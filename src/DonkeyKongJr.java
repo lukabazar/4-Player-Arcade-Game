@@ -19,12 +19,16 @@ public class DonkeyKongJr extends Application {
         Pane root = new Pane();
         Scene scene = new Scene(root, width, height);
 
+
+        /*
         BackgroundSize backgroundSize = new BackgroundSize(width, height, false,
                                           false, false, false);
-        root.setBackground(new Background(new BackgroundImage(new Image("background.png"),
+        root.setBackground(new Background(new BackgroundImage(new Image("backgrounds/background-01.png"),
                                           BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
                                   null, backgroundSize)));
-        new Level(root, mult);
+
+         */
+        new Level(scene, root, mult);
 
         primaryStage.setTitle("Donkey Kong Jr.");
         primaryStage.getIcons().add(new Image("icon.png"));

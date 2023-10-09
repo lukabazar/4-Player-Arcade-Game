@@ -1,33 +1,34 @@
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 
-public class Collectable {
-
-    private enum Fruit {BANANA, CHERRY, MANGO}
+public class Collectable extends GameObject {
 
     private final ImageView collectable = new ImageView();
-    private final int x;
-    private final int y;
 
-    public Collectable(Pane pane, Fruit type, int x, int y) {
-        this.x = x;
-        this.y = y;
-        createCollectable(pane, type);
+    public Collectable(Fruit type, int x, int y, int width, int height) {
+        super(x, y, width, height);
+        this.collectable.setFitWidth(width);
+        this.collectable.setFitHeight(height);
+        createCollectable(type);
     }
 
-    private void createCollectable(Pane pane, Fruit type) {
+    private void createCollectable(Fruit type) {
         this.collectable.setPreserveRatio(true);
-        this.collectable.setX(x);
-        this.collectable.setY(y);
+        this.collectable.setX(super.getX());
+        this.collectable.setY(super.getY());
         if(type == Fruit.BANANA) {
-            //collectable.setImage();
+            collectable.setImage(Fruit.BANANA.getImage());
         }
         else if(type == Fruit.CHERRY) {
-            //collectable.setImage();
+            collectable.setImage(Fruit.CHERRY.getImage());
         }
-        else if(type == Fruit.MANGO) {
-            //collectable.setImage();
+        else if(type == Fruit.GUAVA) {
+            collectable.setImage(Fruit.GUAVA.getImage());
         }
-        pane.getChildren().add(this.collectable);
+    }
+
+    @Override
+    public Node getGameObject() {
+        return this.collectable;
     }
 }
