@@ -5,10 +5,10 @@ import javafx.scene.shape.Rectangle;
 public class GameObject {
     private final Rectangle gameObject = new Rectangle();
     public GameObject(int x, int y, int width, int height) {
-        gameObject.setFill(Color.WHITE);
-        gameObject.setStroke(Color.BLACK);
-        gameObject.setX(x);
-        gameObject.setY(y);
+        gameObject.setFill(Color.TRANSPARENT);
+        gameObject.setStroke(Color.RED);
+        gameObject.setTranslateX(x);
+        gameObject.setTranslateY(y);
         gameObject.setWidth(width);
         gameObject.setHeight(height);
     }
@@ -17,36 +17,28 @@ public class GameObject {
         return this.gameObject;
     }
 
-    public int getMaxX() {
-        return getX() + (getWidth()/2);
+    public double getX() {
+        return gameObject.getTranslateX();
     }
 
-    public int getMinX() {
-        return getX() - (getWidth()/2);
+    public void setX(double x) {
+        gameObject.setTranslateX(x);
     }
 
-    public int getMaxY() {
-        return getY() - (getHeight()/2);
+    public void setY(double y) {
+        gameObject.setTranslateY(y);
     }
 
-    public int getMinY() {
-        return getY() + (getHeight()/2);
+    public double getY() {
+        return gameObject.getTranslateY();
     }
 
-    public int getX() {
-        return (int) gameObject.getX();
+    public double getWidth() {
+        return gameObject.getWidth();
     }
 
-    public int getY() {
-        return (int) gameObject.getY();
-    }
-
-    private int getWidth() {
-        return (int) gameObject.getWidth();
-    }
-
-    private int getHeight() {
-        return (int) gameObject.getHeight();
+    public double getHeight() {
+        return gameObject.getHeight();
     }
 
 }
