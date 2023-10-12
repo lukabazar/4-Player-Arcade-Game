@@ -2,37 +2,35 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Scanner;
 
 public class Level {
 
-    public enum PlatformType {STANDARD, ROPE}
+    private enum PlatformType {STANDARD, ROPE}
     private final Scene scene;
     private final Pane pane;
     private final int mult;
-    private Collection<GameObject> platforms;
-    private Collection<GameObject> ropes;
+    private List<GameObject> platforms;
+    private List<GameObject> ropes;
     private Player player;
 
-    private double xVelocity = 0;
-    private double yVelocity = 0;
-    private boolean isJumping = false;
-    private boolean isWalking = false;
-    private boolean isClimbing = false;
-    private boolean isCycle = false;
-    private int cycle = 0;
-
+    /**
+     * Places all game objects onto the level
+     *
+     * @param scene JavaFX scene
+     * @param pane Pane to place assets
+     * @param mult Multiple used to scale window
+     */
     public Level(Scene scene, Pane pane, int mult) {
         this.scene = scene;
         this.pane = pane;
         this.mult = mult;
-        makePlatforms();
+        makeGameObjects();
         makeCollectables();
         makeEnemies();
         makePlayer();
@@ -40,18 +38,22 @@ public class Level {
         play();
     }
 
+    /**
+     * Holds animation timer in order to update the game
+     */
     private void play() {
         AnimationTimer timer = new AnimationTimer() {
             long last = 0;
+
             @Override
             public void handle(long now) {
                 update();
-                if(now - last > 17_500_000) {
-                    if(cycle == 0) {
-                        cycle = 1;
+                if (now - last > 17_500_000) {
+                    if (player.getCycle() == 0) {
+                        player.setCycle(1);
                     }
                     else {
-                        cycle = 0;
+                        player.setCycle(0);
                     }
                 }
                 last = now;
@@ -60,40 +62,62 @@ public class Level {
         timer.start();
     }
 
+    /**
+     * Updates the screen based on user input and gravity
+     */
     private void update() {
 
-        if(!isClimbing) {
-            yVelocity += 0.25 / 3.0 * mult;
+        player.changeSprite();
+
+        if (!player.isClimbing()) {
+            player.setyVelocity(player.yVelocity() + 0.25 / 3.0 * mult);
         }
 
-        changeSprite();
+        player.setX(player.getX() + player.xVelocity());
+        player.setY(player.getY() + player.yVelocity());
 
-        player.setX(player.getX() + xVelocity);
-        player.setY(player.getY() + yVelocity);
-
-        for(GameObject platform : platforms) {
+        for (GameObject platform : platforms) {
             if (isCollision(player, platform) && onPlatform(player, platform) && player.getY() < platform.getY()) {
-                yVelocity = 0;
-                isJumping = false;
-                isClimbing = false;
+                player.setyVelocity(0);
+                player.setJumping(false);
+                player.setClimbing(false);
+                player.setClimbingSpecial(false);
+                player.setGrounded(true);
                 player.setY(platform.getY() - player.getHeight());
             }
-            else if(isCollision(player, platform) && isClimbing && player.getY() > platform.getY()) {
-                yVelocity = 0;
-                player.setY(platform.getY() + platform.getHeight());
+            else if (isCollision(player, platform) && player.isClimbing() && player.getY() > platform.getY()) {
+                if (player.isClimbingSpecial()) {
+                    player.setyVelocity(0);
+                    player.setY(platform.getY() + platform.getHeight());
+                }
+                else if (player.getGameObject().getScaleX() == 1 &&
+                         player.getX() + 2 * 9 * mult > platform.getX() + platform.getWidth()) {
+                    player.setyVelocity(0);
+                    player.setY(platform.getY() + platform.getHeight());
+                }
+                else if (player.getGameObject().getScaleX() == -1 &&
+                         player.getX() + player.getWidth() - 2 * 9 * mult < platform.getX()) {
+                    player.setyVelocity(0);
+                    player.setY(platform.getY() + platform.getHeight());
+                }
+                player.setGrounded(false);
             }
         }
 
-        for(GameObject rope : ropes) {
-            if (isCollision(player, rope) && player.getY() + player.getHeight()/2 < rope.getY() + rope.getHeight()) {
-                if(isJumping) {
-                    yVelocity = 0;
-                    isJumping = false;
+        for (GameObject rope : ropes) {
+            if (isCollision(player, rope) && player.getY() + player.getHeight() / 2 < rope.getY() + rope.getHeight() &&
+                player.getY() > rope.getY()) {
+                if (player.isJumping()) {
+                    player.setyVelocity(0);
+                    player.setJumping(false);
                 }
-                if(!isClimbing) {
-                    player.setX(rope.getX() - player.getWidth()/2 - rope.getWidth());
+                if (!player.isClimbing()) {
+                    player.setyVelocity(0);
+                    player.setX(rope.getX() - player.getWidth() / 2 - rope.getWidth());
                 }
-                isClimbing = true;
+                player.setxVelocity(0);
+                player.setClimbing(true);
+                player.setGrounded(false);
             }
         }
 
@@ -109,110 +133,140 @@ public class Level {
         }
 
         scene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.LEFT) {
-                if(isClimbing) {
+            if (player.isFalling()) {}
+            else if (event.getCode() == KeyCode.LEFT) {
+                if (player.isClimbingSpecial()) {
+                    player.getGameObject().setScaleX(-1);
+                    player.setX(player.getX() - 2.5 *  mult);
+                    player.setClimbing(false);
+                    player.setClimbingSpecial(false);
+                }
+                else if (player.isClimbing()) {
+                    if (player.getGameObject().getScaleX() == 1 && player.getX() - player.getWidth()/2 > 0) {
+                        player.setClimbingSpecial(true);
+                        player.setX(player.getX() - player.getWidth() / 2 + ropes.get(0).getWidth());
+                        player.getGameObject().setScaleX(-1);
+                    }
                     player.getGameObject().setScaleX(1);
                 }
                 else {
-                    xVelocity = -2/3.0 * mult;
-                    isWalking = true;
+                    player.setxVelocity(-2 / 3.0 * mult);
+                    player.setWalking(true);
                     player.getGameObject().setScaleX(-1);
                 }
             }
             else if (event.getCode() == KeyCode.RIGHT) {
-                if(isClimbing) {
+                if (player.isClimbingSpecial()) {
+                    player.getGameObject().setScaleX(1);
+                    player.setX(player.getX() + 5.5 * mult);
+                    player.setClimbing(false);
+                    player.setClimbingSpecial(false);
+                }
+                else if (player.isClimbing()) {
+                    if (player.getGameObject().getScaleX() == -1 && player.getX() + 3*player.getWidth()/2 < 256*mult) {
+                        player.setClimbingSpecial(true);
+                        player.setX(player.getX() + player.getWidth() / 2);
+                        player.getGameObject().setScaleX(1);
+                    }
                     player.getGameObject().setScaleX(-1);
                 }
                 else {
-                    xVelocity = 2/3.0 * mult;
-                    isWalking = true;
+                    player.setxVelocity(2 / 3.0 * mult);
+                    player.setWalking(true);
                     player.getGameObject().setScaleX(1);
                 }
             }
-            else if(event.getCode() == KeyCode.UP && isClimbing) {
-                yVelocity = -1/3.0 * mult;
-                isCycle = true;
+            else if (event.getCode() == KeyCode.UP && player.isClimbing()) {
+                if (player.isClimbingSpecial()) {
+                    player.setyVelocity(-2 / 3.0 * mult);
+                }
+                else {
+                    player.setyVelocity(-1 / 3.0 * mult);
+                }
+                player.isCycle(true);
             }
-            else if(event.getCode() == KeyCode.DOWN && isClimbing) {
-                yVelocity = 2/3.0 * mult;
-                isCycle = true;
+            else if (event.getCode() == KeyCode.DOWN && player.isClimbing()) {
+                if (player.isClimbingSpecial()) {
+                    player.setyVelocity(1 / 3.0 * mult);
+                }
+                else {
+                    player.setyVelocity(2 / 3.0 * mult);
+                }
+                player.isCycle(false);
             }
-            else if(event.getCode() == KeyCode.SPACE && !isJumping && !isClimbing) {
-                yVelocity = -5/3.0 * mult;
-                isJumping = true;
+            else if (event.getCode() == KeyCode.SPACE && !player.isJumping() && !player.isClimbing()) {
+                player.setyVelocity(-5 / 3.0 * mult);
+                player.setJumping(true);
             }
         });
 
         scene.setOnKeyReleased(event -> {
             if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
-                xVelocity = 0;
-                isWalking = false;
+                player.setxVelocity(0);
+                player.setWalking(false);
             }
-            else if(event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN) {
-                yVelocity = 0;
-                isCycle = false;
+            else if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN) {
+                player.setyVelocity(0);
+                player.isCycle(false);
             }
         });
     }
 
-    private void changeSprite() {
-        if(isClimbing) {
-            if(cycle == 0 && isCycle) {
-                player.setImage("/sprites/climb-01.png");
-            }
-            else {
-                player.setImage("/sprites/climb-02.png");
-            }
-        }
-        else if(isWalking) {
-            if(cycle == 0) {
-                player.setImage("/sprites/walk-01.png");
-            }
-            else {
-                player.setImage("/sprites/walk-03.png");
-            }
-        }
-        else if(isJumping) {
-            player.setImage("/sprites/jump-01.png");
-        }
-        else {
-            player.setImage("/sprites/walk-02.png");
-        }
-    }
-
+    /**
+     * Checks for collision between two GameObjects
+     *
+     * @param object1 First object
+     * @param object2 Second object
+     * @return true if they collide, false otherwise
+     */
     private boolean isCollision(GameObject object1, GameObject object2) {
         return object1.getGameObject().getBoundsInParent().intersects(object2.getGameObject().getBoundsInParent());
     }
 
+    /**
+     * Checks if one GameObject is on top of another GameObject
+     *
+     * @param object1 First object
+     * @param object2 Second object
+     * @return true if one is on top of the second, false otherwise
+     */
     private boolean onPlatform(GameObject object1, GameObject object2) {
-        double upperBound = object2.getX() + object2.getWidth() - object1.getWidth()/2;
-        double lowerBound = object2.getX() - object1.getWidth()/2;
-
+        double upperBound = object2.getX() + object2.getWidth() - object1.getWidth() / 2;
+        double lowerBound = object2.getX() - object1.getWidth() / 2;
         return object1.getX() > lowerBound && object1.getX() < upperBound;
     }
 
+    /**
+     * Adds all GameObjects to screen
+     */
     private void addAll() {
-        for(GameObject rope : ropes) {
+        for (GameObject rope : ropes) {
             pane.getChildren().add(rope.getGameObject());
         }
-        for(GameObject platform : platforms) {
+        for (GameObject platform : platforms) {
             pane.getChildren().add(platform.getGameObject());
         }
         pane.getChildren().add(player.getGameObject());
     }
 
+    /**
+     * Creates GameObjects from stream
+     *
+     * @param in input stream
+     * @param type current GameObject type to create
+     */
     private void platformsFromStream(InputStream in, PlatformType type) {
         InputStreamReader isr = new InputStreamReader(in, StandardCharsets.UTF_8);
         Scanner scanner = new Scanner(isr);
         scanner.useDelimiter(",|\\n");
         scanner.nextLine();
-        while(scanner.hasNext()) {
+        while (scanner.hasNext()) {
             int width = Integer.parseInt(scanner.next()) * mult;
             int height = Integer.parseInt(scanner.next()) * mult;
             int x = Integer.parseInt(scanner.next()) * mult;
             int y = Integer.parseInt(scanner.next()) * mult;
             scanner.nextLine();
-            if(type == PlatformType.STANDARD) {
+            if (type == PlatformType.STANDARD) {
                 platforms.add(new GameObject(x, y, width, height));
             }
             else {
@@ -221,24 +275,26 @@ public class Level {
         }
     }
 
-    private void makePlatforms() {
+    /**
+     * Creates GameObjects, and reads text files
+     */
+    private void makeGameObjects() {
         platforms = new ArrayList<>();
         ropes = new ArrayList<>();
 
         try (InputStream in = Level.class.getResourceAsStream("ropes-01.txt")) {
             platformsFromStream(in, PlatformType.ROPE);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("No File.");
         }
 
         try (InputStream in = Level.class.getResourceAsStream("platforms-01.txt")) {
             platformsFromStream(in, PlatformType.STANDARD);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("No File.");
         }
     }
+
 
     private void makeCollectables() {
         /*
@@ -254,6 +310,9 @@ public class Level {
 
     }
 
+    /**
+     * Creates player
+     */
     private void makePlayer() {
         player = new Player(0, 200 * mult, 27 * mult, 16 * mult);
     }

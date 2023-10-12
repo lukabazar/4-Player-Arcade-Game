@@ -4,6 +4,9 @@ import javafx.scene.image.ImageView;
 
 public class Collectable extends GameObject {
 
+    /**
+     * Enum containing all Fruit sprites
+     */
     public enum Fruit {
         CHERRY("fruits/cherry.png"), BANANA("fruits/banana.png"), GUAVA("fruits/guava.png");
 
@@ -20,6 +23,11 @@ public class Collectable extends GameObject {
             img = tempImg;
         }
 
+        /**
+         * Get image of Sprite
+         *
+         * @return Image
+         */
         public Image getImage() {
             return this.img.getImage();
         }
@@ -27,6 +35,15 @@ public class Collectable extends GameObject {
 
     private final ImageView collectable = new ImageView();
 
+    /**
+     * Collectable GameObject to be used in the game
+     *
+     * @param type Fruit type
+     * @param x initial x coordinate
+     * @param y initial y coordinate
+     * @param width width of collectable
+     * @param height height of collectable
+     */
     public Collectable(Fruit type, int x, int y, int width, int height) {
         super(x, y, width, height);
         this.collectable.setFitWidth(width);
@@ -34,6 +51,11 @@ public class Collectable extends GameObject {
         createCollectable(type);
     }
 
+    /**
+     * Create collectable and set corresponding image
+     *
+     * @param type Fruit type to set
+     */
     private void createCollectable(Fruit type) {
         this.collectable.setPreserveRatio(true);
         this.collectable.setX(super.getX());
@@ -49,6 +71,11 @@ public class Collectable extends GameObject {
         }
     }
 
+    /**
+     * Get Node of the Collectable GameObject
+     *
+     * @return Node of GameObject
+     */
     @Override
     public Node getGameObject() {
         return this.collectable;

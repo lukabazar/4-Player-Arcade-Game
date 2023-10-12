@@ -4,7 +4,60 @@ import javafx.scene.image.ImageView;
 
 public class Player extends GameObject {
 
+    /**
+     * Enum containing all Donkey Kong Jr. sprites
+     */
+    private enum Sprites {
+        WALK1("sprites/walk-01.png"), WALK2("sprites/walk-02.png"),
+        WALK3("sprites/walk-03.png"), CLIMB1("sprites/climb-01.png"),
+        CLIMB2("sprites/climb-02.png"), CLIMB3("sprites/climb-03.png"),
+        JUMP("sprites/jump-01.png"), FALL("sprites/fall-01.png"),
+        DEATH1("sprites/death-01.png"), DEATH2("sprites/death-02.png"),
+        WIN1("sprites/win-01.png"), WIN2("sprites/win-02.png");
+
+        private final ImageView img;
+
+        Sprites(String imgStr) {
+            ImageView tempImg = null;
+            try {
+                tempImg = new ImageView(imgStr);
+            }
+            catch (Exception e) {
+                System.out.println("File not found.");
+            }
+            img = tempImg;
+        }
+
+        /**
+         * Get image of Sprite
+         *
+         * @return Image
+         */
+        public Image getImage() {
+            return this.img.getImage();
+        }
+    }
+
+    private boolean isCycle = false;
+    private int cycle = 0;
+    private double xVelocity = 0;
+    private double yVelocity = 0;
+    private boolean isJumping = false;
+    private boolean isWalking = false;
+    private boolean isGrounded = true;
+    private boolean isClimbing = false;
+    private boolean isFalling = false;
+    private boolean isClimbingSpecial = false;
     private final ImageView dk = new ImageView();
+
+    /**
+     * Player GameObject (Donkey Kong Jr.)
+     *
+     * @param x initial x coordinate
+     * @param y initial y coordinate
+     * @param width width of object
+     * @param height height of object
+     */
     public Player(int x, int y, int width, int height) {
         super(x, y, width, height);
         dk.setTranslateX(x);
@@ -13,32 +66,295 @@ public class Player extends GameObject {
         dk.setFitHeight(height);
     }
 
+    /**
+     * Returns Node representing GameObject
+     *
+     * @return Node
+     */
     @Override
     public Node getGameObject() {
         return dk;
     }
 
+    /**
+     * Get current x coordinate
+     *
+     * @return double x
+     */
     @Override
     public double getX() {
         return dk.getTranslateX();
     }
 
+    /**
+     * Get current y coordinate
+     *
+     * @return double y
+     */
     @Override
     public double getY() {
         return dk.getTranslateY();
     }
 
+    /**
+     * Set new x coordinate
+     *
+     * @param x new x coordinate
+     */
     @Override
     public void setX(double x) {
         dk.setTranslateX(x);
     }
 
+    /**
+     * Set new y coordinate
+     *
+     * @param y new y coordinate
+     */
     @Override
     public void setY(double y) {
         dk.setTranslateY(y);
     }
 
-    public void setImage(String imageStr) {
-        dk.setImage(new Image(imageStr));
+    /**
+     * Set velocity in x direction
+     *
+     * @param xVelocity new xVelocity
+     */
+    public void setxVelocity(double xVelocity) {
+        this.xVelocity = xVelocity;
     }
+
+    /**
+     * Set velocity in y direction
+     *
+     * @param yVelocity new yVelocity
+     */
+    public void setyVelocity(double yVelocity) {
+        this.yVelocity = yVelocity;
+    }
+
+    /**
+     * Get current xVelocity
+     *
+     * @return double xVelocity
+     */
+    public double xVelocity() {
+        return this.xVelocity;
+    }
+
+    /**
+     * Get current yVelocity
+     *
+     * @return double yVelocity
+     */
+    public double yVelocity() {
+        return this.yVelocity;
+    }
+
+    /**
+     * Is player jumping
+     *
+     * @return true if player is jumping, false otherwise
+     */
+    public boolean isJumping() {
+        return isJumping;
+    }
+
+    /**
+     * Set if character is jumping
+     *
+     * @param jumping boolean to set
+     */
+    public void setJumping(boolean jumping) {
+        isJumping = jumping;
+    }
+
+    /**
+     * Is player walking
+     *
+     * @return true if player is walking, false otherwise
+     */
+    public boolean isWalking() {
+        return isWalking;
+    }
+
+    /**
+     * Set if player is walking
+     *
+     * @param walking boolean to set
+     */
+    public void setWalking(boolean walking) {
+        isWalking = walking;
+    }
+
+    /**
+     * Is player climbing
+     *
+     * @return true if player is climbing, false otherwise
+     */
+    public boolean isClimbing() {
+        return isClimbing;
+    }
+
+    /**
+     * Set if player is climbing
+     *
+     * @param climbing boolean to set
+     */
+    public void setClimbing(boolean climbing) {
+        isClimbing = climbing;
+    }
+
+    /**
+     * Is player in special two-handed climb state
+     *
+     * @return true if character is in the two-handed climb, false otherwise
+     */
+    public boolean isClimbingSpecial() {
+        return isClimbingSpecial;
+    }
+
+    /**
+     * Set if player is in special two-handed climb state
+     *
+     * @param climbingSpecial boolean to set
+     */
+    public void setClimbingSpecial(boolean climbingSpecial) {
+        isClimbingSpecial = climbingSpecial;
+    }
+
+    /**
+     * Is player grounded
+     *
+     * @return true if player is grounded, false otherwise
+     */
+    public boolean isGrounded() {
+        return isGrounded;
+    }
+
+    /**
+     * Set if player is grounded
+     *
+     * @param grounded boolean to set
+     */
+    public void setGrounded(boolean grounded) {
+        isGrounded = grounded;
+    }
+
+    /**
+     * Is player falling
+     *
+     * @return true if player is falling, false otherwise
+     */
+    public boolean isFalling() {
+        return isFalling;
+    }
+
+    /**
+     * Changes the current Image for the
+     * ImageView representing the player character
+     */
+    public void changeSprite() {
+        isFalling = false;
+        if(isClimbing()) {
+            setClimb();
+        }
+        else if(isJumping()) {
+            setJump();
+        }
+        else if(isWalking()) {
+            setWalk();
+        }
+        else if(isGrounded()) {
+            setDefault();
+        }
+        else {
+            isFalling = true;
+            setFall();
+        }
+    }
+
+    /**
+     * Set current image to a Walk sprite
+     */
+    private void setWalk() {
+        if(cycle == 0) {
+            dk.setImage(Sprites.WALK1.getImage());
+        }
+        else {
+            dk.setImage(Sprites.WALK3.getImage());
+        }
+    }
+
+    /**
+     * Set current image to Jump sprite
+     */
+    private void setJump() {
+        dk.setImage(Sprites.JUMP.getImage());
+    }
+
+    /**
+     * Set current image to Climb sprite
+     */
+    private void setClimb() {
+        if(isClimbingSpecial) {
+            if(cycle == 0) {
+                dk.setScaleX(1);
+            }
+            else {
+                dk.setScaleX(-1);
+            }
+            dk.setImage(Sprites.CLIMB3.getImage());
+        }
+        else if(cycle == 0 && isCycle) {
+            dk.setImage(Sprites.CLIMB1.getImage());
+        }
+        else {
+            dk.setImage(Sprites.CLIMB2.getImage());
+        }
+    }
+
+    /**
+     * Set current image to fall sprite
+     */
+    private void setFall() {
+        dk.setImage(Sprites.FALL.getImage());
+    }
+
+    /**
+     * Set current image to default sprite
+     */
+    private void setDefault() {
+        dk.setImage(Sprites.WALK2.getImage());
+    }
+
+    /**
+     * Set current animation cycle (current sprite to change to)
+     *
+     * @param cycle current cycle number
+     */
+    public void setCycle(int cycle) {
+        this.cycle = cycle;
+    }
+
+    /**
+     * Get current cycle number
+     *
+     * @return int current cycle
+     */
+    public int getCycle() {
+        return this.cycle;
+    }
+
+    /**
+     * Set if the current state of the player should cycle
+     * through sprites
+     *
+     * @param bool true if cycling, false otherwise
+     */
+    public void isCycle(boolean bool) {
+        this.isCycle = bool;
+    }
+
 }
