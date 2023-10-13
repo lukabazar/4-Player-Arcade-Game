@@ -15,7 +15,7 @@ public class GameObject {
      */
     public GameObject(int x, int y, int width, int height) {
         gameObject.setFill(Color.TRANSPARENT);
-        gameObject.setStroke(Color.RED);
+        //gameObject.setStroke(Color.RED);
         gameObject.setTranslateX(x);
         gameObject.setTranslateY(y);
         gameObject.setWidth(width);

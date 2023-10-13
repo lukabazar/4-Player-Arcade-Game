@@ -34,6 +34,7 @@ public class Collectable extends GameObject {
     }
 
     private final ImageView collectable = new ImageView();
+    private boolean isFalling = false;
 
     /**
      * Collectable GameObject to be used in the game
@@ -69,6 +70,54 @@ public class Collectable extends GameObject {
         else if(type == Fruit.GUAVA) {
             collectable.setImage(Fruit.GUAVA.getImage());
         }
+    }
+
+    public boolean isFalling() {
+        return isFalling;
+    }
+
+    public void setFalling() {
+        isFalling = true;
+    }
+
+    /**
+     * Set new x coordinate
+     *
+     * @param x new x coordinate
+     */
+    @Override
+    public void setX(double x) {
+        collectable.setTranslateX(x);
+    }
+
+    /**
+     * Set new y coordinate
+     *
+     * @param y new y coordinate
+     */
+    @Override
+    public void setY(double y) {
+        collectable.setTranslateY(y);
+    }
+
+    /**
+     * Get current x coordinate
+     *
+     * @return double x
+     */
+    @Override
+    public double getX() {
+        return collectable.getTranslateX();
+    }
+
+    /**
+     * Get current y coordinate
+     *
+     * @return double y
+     */
+    @Override
+    public double getY() {
+        return collectable.getTranslateY();
     }
 
     /**

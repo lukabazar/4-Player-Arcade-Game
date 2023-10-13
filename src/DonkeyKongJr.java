@@ -12,9 +12,9 @@ public class DonkeyKongJr extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        int mult = 3;
-        int width = 256 * mult;
-        int height = 240 * mult;
+        int multi = 3;
+        int width = 256 * multi;
+        int height = 240 * multi;
 
         Pane root = new Pane();
         Scene scene = new Scene(root, width, height);
@@ -26,7 +26,7 @@ public class DonkeyKongJr extends Application {
                                           BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
                                   null, backgroundSize)));
 
-        new Level(scene, root, mult);
+        new Level(scene, root, multi);
 
         primaryStage.setTitle("Donkey Kong Jr.");
         primaryStage.getIcons().add(new Image("icon.png"));
