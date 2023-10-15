@@ -1,4 +1,5 @@
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -40,8 +41,12 @@ public class Player extends GameObject {
 
     private boolean isCycle = false;
     private int cycle = 0;
+    private int fallCount = 0;
+    private int lives;
     private double xVelocity = 0;
     private double yVelocity = 0;
+    private final double spawnX;
+    private final double spawnY;
     private boolean isJumping = false;
     private boolean isWalking = false;
     private boolean isGrounded = true;
@@ -58,8 +63,11 @@ public class Player extends GameObject {
      * @param width width of object
      * @param height height of object
      */
-    public Player(int x, int y, int width, int height) {
+    public Player(int x, int y, int width, int height, int lives) {
         super(x, y, width, height);
+        this.lives = lives;
+        spawnX = x;
+        spawnY = y;
         dk.setTranslateX(x);
         dk.setTranslateY(y);
         dk.setPreserveRatio(true);
@@ -251,27 +259,54 @@ public class Player extends GameObject {
         return isFalling;
     }
 
+    public int getFallCount() {
+        return fallCount;
+    }
+
+    private void resetFall() {
+        isFalling = false;
+        fallCount = 0;
+    }
+
     /**
      * Changes the current Image for the
      * ImageView representing the player character
      */
     public void changeSprite() {
-        isFalling = false;
         if(isClimbing()) {
+            resetFall();
             setClimb();
         }
         else if(isJumping()) {
+            resetFall();
             setJump();
         }
         else if(isWalking()) {
+            resetFall();
             setWalk();
         }
         else if(isGrounded()) {
+            resetFall();
             setDefault();
         }
         else {
             isFalling = true;
+            fallCount++;
             setFall();
+        }
+    }
+
+    public void respawn(Label label) {
+        lives--;
+        if(lives == 0) {
+            // TODO
+            System.out.println("Game Over!");
+            label.setText("Lives: 0");
+        }
+        else if (lives >= 1) {
+            dk.setTranslateX(spawnX);
+            dk.setTranslateY(spawnY);
+            label.setText("Lives: " + lives);
         }
     }
 
@@ -280,10 +315,16 @@ public class Player extends GameObject {
      */
     private void setWalk() {
         if(cycle == 0) {
-            dk.setImage(Sprites.WALK1.getImage());
+            dk.setImage(Sprites.WALK2.getImage());
+        }
+        else if(cycle == 1){
+            dk.setImage(Sprites.WALK3.getImage());
+        }
+        else if(cycle == 2){
+            dk.setImage(Sprites.WALK2.getImage());
         }
         else {
-            dk.setImage(Sprites.WALK3.getImage());
+            dk.setImage(Sprites.WALK1.getImage());
         }
     }
 
@@ -299,7 +340,7 @@ public class Player extends GameObject {
      */
     private void setClimb() {
         if(isClimbingSpecial) {
-            if(cycle == 0) {
+            if(cycle % 2 == 0 && isCycle) {
                 dk.setScaleX(1);
             }
             else {
@@ -307,12 +348,16 @@ public class Player extends GameObject {
             }
             dk.setImage(Sprites.CLIMB3.getImage());
         }
-        else if(cycle == 0 && isCycle) {
+        else if(cycle % 2 == 0 && isCycle) {
             dk.setImage(Sprites.CLIMB1.getImage());
         }
         else {
             dk.setImage(Sprites.CLIMB2.getImage());
         }
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
     }
 
     /**

@@ -1,6 +1,7 @@
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Rectangle;
 
 public class Collectable extends GameObject {
 
@@ -34,6 +35,7 @@ public class Collectable extends GameObject {
     }
 
     private final ImageView collectable = new ImageView();
+    private final Rectangle hitBox = new Rectangle();
     private boolean isFalling = false;
 
     /**
@@ -47,6 +49,8 @@ public class Collectable extends GameObject {
      */
     public Collectable(Fruit type, int x, int y, int width, int height) {
         super(x, y, width, height);
+        this.hitBox.setX(x + width/3.0);
+        this.hitBox.setY(y + height/3.0);
         this.collectable.setFitWidth(width);
         this.collectable.setFitHeight(height);
         createCollectable(type);
@@ -88,6 +92,7 @@ public class Collectable extends GameObject {
     @Override
     public void setX(double x) {
         collectable.setTranslateX(x);
+        hitBox.setX(x + collectable.getFitWidth()/3);
     }
 
     /**
@@ -98,6 +103,7 @@ public class Collectable extends GameObject {
     @Override
     public void setY(double y) {
         collectable.setTranslateY(y);
+        hitBox.setY(y + collectable.getFitWidth()/3);
     }
 
     /**
@@ -128,5 +134,9 @@ public class Collectable extends GameObject {
     @Override
     public Node getGameObject() {
         return this.collectable;
+    }
+
+    public Node getHitBox() {
+        return this.hitBox;
     }
 }

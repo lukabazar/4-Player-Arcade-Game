@@ -27,8 +27,9 @@ public class Enemy extends GameObject {
     }
 
     private final ImageView enemy = new ImageView();
-    private double spawnX = 0;
-    private double spawnY = 0;
+    private int cycle = 0;
+    private int dir = 0;
+    private EnemySprites startingSprite = EnemySprites.RED1;
 
     public Enemy(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -42,9 +43,46 @@ public class Enemy extends GameObject {
         enemy.setImage(EnemySprites.RED1.getImage());
     }
 
-    public void setSpawn(double spawnX, double spawnY) {
-        this.spawnX = spawnX;
-        this.spawnY = spawnY;
+    public void setCycle(int cycle) {
+        this.cycle = cycle;
+    }
+
+    public void switchColor() {
+        this.startingSprite = EnemySprites.BLUE1;
+    }
+
+    public int getCycle() {
+        return cycle;
+    }
+
+    public void changeSprite() {
+        if(cycle == 0) {
+            if(startingSprite == EnemySprites.RED1) {
+                enemy.setImage(EnemySprites.RED2.getImage());
+            }
+            else {
+                enemy.setImage(EnemySprites.BLUE2.getImage());
+            }
+        }
+        else {
+            if(startingSprite == EnemySprites.RED1) {
+                enemy.setImage(EnemySprites.RED1.getImage());
+            }
+            else {
+                enemy.setImage(EnemySprites.BLUE2.getImage());
+            }
+        }
+    }
+
+    public void changeDirection() {
+        if(dir == 0) {
+            dir = 90;
+            enemy.setRotate(dir);
+        }
+        else {
+            dir = 0;
+            enemy.setRotate(dir);
+        }
     }
 
     @Override
