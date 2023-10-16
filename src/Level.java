@@ -8,8 +8,8 @@ import javafx.scene.layout.Pane;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Level {
@@ -29,6 +29,7 @@ public class Level {
     private boolean isWin = false;
     boolean isPressed = false;
     int numRopes = 0;
+    Random random = new Random(System.currentTimeMillis());
 
     /**
      * Places all game objects onto the level
@@ -57,8 +58,12 @@ public class Level {
     private void play() {
         AnimationTimer timer = new AnimationTimer() {
             int count = 0;
+            int altCount = 300;
             @Override
             public void handle(long now) {
+                if (altCount == 0) {
+                    altCount = 1;
+                }
                 if(isWin) {
                     this.stop();
                     popUp();
@@ -92,13 +97,18 @@ public class Level {
                         }
                     }
                 }
-                if(count % 600 == 0) {
-                    if(level == Mode.LEVEL1) {
-                        enemies.add(new Enemy(80 * multi,56 * multi,16 * multi, 8 * multi));
-                    }
-                    else if(level == Mode.LEVEL2) {
-                        enemies.add(new Enemy(48 * multi,56 * multi,16 * multi, 8 * multi));
-                    }
+                if(count % altCount == 0 && level == Mode.LEVEL2) {
+                    Enemy enemyToAdd = new Enemy(48 * multi,56 * multi,16 * multi, 8 * multi);
+                    enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
+                    enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
+                    enemies.add(enemyToAdd);
+                    altCount -= 5;
+                }
+                if(count % 300 == 0 && level == Mode.LEVEL1) {
+                    Enemy enemyToAdd = new Enemy(80 * multi,56 * multi,16 * multi, 8 * multi);
+                    enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
+                    enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
+                    enemies.add(enemyToAdd);
                 }
                 if (count % 8 == 0) {
                     if (player.getCycle() == 0) {
@@ -158,6 +168,13 @@ public class Level {
         player.changeSprite();
 
         for(Enemy enemy : enemies) {
+            if(snapToBounds(enemy)) {
+                enemy.switchXDir();
+                enemy.setXVelocity(enemy.xVelocity());
+            }
+            enemy.setYVelocity(enemy.yVelocity() + 0.5 / 3.0 * multi);
+            enemy.setX(enemy.getX() + enemy.xVelocity());
+            enemy.setY(enemy.getY() + enemy.yVelocity());
             pane.getChildren().remove(enemy.getGameObject());
             pane.getChildren().add(enemy.getGameObject());
             enemy.changeSprite();
@@ -168,10 +185,10 @@ public class Level {
 
         // Gravity
         if (!player.isClimbing()) {
-            player.setyVelocity(player.yVelocity() + 0.25 / 3.0 * multi);
+            player.setYVelocity(player.yVelocity() + 0.25 / 3.0 * multi);
         }
 
-        snapToBounds();
+        snapToBounds(player);
         handleCollisions();
 
         scene.setOnKeyPressed(this::keyPressed);
@@ -185,12 +202,12 @@ public class Level {
      */
     private void keyReleased(KeyEvent event) {
         if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.RIGHT) {
-            player.setxVelocity(0);
+            player.setXVelocity(0);
             player.setWalking(false);
             isPressed = false;
         }
         else if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN) {
-            player.setyVelocity(0);
+            player.setYVelocity(0);
             player.isCycle(false);
             isPressed = false;
         }
@@ -227,7 +244,7 @@ public class Level {
                 player.getGameObject().setScaleX(1);
             }
             else {
-                player.setxVelocity(-2 / 3.0 * multi);
+                player.setXVelocity(-2 / 3.0 * multi);
                 player.setWalking(true);
                 player.getGameObject().setScaleX(-1);
             }
@@ -256,7 +273,7 @@ public class Level {
                 player.getGameObject().setScaleX(-1);
             }
             else {
-                player.setxVelocity(2 / 3.0 * multi);
+                player.setXVelocity(2 / 3.0 * multi);
                 player.setWalking(true);
                 player.getGameObject().setScaleX(1);
             }
@@ -264,28 +281,28 @@ public class Level {
         else if (event.getCode() == KeyCode.UP && player.isClimbing()) {
             if (player.isClimbingSpecial()) {
                 if(numRopes == 1) {
-                    player.setyVelocity(0);
+                    player.setYVelocity(0);
                     player.setClimbing(false);
                     player.setClimbingSpecial(false);
                 }
                 else {
-                    player.setyVelocity(-2 / 3.0 * multi);
+                    player.setYVelocity(-2 / 3.0 * multi);
                 }
             }
             else {
-                player.setyVelocity(-0.75 / 3.0 * multi);
+                player.setYVelocity(-0.75 / 3.0 * multi);
             }
             player.isCycle(true);
         }
         else if (event.getCode() == KeyCode.DOWN && player.isClimbing()) {
             if (player.isClimbingSpecial()) {
                 if(numRopes == 1) {
-                    player.setyVelocity(0);
+                    player.setYVelocity(0);
                     player.setClimbing(false);
                     player.setClimbingSpecial(false);
                 }
                 else {
-                    player.setyVelocity(0.75 / 3.0 * multi);
+                    player.setYVelocity(0.75 / 3.0 * multi);
                 }
                 player.isCycle(true);
             }
@@ -293,11 +310,11 @@ public class Level {
                 if(numRopes == 0) {
                     player.setClimbing(false);
                 }
-                player.setyVelocity(2 / 3.0 * multi);
+                player.setYVelocity(2 / 3.0 * multi);
             }
         }
         else if (event.getCode() == KeyCode.SPACE && !player.isJumping() && !player.isClimbing()) {
-            player.setyVelocity(-5 / 3.0 * multi);
+            player.setYVelocity(-5 / 3.0 * multi);
             player.setJumping(true);
         }
     }
@@ -319,14 +336,14 @@ public class Level {
                     isWin = true;
                 }
                 if (player.isJumping()) {
-                    player.setyVelocity(0);
+                    player.setYVelocity(0);
                     player.setJumping(false);
                 }
                 if (!player.isClimbing()) {
-                    player.setyVelocity(0);
+                    player.setYVelocity(0);
                     player.setX(rope.getX() - player.getWidth() / 2 - rope.getWidth());
                 }
-                player.setxVelocity(0);
+                player.setXVelocity(0);
                 player.setClimbing(true);
                 player.setGrounded(false);
                 numRopes++;
@@ -343,7 +360,9 @@ public class Level {
                 fruit.getHitBox().relocate(0,0);
             }
             for(Enemy enemy : enemies) {
-                if(isCollision(fruit, enemy)) {
+                if(isCollision(fruit, enemy) && fruit.isFalling()) {
+                    int scoreInt = Integer.parseInt(labels.get(0).getText().substring(7));
+                    labels.get(0).setText("Score: " + (scoreInt + 400));
                     enemy.getGameObject().relocate(256 * multi, 240 * multi);
                     pane.getChildren().remove(enemy.getGameObject());
                 }
@@ -365,6 +384,27 @@ public class Level {
                     labels.get(0).setText("Score: 5000");
                 }
                 player.respawn(labels.get(1));
+                enemy.setX(pane.getWidth() + enemy.getWidth());
+                enemy.setY(pane.getHeight() + enemy.getHeight());
+                pane.getChildren().remove(enemy.getGameObject());
+            }
+            for(GameObject platform : platforms) {
+                if(isCollision(platform, enemy) && enemy.getY() < 72 * multi
+                   && enemy.getGameObject().getRotate() == 0) {
+                    enemy.setYVelocity(0);
+                    enemy.setY(platform.getY() - enemy.getHeight());
+                }
+            }
+            for(Rope rope : ropes) {
+                if(enemy.getX() == rope.getX() + rope.getWidth()/2 &&
+                   enemy.getY() >= rope.getY() - 2 * enemy.getHeight() && enemy.getGameObject().getRotate() == 0) {
+                    int randomInt = random.nextInt(0, 3);
+                    if(randomInt == 0) {
+                        enemy.setX(rope.getX() + rope.getWidth()/2 - enemy.getWidth()/2);
+                        enemy.setYVelocity(2.5 / 3 * multi);
+                        enemy.changeRotate();
+                    }
+                }
             }
         }
     }
@@ -375,7 +415,7 @@ public class Level {
     private void platformCollision() {
         for (GameObject platform : platforms) {
             if (isCollision(player, platform) && onPlatform(player, platform) && player.getY() < platform.getY()) {
-                player.setyVelocity(0);
+                player.setYVelocity(0);
                 player.setJumping(false);
                 player.setClimbing(false);
                 player.setClimbingSpecial(false);
@@ -384,22 +424,22 @@ public class Level {
             }
             else if (isCollision(player, platform) && player.isClimbing() && player.getY() > platform.getY()) {
                 if (player.isClimbingSpecial()) {
-                    player.setyVelocity(0);
+                    player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
                 }
                 else if (player.getGameObject().getScaleX() == 1 &&
                         player.getX() + 2 * 9 * multi > platform.getX() + platform.getWidth()) {
-                    player.setyVelocity(0);
+                    player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
                 }
                 else if (player.getGameObject().getScaleX() == -1 &&
                         player.getX() + player.getWidth() - 2 * 9 * multi < platform.getX()) {
-                    player.setyVelocity(0);
+                    player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
                 }
                 else if(player.getX() > platform.getX() &&
                         player.getX() + player.getWidth() < platform.getX() + platform.getWidth()) {
-                    player.setyVelocity(0);
+                    player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
                 }
                 player.setGrounded(false);
@@ -407,12 +447,12 @@ public class Level {
             else if(isCollision(player, platform) && player.isClimbing() && player.getY() < platform.getY()) {
                 if(player.getGameObject().getScaleX() == -1 &&
                         player.getX() + player.getWidth() - 2 * 9 * multi < platform.getX()) {
-                    player.setyVelocity(0);
+                    player.setYVelocity(0);
                     player.setY(platform.getY() - player.getHeight());
                 }
                 else if(player.getGameObject().getScaleX() == 1 &&
                         player.getX() + 2 * 9 * multi > platform.getX() + platform.getWidth()) {
-                    player.setyVelocity(0);
+                    player.setYVelocity(0);
                     player.setY(platform.getY() - player.getHeight());
                 }
                 player.setGrounded(false);
@@ -423,31 +463,53 @@ public class Level {
     /**
      * Snap player in bounds
      */
-    private void snapToBounds() {
+    private boolean snapToBounds(GameObject gameObject) {
+        boolean isSnapping = false;
 
-        if (player.getX() < 0) {
-            player.setX(0);
+        if (gameObject.getX() < 0) {
+            gameObject.setX(0);
+            isSnapping = true;
         }
 
         if(level == Mode.LEVEL1) {
-            if (player.getX() > pane.getWidth() - player.getWidth()) {
-                player.setX(pane.getWidth() - player.getWidth());
+
+            if (gameObject.getX() > pane.getWidth() - gameObject.getWidth()) {
+                gameObject.setX(pane.getWidth() - gameObject.getWidth());
+                isSnapping = true;
             }
 
-            else if (player.getY() > pane.getHeight() + player.getHeight()) {
-                if(level == Mode.LEVEL1) {
-                    labels.get(0).setText("Score: 5000");
+            if(gameObject instanceof Enemy && gameObject.getX() + gameObject.getWidth() > 208 * multi) {
+                gameObject.setX(208 * multi - gameObject.getWidth());
+                isSnapping = true;
+            }
+
+            else if (gameObject.getY() > pane.getHeight() + gameObject.getHeight()) {
+                if(gameObject instanceof Player) {
+                    if(level == Mode.LEVEL1) {
+                        labels.get(0).setText("Score: 5000");
+                    }
+                    player.respawn(labels.get(1));
                 }
-                player.respawn(labels.get(1));
+                if(gameObject instanceof Enemy) {
+                    gameObject.setX(pane.getWidth() + gameObject.getWidth());
+                    gameObject.setY(pane.getHeight() + gameObject.getHeight());
+                    pane.getChildren().remove(gameObject.getGameObject());
+                }
+                isSnapping = true;
             }
         }
 
         else if(level == Mode.LEVEL2) {
-            if (player.getX() < 24 * multi) {
-                player.setX(24 * multi);
+            if (gameObject.getX() < 24 * multi) {
+                gameObject.setX(24 * multi);
+                isSnapping = true;
+            }
+            else if(gameObject.getX() + gameObject.getWidth() > 232 * multi) {
+                gameObject.setX(232 * multi - gameObject.getWidth());
+                isSnapping = true;
             }
         }
-
+        return isSnapping;
     }
 
     /**

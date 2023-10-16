@@ -2,6 +2,8 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.Random;
+
 public class Enemy extends GameObject {
     private enum EnemySprites {
         RED1("enemies/red-01.png"), RED2("enemies/red-02.png"),
@@ -26,10 +28,13 @@ public class Enemy extends GameObject {
         }
     }
 
+    private int xDir = new Random(System.currentTimeMillis()).nextInt(0, 2);
+    private EnemySprites startingSprite = EnemySprites.RED1;
     private final ImageView enemy = new ImageView();
     private int cycle = 0;
-    private int dir = 0;
-    private EnemySprites startingSprite = EnemySprites.RED1;
+    private int rotate = 0;
+    private double xVelocity = 0;
+    private double yVelocity = 0;
 
     /**
      * Enemy GameObject
@@ -67,6 +72,12 @@ public class Enemy extends GameObject {
      * Changes the sprite based on color and current cycle
      */
     public void changeSprite() {
+        if(xVelocity < 0) {
+            enemy.setScaleX(-1);
+        }
+        else if (xVelocity > 0) {
+            enemy.setScaleX(1);
+        }
         if(cycle == 0) {
             if(startingSprite == EnemySprites.RED1) {
                 enemy.setImage(EnemySprites.RED2.getImage());
@@ -86,17 +97,114 @@ public class Enemy extends GameObject {
     }
 
     /**
-     * Changes the rotation of the sprite
+     * Get current yVelocity
+     *
+     * @return double yVelocity
      */
-    public void changeDirection() {
-        if(dir == 0) {
-            dir = 90;
-            enemy.setRotate(dir);
+    public double yVelocity() {
+        return yVelocity;
+    }
+
+
+    /**
+     * Get current xVelocity
+     *
+     * @return double xVelocity
+     */
+    public double xVelocity() {
+        return xVelocity;
+    }
+
+    public void setXVelocity(double xVelocity) {
+        if(enemy.getRotate() != 0) {
+            this.xVelocity = 0;
+        }
+        else if(xDir == 0) {
+            this.xVelocity = xVelocity;
         }
         else {
-            dir = 0;
-            enemy.setRotate(dir);
+            this.xVelocity = -xVelocity;
         }
+    }
+
+    public void setYVelocity(double yVelocity) {
+        if(enemy.getRotate() != 0) {}
+        else {
+            this.yVelocity = yVelocity;
+        }
+    }
+
+    public void switchXDir() {
+        if(this.xDir == 0) {
+            this.xDir = 1;
+                    }
+        else {
+            this.xDir = 0;
+        }
+    }
+
+    /**
+     * Changes the rotation of the sprite
+     */
+    public void changeRotate() {
+        if(rotate == 0) {
+            if(xVelocity > 0) {
+                rotate = 90;
+            }
+            else if (xVelocity < 0) {
+                rotate = -90;
+            }
+            enemy.setRotate(rotate);
+        }
+        else {
+            rotate = 0;
+            enemy.setRotate(rotate);
+        }
+    }
+
+    /**
+     * Set new x coordinate
+     *
+     * @param x new x coordinate
+     */
+    @Override
+    public void setX(double x) {
+        if(enemy.getRotate() != 0) {
+            enemy.setTranslateX(enemy.getTranslateX());
+        }
+        else {
+            enemy.setTranslateX(x);
+        }
+    }
+
+    /**
+     * Set new y coordinate
+     *
+     * @param y new y coordinate
+     */
+    @Override
+    public void setY(double y) {
+        enemy.setTranslateY(y);
+    }
+
+    /**
+     * Get current x coordinate
+     *
+     * @return double x
+     */
+    @Override
+    public double getX() {
+        return enemy.getTranslateX();
+    }
+
+    /**
+     * Get current y coordinate
+     *
+     * @return double y
+     */
+    @Override
+    public double getY() {
+        return enemy.getTranslateY();
     }
 
     /**

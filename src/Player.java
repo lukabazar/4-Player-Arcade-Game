@@ -129,7 +129,7 @@ public class Player extends GameObject {
      *
      * @param xVelocity new xVelocity
      */
-    public void setxVelocity(double xVelocity) {
+    public void setXVelocity(double xVelocity) {
         this.xVelocity = xVelocity;
     }
 
@@ -138,7 +138,7 @@ public class Player extends GameObject {
      *
      * @param yVelocity new yVelocity
      */
-    public void setyVelocity(double yVelocity) {
+    public void setYVelocity(double yVelocity) {
         this.yVelocity = yVelocity;
     }
 
@@ -356,10 +356,6 @@ public class Player extends GameObject {
         else {
             dk.setImage(Sprites.CLIMB2.getImage());
         }
-    }
-
-    public void setLives(int lives) {
-        this.lives = lives;
     }
 
     /**
