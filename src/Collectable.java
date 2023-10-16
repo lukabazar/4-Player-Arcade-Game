@@ -37,6 +37,8 @@ public class Collectable extends GameObject {
     private final ImageView collectable = new ImageView();
     private final Rectangle hitBox = new Rectangle();
     private boolean isFalling = false;
+    private final double spawnX;
+    private final double spawnY;
 
     /**
      * Collectable GameObject to be used in the game
@@ -49,8 +51,13 @@ public class Collectable extends GameObject {
      */
     public Collectable(Fruit type, int x, int y, int width, int height) {
         super(x, y, width, height);
-        this.hitBox.setX(x + width/3.0);
-        this.hitBox.setY(y + height/3.0);
+        this.spawnX = x;
+        this.spawnY = y;
+        this.collectable.setPreserveRatio(true);
+        this.collectable.setTranslateX(x);
+        this.collectable.setTranslateY(y);
+        this.hitBox.setTranslateX(x + width/2.0);
+        this.hitBox.setTranslateY(y + height/2.0);
         this.collectable.setFitWidth(width);
         this.collectable.setFitHeight(height);
         createCollectable(type);
@@ -62,9 +69,6 @@ public class Collectable extends GameObject {
      * @param type Fruit type to set
      */
     private void createCollectable(Fruit type) {
-        this.collectable.setPreserveRatio(true);
-        this.collectable.setX(super.getX());
-        this.collectable.setY(super.getY());
         if(type == Fruit.BANANA) {
             collectable.setImage(Fruit.BANANA.getImage());
         }
@@ -76,12 +80,28 @@ public class Collectable extends GameObject {
         }
     }
 
+    /**
+     * Is collectible falling
+     *
+     * @return true if it is currently falling, false otherwise
+     */
     public boolean isFalling() {
         return isFalling;
     }
 
-    public void setFalling() {
-        isFalling = true;
+    /**
+     * Set the collectible to the falling state
+     *
+     */
+    public void setFalling(boolean bool) {
+        isFalling = bool;
+    }
+
+    public void respawn() {
+        collectable.setTranslateX(spawnX);
+        collectable.setTranslateY(spawnY);
+        hitBox.setTranslateX(spawnX + collectable.getFitWidth()/2.0);
+        hitBox.setTranslateY(spawnY + collectable.getFitHeight()/2.0);
     }
 
     /**
@@ -92,7 +112,7 @@ public class Collectable extends GameObject {
     @Override
     public void setX(double x) {
         collectable.setTranslateX(x);
-        hitBox.setX(x + collectable.getFitWidth()/3);
+        hitBox.setTranslateX(x + collectable.getFitWidth()/2.0);
     }
 
     /**
@@ -103,7 +123,7 @@ public class Collectable extends GameObject {
     @Override
     public void setY(double y) {
         collectable.setTranslateY(y);
-        hitBox.setY(y + collectable.getFitWidth()/3);
+        hitBox.setTranslateY(y + collectable.getFitWidth()/2.0);
     }
 
     /**
@@ -136,6 +156,11 @@ public class Collectable extends GameObject {
         return this.collectable;
     }
 
+    /**
+     * Get HitBox of the Node (smaller than the ImageView)
+     *
+     * @return Node representing the hitbox
+     */
     public Node getHitBox() {
         return this.hitBox;
     }

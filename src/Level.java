@@ -8,6 +8,7 @@ import javafx.scene.layout.Pane;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -60,11 +61,26 @@ public class Level {
             public void handle(long now) {
                 if(isWin) {
                     this.stop();
+                    popUp();
+                }
+                if(player.getLives() == 0) {
+                    this.stop();
+                    player.getGameObject().relocate(0,0);
+                    pane.getChildren().remove(player.getGameObject());
+                    popUp();
                 }
                 if(count % 120 == 0) {
-                    if(Integer.parseInt(labels.get(0).getText().substring(7)) == 0) {
+                    for(int i = fruits.size() - 1; i >= 0; i--) {
+                        if(!pane.getChildren().contains(fruits.get(i).getGameObject()) && level == Mode.LEVEL2) {
+                            fruits.get(i).setFalling(false);
+                            fruits.get(i).respawn();
+                            pane.getChildren().add(fruits.get(i).getGameObject());
+                            pane.getChildren().add(fruits.get(i).getHitBox());
+                            break;
+                        }
+                    }
+                    if(Integer.parseInt(labels.get(0).getText().substring(7)) == 0 && level == Mode.LEVEL1) {
                         labels.get(0).setText("Score: 0");
-                        player.setLives(0);
                     }
                     else {
                         int currentScore = Integer.parseInt(labels.get(0).getText().substring(7));
@@ -109,6 +125,21 @@ public class Level {
             }
         };
         timer.start();
+    }
+
+    /**
+     * End of game popups
+     *
+     */
+    private void popUp() {
+        if(level == Mode.LEVEL2 || isWin) {
+            // TODO Game Over!
+            //   Final Score: XXXX
+        }
+        else {
+            // TODO Game Over!
+            //    No More Lives!
+        }
     }
 
     /**
@@ -181,7 +212,14 @@ public class Level {
                 isPressed = true;
             }
             else if (player.isClimbing()) {
-                if (player.getGameObject().getScaleX() == 1 && player.getX() - player.getWidth()/2 > 0) {
+                int left;
+                if(level == Mode.LEVEL1) {
+                    left = 0;
+                }
+                else {
+                    left = 24 * multi;
+                }
+                if (player.getGameObject().getScaleX() == 1 && player.getX() - player.getWidth()/2 > left) {
                     player.setClimbingSpecial(true);
                     player.setX(player.getX() - player.getWidth() / 2 + ropes.get(0).getWidth());
                     player.getGameObject().setScaleX(-1);
@@ -203,7 +241,14 @@ public class Level {
                 isPressed = true;
             }
             else if (player.isClimbing()) {
-                if (player.getGameObject().getScaleX() == -1 && player.getX() + 3*player.getWidth()/2 < 256* multi) {
+                int right;
+                if(level == Mode.LEVEL1) {
+                    right = 256 * multi;
+                }
+                else {
+                    right = 232 * multi;
+                }
+                if (player.getGameObject().getScaleX() == -1 && player.getX() + 3 * player.getWidth() / 2 < right) {
                     player.setClimbingSpecial(true);
                     player.setX(player.getX() + player.getWidth() / 2);
                     player.getGameObject().setScaleX(1);
@@ -240,7 +285,7 @@ public class Level {
                     player.setClimbingSpecial(false);
                 }
                 else {
-                    player.setyVelocity(1 / 3.0 * multi);
+                    player.setyVelocity(0.75 / 3.0 * multi);
                 }
                 player.isCycle(true);
             }
@@ -290,10 +335,12 @@ public class Level {
 
         for (Collectable fruit : fruits) {
             if(player.getGameObject().getBoundsInParent().intersects(fruit.getHitBox().getBoundsInParent())) {
-                fruit.setFalling();
+                if(!fruit.isFalling()) {
+                    int scoreInt = Integer.parseInt(labels.get(0).getText().substring(7));
+                    labels.get(0).setText("Score: " + (scoreInt + 400));
+                }
+                fruit.setFalling(true);
                 fruit.getHitBox().relocate(0,0);
-                int scoreInt = Integer.parseInt(labels.get(0).getText().substring(7));
-                labels.get(0).setText("Score: " + (scoreInt + 400));
             }
             for(Enemy enemy : enemies) {
                 if(isCollision(fruit, enemy)) {
@@ -307,6 +354,8 @@ public class Level {
                     fruit.getGameObject().relocate(0,0);
                     pane.getChildren().remove(fruit.getGameObject());
                     pane.getChildren().remove(fruit.getHitBox());
+                    fruits.set(fruits.indexOf(fruit), fruits.get(0));
+                    fruits.set(0, fruit);
                 }
             }
         }
@@ -511,17 +560,29 @@ public class Level {
     }
 
 
+    /**
+     * Creates initial collectables
+     */
     private void makeCollectables() {
         fruits = new ArrayList<>();
+        int size = 16 * multi;
         if(level == Mode.LEVEL1) {
-            int size = 16 * multi;
             fruits.add(new Collectable(Collectable.Fruit.CHERRY, 96 * multi, 81 * multi, size, size));
             fruits.add(new Collectable(Collectable.Fruit.GUAVA, 32 * multi, 81 * multi, size, size));
             fruits.add(new Collectable(Collectable.Fruit.GUAVA, 153 * multi, 98 * multi, size, size));
             fruits.add(new Collectable(Collectable.Fruit.BANANA, 136 * multi, 145 * multi, size, size));
         }
+        else if(level == Mode.LEVEL2) {
+            for(int i = 0; i < 8; i++) {
+                int nextX = (35 + (24 * i)) * multi;
+                fruits.add(new Collectable(Collectable.Fruit.CHERRY, nextX, 120 * multi, size, size));
+            }
+        }
     }
 
+    /**
+     * Creates initial enemies
+     */
     private void makeEnemies() {
         enemies = new ArrayList<>();
     }
@@ -530,7 +591,12 @@ public class Level {
      * Creates player
      */
     private void makePlayer() {
-        player = new Player(0, 200 * multi, 27 * multi, 16 * multi, 3);
+        if(level == Mode.LEVEL1) {
+            player = new Player(0, 200 * multi, 27 * multi, 16 * multi, 3);
+        }
+        else if(level == Mode.LEVEL2) {
+            player = new Player(24 * multi, 200 * multi, 27* multi, 16 * multi, 1);
+        }
     }
 
 }

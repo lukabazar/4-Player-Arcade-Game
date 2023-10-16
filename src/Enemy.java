@@ -31,6 +31,14 @@ public class Enemy extends GameObject {
     private int dir = 0;
     private EnemySprites startingSprite = EnemySprites.RED1;
 
+    /**
+     * Enemy GameObject
+     *
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param width enemy width
+     * @param height enemy height
+     */
     public Enemy(int x, int y, int width, int height) {
         super(x, y, width, height);
         enemy.setTranslateX(x);
@@ -39,22 +47,25 @@ public class Enemy extends GameObject {
         enemy.setFitWidth(width);
     }
 
-    public void setEnemy() {
-        enemy.setImage(EnemySprites.RED1.getImage());
-    }
-
+    /**
+     * Set the number of the current cycle (for sprite animation)
+     *
+     * @param cycle cycle number
+     */
     public void setCycle(int cycle) {
         this.cycle = cycle;
     }
 
+    /**
+     * Switches the color of the sprite for static paths
+     */
     public void switchColor() {
         this.startingSprite = EnemySprites.BLUE1;
     }
 
-    public int getCycle() {
-        return cycle;
-    }
-
+    /**
+     * Changes the sprite based on color and current cycle
+     */
     public void changeSprite() {
         if(cycle == 0) {
             if(startingSprite == EnemySprites.RED1) {
@@ -74,6 +85,9 @@ public class Enemy extends GameObject {
         }
     }
 
+    /**
+     * Changes the rotation of the sprite
+     */
     public void changeDirection() {
         if(dir == 0) {
             dir = 90;
@@ -85,6 +99,11 @@ public class Enemy extends GameObject {
         }
     }
 
+    /**
+     * Get the current GameObject of enemy
+     *
+     * @return Node of the GameObject
+     */
     @Override
     public Node getGameObject() {
         return enemy;

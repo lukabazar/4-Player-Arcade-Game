@@ -299,8 +299,6 @@ public class Player extends GameObject {
     public void respawn(Label label) {
         lives--;
         if(lives == 0) {
-            // TODO
-            System.out.println("Game Over!");
             label.setText("Lives: 0");
         }
         else if (lives >= 1) {
@@ -308,6 +306,10 @@ public class Player extends GameObject {
             dk.setTranslateY(spawnY);
             label.setText("Lives: " + lives);
         }
+    }
+
+    public int getLives() {
+        return lives;
     }
 
     /**

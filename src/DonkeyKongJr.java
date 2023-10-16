@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -31,7 +32,6 @@ public class DonkeyKongJr extends Application {
 
         int width = pixelWidth * multi;
         int height = pixelHeight * multi;
-
 
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, width, height);
@@ -63,6 +63,7 @@ public class DonkeyKongJr extends Application {
 
         for(Label label : labels) {
             label.setTextFill(Color.WHITE);
+            label.setFont(new Font("Stencil", 5 * multi));
         }
         new Level(scene, root, labels, multi, level);
 
@@ -70,8 +71,8 @@ public class DonkeyKongJr extends Application {
         hBox.getChildren().addAll(labels);
         hBox.setPadding(new Insets(10));
         hBox.setSpacing(10);
-
         root.setTop(hBox);
+
         primaryStage.setTitle("Donkey Kong Jr.");
         primaryStage.getIcons().add(new Image("icon.png"));
         primaryStage.setScene(scene);
