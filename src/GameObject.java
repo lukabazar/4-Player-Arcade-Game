@@ -2,15 +2,20 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Name: Luka Bazar
+ * <p>
+ * Standard GameObject (has only x,y and shape to be collided)
+ */
 public class GameObject {
     private final Rectangle gameObject = new Rectangle();
 
     /**
      * Creates standard game object to be used in the game
      *
-     * @param x initial x
-     * @param y initial y
-     * @param width object width
+     * @param x      initial x
+     * @param y      initial y
+     * @param width  object width
      * @param height object height
      */
     public GameObject(int x, int y, int width, int height) {

@@ -1,12 +1,17 @@
+/**
+ * Name: Luka Bazar
+ * <p>
+ * Level geometry GameObject (can be climbed)
+ */
 public class Rope extends GameObject {
     private boolean isWinner = false;
 
     /**
      * Rope GameObject
      *
-     * @param x x coordinate
-     * @param y y coordinate
-     * @param width rope width
+     * @param x      x coordinate
+     * @param y      y coordinate
+     * @param width  rope width
      * @param height rope height
      */
     public Rope(int x, int y, int width, int height) {

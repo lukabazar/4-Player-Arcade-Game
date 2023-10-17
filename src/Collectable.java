@@ -3,6 +3,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Name: Luka Bazar
+ * <p>
+ * Collectable objects (fruit)
+ */
 public class Collectable extends GameObject {
 
     /**
@@ -17,8 +22,7 @@ public class Collectable extends GameObject {
             ImageView tempImg = null;
             try {
                 tempImg = new ImageView(imgStr);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("File not found.");
             }
             img = tempImg;
@@ -43,10 +47,10 @@ public class Collectable extends GameObject {
     /**
      * Collectable GameObject to be used in the game
      *
-     * @param type Fruit type
-     * @param x initial x coordinate
-     * @param y initial y coordinate
-     * @param width width of collectable
+     * @param type   Fruit type
+     * @param x      initial x coordinate
+     * @param y      initial y coordinate
+     * @param width  width of collectable
      * @param height height of collectable
      */
     public Collectable(Fruit type, int x, int y, int width, int height) {
@@ -56,8 +60,8 @@ public class Collectable extends GameObject {
         this.collectable.setPreserveRatio(true);
         this.collectable.setTranslateX(x);
         this.collectable.setTranslateY(y);
-        this.hitBox.setTranslateX(x + width/2.0);
-        this.hitBox.setTranslateY(y + height/2.0);
+        this.hitBox.setTranslateX(x + width / 2.0);
+        this.hitBox.setTranslateY(y + height / 2.0);
         this.collectable.setFitWidth(width);
         this.collectable.setFitHeight(height);
         createCollectable(type);
@@ -69,13 +73,13 @@ public class Collectable extends GameObject {
      * @param type Fruit type to set
      */
     private void createCollectable(Fruit type) {
-        if(type == Fruit.BANANA) {
+        if (type == Fruit.BANANA) {
             collectable.setImage(Fruit.BANANA.getImage());
         }
-        else if(type == Fruit.CHERRY) {
+        else if (type == Fruit.CHERRY) {
             collectable.setImage(Fruit.CHERRY.getImage());
         }
-        else if(type == Fruit.GUAVA) {
+        else if (type == Fruit.GUAVA) {
             collectable.setImage(Fruit.GUAVA.getImage());
         }
     }
@@ -91,7 +95,6 @@ public class Collectable extends GameObject {
 
     /**
      * Set the collectible to the falling state
-     *
      */
     public void setFalling(boolean bool) {
         isFalling = bool;
@@ -100,8 +103,8 @@ public class Collectable extends GameObject {
     public void respawn() {
         collectable.setTranslateX(spawnX);
         collectable.setTranslateY(spawnY);
-        hitBox.setTranslateX(spawnX + collectable.getFitWidth()/2.0);
-        hitBox.setTranslateY(spawnY + collectable.getFitHeight()/2.0);
+        hitBox.setTranslateX(spawnX + collectable.getFitWidth() / 2.0);
+        hitBox.setTranslateY(spawnY + collectable.getFitHeight() / 2.0);
     }
 
     /**
@@ -112,7 +115,7 @@ public class Collectable extends GameObject {
     @Override
     public void setX(double x) {
         collectable.setTranslateX(x);
-        hitBox.setTranslateX(x + collectable.getFitWidth()/2.0);
+        hitBox.setTranslateX(x + collectable.getFitWidth() / 2.0);
     }
 
     /**
@@ -123,7 +126,7 @@ public class Collectable extends GameObject {
     @Override
     public void setY(double y) {
         collectable.setTranslateY(y);
-        hitBox.setTranslateY(y + collectable.getFitWidth()/2.0);
+        hitBox.setTranslateY(y + collectable.getFitWidth() / 2.0);
     }
 
     /**

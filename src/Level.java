@@ -1,9 +1,15 @@
 import javafx.animation.AnimationTimer;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -12,10 +18,19 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * Name: Luka Bazar
+ * <p>
+ * Main level with GameObjects
+ */
 public class Level {
 
-    public enum Mode {LEVEL1, LEVEL2};
+    /**
+     * Level as Mode
+     */
+    public enum Mode {LEVEL1, LEVEL2}
     private enum PlatformType {STANDARD, ROPE}
+
     private final Scene scene;
     private final Pane pane;
     private final List<Label> labels;
@@ -27,15 +42,16 @@ public class Level {
     private List<Enemy> enemies;
     private Player player;
     private boolean isWin = false;
-    boolean isPressed = false;
-    int numRopes = 0;
-    Random random = new Random(System.currentTimeMillis());
+    private boolean isPressed = false;
+    private boolean isOver = false;
+    private int numRopes = 0;
+    private final Random random = new Random(System.currentTimeMillis());
 
     /**
      * Places all game objects onto the level
      *
      * @param scene JavaFX scene
-     * @param pane Pane to place assets
+     * @param pane  Pane to place assets
      * @param multi Multiple used to scale window
      */
     public Level(Scene scene, Pane pane, List<Label> labels, int multi, Mode level) {
@@ -55,28 +71,29 @@ public class Level {
     /**
      * Holds animation timer in order to update the game
      */
-    private void play() {
+    public void play() {
         AnimationTimer timer = new AnimationTimer() {
             int count = 0;
             int altCount = 300;
+
             @Override
             public void handle(long now) {
                 if (altCount == 0) {
                     altCount = 1;
                 }
-                if(isWin) {
+                if (isWin) {
                     this.stop();
                     popUp();
                 }
-                if(player.getLives() == 0) {
+                if (player.getLives() == 0) {
                     this.stop();
-                    player.getGameObject().relocate(0,0);
+                    player.getGameObject().relocate(0, 0);
                     pane.getChildren().remove(player.getGameObject());
                     popUp();
                 }
-                if(count % 120 == 0) {
-                    for(int i = fruits.size() - 1; i >= 0; i--) {
-                        if(!pane.getChildren().contains(fruits.get(i).getGameObject()) && level == Mode.LEVEL2) {
+                if (count % 120 == 0) {
+                    for (int i = fruits.size() - 1; i >= 0; i--) {
+                        if (!pane.getChildren().contains(fruits.get(i).getGameObject()) && level == Mode.LEVEL2) {
                             fruits.get(i).setFalling(false);
                             fruits.get(i).respawn();
                             pane.getChildren().add(fruits.get(i).getGameObject());
@@ -84,28 +101,27 @@ public class Level {
                             break;
                         }
                     }
-                    if(Integer.parseInt(labels.get(0).getText().substring(7)) == 0 && level == Mode.LEVEL1) {
+                    if (getScore() == 0 && level == Mode.LEVEL1) {
                         labels.get(0).setText("Score: 0");
                     }
                     else {
-                        int currentScore = Integer.parseInt(labels.get(0).getText().substring(7));
-                        if(level == Mode.LEVEL1) {
-                            labels.get(0).setText("Score: " + (currentScore - 100));
+                        if (level == Mode.LEVEL1) {
+                            labels.get(0).setText("Score: " + (getScore() - 100));
                         }
                         else {
-                            labels.get(0).setText("Score: " + (currentScore + 100));
+                            labels.get(0).setText("Score: " + (getScore() + 100));
                         }
                     }
                 }
-                if(count % altCount == 0 && level == Mode.LEVEL2) {
-                    Enemy enemyToAdd = new Enemy(48 * multi,56 * multi,16 * multi, 8 * multi);
+                if (count % altCount == 0 && level == Mode.LEVEL2) {
+                    Enemy enemyToAdd = new Enemy(48 * multi, 56 * multi, 16 * multi, 8 * multi);
                     enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
                     enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
                     enemies.add(enemyToAdd);
                     altCount -= 5;
                 }
-                if(count % 300 == 0 && level == Mode.LEVEL1) {
-                    Enemy enemyToAdd = new Enemy(80 * multi,56 * multi,16 * multi, 8 * multi);
+                if (count % 300 == 0 && level == Mode.LEVEL1) {
+                    Enemy enemyToAdd = new Enemy(80 * multi, 56 * multi, 16 * multi, 8 * multi);
                     enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
                     enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
                     enemies.add(enemyToAdd);
@@ -113,17 +129,17 @@ public class Level {
                 if (count % 8 == 0) {
                     if (player.getCycle() == 0) {
                         player.setCycle(1);
-                        for(Enemy enemy : enemies) {
+                        for (Enemy enemy : enemies) {
                             enemy.setCycle(1);
                         }
                     }
                     else if (player.getCycle() == 1) {
                         player.setCycle(2);
-                        for(Enemy enemy : enemies) {
+                        for (Enemy enemy : enemies) {
                             enemy.setCycle(0);
                         }
                     }
-                    else if (player.getCycle() == 2){
+                    else if (player.getCycle() == 2) {
                         player.setCycle(3);
                     }
                     else {
@@ -138,27 +154,61 @@ public class Level {
     }
 
     /**
-     * End of game popups
+     * Is the current game over
      *
+     * @return true if it is, false if not
+     */
+    public boolean isOver() {
+        return isOver;
+    }
+
+    /**
+     * Get score from label
+     *
+     * @return int score
+     */
+    private int getScore() {
+        return Integer.parseInt(labels.get(0).getText().substring(7));
+    }
+
+    /**
+     * End of game popups
      */
     private void popUp() {
-        if(level == Mode.LEVEL2 || isWin) {
-            // TODO Game Over!
-            //   Final Score: XXXX
+        Stage stage = new Stage();
+        stage.setWidth(scene.getWidth()/4);
+        stage.setHeight(scene.getHeight()/4);
+        Label label = new Label();
+        label.setTextAlignment(TextAlignment.CENTER);
+        Button button = new Button("Back to Title Screen");
+        VBox vBox = new VBox(label, button);
+        vBox.setSpacing(10);
+        vBox.setAlignment(Pos.CENTER);
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(vBox);
+        stage.setScene(new Scene(borderPane));
+        button.setOnAction(event -> {
+            isOver = true;
+            stage.close();
+        });
+        stage.setOnCloseRequest(event -> isOver = true);
+        if (level == Mode.LEVEL2 || isWin) {
+            int bonus = player.getLives() * 400;
+            label.setText("Game Over!\nFinal Score: " + getScore() + bonus);
         }
         else {
-            // TODO Game Over!
-            //    No More Lives!
+            label.setText("Game Over!\nNo More Lives!");
         }
+        stage.show();
     }
 
     /**
      * Updates the screen based on user input and gravity
      */
     private void update() {
-        if(player.getFallCount() >= 8 * multi) {
-            if(player.isGrounded()) {
-                if(level == Mode.LEVEL1) {
+        if (player.getFallCount() >= 8 * multi) {
+            if (player.isGrounded()) {
+                if (level == Mode.LEVEL1) {
                     labels.get(0).setText("Score: 5000");
                 }
                 player.respawn(labels.get(1));
@@ -167,8 +217,8 @@ public class Level {
 
         player.changeSprite();
 
-        for(Enemy enemy : enemies) {
-            if(snapToBounds(enemy)) {
+        for (Enemy enemy : enemies) {
+            if (snapToBounds(enemy)) {
                 enemy.switchXDir();
                 enemy.setXVelocity(enemy.xVelocity());
             }
@@ -230,13 +280,13 @@ public class Level {
             }
             else if (player.isClimbing()) {
                 int left;
-                if(level == Mode.LEVEL1) {
+                if (level == Mode.LEVEL1) {
                     left = 0;
                 }
                 else {
                     left = 24 * multi;
                 }
-                if (player.getGameObject().getScaleX() == 1 && player.getX() - player.getWidth()/2 > left) {
+                if (player.getGameObject().getScaleX() == 1 && player.getX() - player.getWidth() / 2 > left) {
                     player.setClimbingSpecial(true);
                     player.setX(player.getX() - player.getWidth() / 2 + ropes.get(0).getWidth());
                     player.getGameObject().setScaleX(-1);
@@ -259,7 +309,7 @@ public class Level {
             }
             else if (player.isClimbing()) {
                 int right;
-                if(level == Mode.LEVEL1) {
+                if (level == Mode.LEVEL1) {
                     right = 256 * multi;
                 }
                 else {
@@ -280,7 +330,7 @@ public class Level {
         }
         else if (event.getCode() == KeyCode.UP && player.isClimbing()) {
             if (player.isClimbingSpecial()) {
-                if(numRopes == 1) {
+                if (numRopes == 1) {
                     player.setYVelocity(0);
                     player.setClimbing(false);
                     player.setClimbingSpecial(false);
@@ -296,7 +346,7 @@ public class Level {
         }
         else if (event.getCode() == KeyCode.DOWN && player.isClimbing()) {
             if (player.isClimbingSpecial()) {
-                if(numRopes == 1) {
+                if (numRopes == 1) {
                     player.setYVelocity(0);
                     player.setClimbing(false);
                     player.setClimbingSpecial(false);
@@ -307,7 +357,7 @@ public class Level {
                 player.isCycle(true);
             }
             else {
-                if(numRopes == 0) {
+                if (numRopes == 0) {
                     player.setClimbing(false);
                 }
                 player.setYVelocity(2 / 3.0 * multi);
@@ -331,8 +381,8 @@ public class Level {
         numRopes = 0;
         for (Rope rope : ropes) {
             if (isCollision(player, rope) && player.getY() + player.getHeight() / 2 < rope.getY() + rope.getHeight() &&
-                    player.getY() > rope.getY()) {
-                if(rope.isWinner()) {
+                player.getY() > rope.getY()) {
+                if (rope.isWinner()) {
                     isWin = true;
                 }
                 if (player.isJumping()) {
@@ -351,26 +401,24 @@ public class Level {
         }
 
         for (Collectable fruit : fruits) {
-            if(player.getGameObject().getBoundsInParent().intersects(fruit.getHitBox().getBoundsInParent())) {
-                if(!fruit.isFalling()) {
-                    int scoreInt = Integer.parseInt(labels.get(0).getText().substring(7));
-                    labels.get(0).setText("Score: " + (scoreInt + 400));
+            if (player.getGameObject().getBoundsInParent().intersects(fruit.getHitBox().getBoundsInParent())) {
+                if (!fruit.isFalling()) {
+                    labels.get(0).setText("Score: " + (getScore() + 400));
                 }
                 fruit.setFalling(true);
-                fruit.getHitBox().relocate(0,0);
+                fruit.getHitBox().relocate(0, 0);
             }
-            for(Enemy enemy : enemies) {
-                if(isCollision(fruit, enemy) && fruit.isFalling()) {
-                    int scoreInt = Integer.parseInt(labels.get(0).getText().substring(7));
-                    labels.get(0).setText("Score: " + (scoreInt + 400));
+            for (Enemy enemy : enemies) {
+                if (isCollision(fruit, enemy) && fruit.isFalling()) {
+                    labels.get(0).setText("Score: " + (getScore() + 400));
                     enemy.getGameObject().relocate(256 * multi, 240 * multi);
                     pane.getChildren().remove(enemy.getGameObject());
                 }
             }
-            if(fruit.isFalling()) {
+            if (fruit.isFalling()) {
                 fruit.setY(fruit.getY() + 2 * multi);
-                if(fruit.getY() > 240 * multi) {
-                    fruit.getGameObject().relocate(0,0);
+                if (fruit.getY() > 240 * multi) {
+                    fruit.getGameObject().relocate(0, 0);
                     pane.getChildren().remove(fruit.getGameObject());
                     pane.getChildren().remove(fruit.getHitBox());
                     fruits.set(fruits.indexOf(fruit), fruits.get(0));
@@ -378,9 +426,9 @@ public class Level {
                 }
             }
         }
-        for(Enemy enemy : enemies) {
-            if(isCollision(player, enemy)) {
-                if(level == Mode.LEVEL1) {
+        for (Enemy enemy : enemies) {
+            if (isCollision(player, enemy)) {
+                if (level == Mode.LEVEL1) {
                     labels.get(0).setText("Score: 5000");
                 }
                 player.respawn(labels.get(1));
@@ -388,19 +436,19 @@ public class Level {
                 enemy.setY(pane.getHeight() + enemy.getHeight());
                 pane.getChildren().remove(enemy.getGameObject());
             }
-            for(GameObject platform : platforms) {
-                if(isCollision(platform, enemy) && enemy.getY() < 72 * multi
-                   && enemy.getGameObject().getRotate() == 0) {
+            for (GameObject platform : platforms) {
+                if (isCollision(platform, enemy) && enemy.getY() < 72 * multi
+                        && enemy.getGameObject().getRotate() == 0) {
                     enemy.setYVelocity(0);
                     enemy.setY(platform.getY() - enemy.getHeight());
                 }
             }
-            for(Rope rope : ropes) {
-                if(enemy.getX() == rope.getX() + rope.getWidth()/2 &&
-                   enemy.getY() >= rope.getY() - 2 * enemy.getHeight() && enemy.getGameObject().getRotate() == 0) {
-                    int randomInt = random.nextInt(0, 3);
-                    if(randomInt == 0) {
-                        enemy.setX(rope.getX() + rope.getWidth()/2 - enemy.getWidth()/2);
+            for (Rope rope : ropes) {
+                if (enemy.getX() == rope.getX() + rope.getWidth() / 2 &&
+                    enemy.getY() >= rope.getY() - 2 * enemy.getHeight() && enemy.getGameObject().getRotate() == 0) {
+                    int randomInt = random.nextInt(0, 4);
+                    if (randomInt == 0) {
+                        enemy.setX(rope.getX() + rope.getWidth() / 2 - enemy.getWidth() / 2);
                         enemy.setYVelocity(2.5 / 3 * multi);
                         enemy.changeRotate();
                     }
@@ -437,20 +485,20 @@ public class Level {
                     player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
                 }
-                else if(player.getX() > platform.getX() &&
+                else if (player.getX() > platform.getX() &&
                         player.getX() + player.getWidth() < platform.getX() + platform.getWidth()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
                 }
                 player.setGrounded(false);
             }
-            else if(isCollision(player, platform) && player.isClimbing() && player.getY() < platform.getY()) {
-                if(player.getGameObject().getScaleX() == -1 &&
+            else if (isCollision(player, platform) && player.isClimbing() && player.getY() < platform.getY()) {
+                if (player.getGameObject().getScaleX() == -1 &&
                         player.getX() + player.getWidth() - 2 * 9 * multi < platform.getX()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() - player.getHeight());
                 }
-                else if(player.getGameObject().getScaleX() == 1 &&
+                else if (player.getGameObject().getScaleX() == 1 &&
                         player.getX() + 2 * 9 * multi > platform.getX() + platform.getWidth()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() - player.getHeight());
@@ -471,26 +519,24 @@ public class Level {
             isSnapping = true;
         }
 
-        if(level == Mode.LEVEL1) {
+        if (level == Mode.LEVEL1) {
 
             if (gameObject.getX() > pane.getWidth() - gameObject.getWidth()) {
                 gameObject.setX(pane.getWidth() - gameObject.getWidth());
                 isSnapping = true;
             }
 
-            if(gameObject instanceof Enemy && gameObject.getX() + gameObject.getWidth() > 208 * multi) {
+            if (gameObject instanceof Enemy && gameObject.getX() + gameObject.getWidth() > 208 * multi) {
                 gameObject.setX(208 * multi - gameObject.getWidth());
                 isSnapping = true;
             }
 
             else if (gameObject.getY() > pane.getHeight() + gameObject.getHeight()) {
-                if(gameObject instanceof Player) {
-                    if(level == Mode.LEVEL1) {
-                        labels.get(0).setText("Score: 5000");
-                    }
+                if (gameObject instanceof Player) {
+                    labels.get(0).setText("Score: 5000");
                     player.respawn(labels.get(1));
                 }
-                if(gameObject instanceof Enemy) {
+                if (gameObject instanceof Enemy) {
                     gameObject.setX(pane.getWidth() + gameObject.getWidth());
                     gameObject.setY(pane.getHeight() + gameObject.getHeight());
                     pane.getChildren().remove(gameObject.getGameObject());
@@ -499,12 +545,12 @@ public class Level {
             }
         }
 
-        else if(level == Mode.LEVEL2) {
+        else if (level == Mode.LEVEL2) {
             if (gameObject.getX() < 24 * multi) {
                 gameObject.setX(24 * multi);
                 isSnapping = true;
             }
-            else if(gameObject.getX() + gameObject.getWidth() > 232 * multi) {
+            else if (gameObject.getX() + gameObject.getWidth() > 232 * multi) {
                 gameObject.setX(232 * multi - gameObject.getWidth());
                 isSnapping = true;
             }
@@ -546,14 +592,14 @@ public class Level {
         for (GameObject platform : platforms) {
             pane.getChildren().add(platform.getGameObject());
         }
-        for(Collectable fruit : fruits) {
+        for (Collectable fruit : fruits) {
             pane.getChildren().add(fruit.getGameObject());
             pane.getChildren().add(fruit.getHitBox());
         }
-        for(GameObject enemy : enemies) {
+        for (GameObject enemy : enemies) {
             pane.getChildren().add(enemy.getGameObject());
         }
-        if(level == Mode.LEVEL1) {
+        if (level == Mode.LEVEL1) {
             ropes.get(ropes.size() - 1).setWinner();
         }
         pane.getChildren().add(player.getGameObject());
@@ -562,7 +608,7 @@ public class Level {
     /**
      * Creates GameObjects from stream
      *
-     * @param in input stream
+     * @param in   input stream
      * @param type current GameObject type to create
      */
     private void platformsFromStream(InputStream in, PlatformType type) {
@@ -592,7 +638,7 @@ public class Level {
         platforms = new ArrayList<>();
         ropes = new ArrayList<>();
 
-        if(level == Mode.LEVEL1) {
+        if (level == Mode.LEVEL1) {
             try (InputStream in = Level.class.getResourceAsStream("ropes-01.txt")) {
                 platformsFromStream(in, PlatformType.ROPE);
             } catch (IOException e) {
@@ -606,7 +652,7 @@ public class Level {
             }
         }
 
-        if(level == Mode.LEVEL2) {
+        if (level == Mode.LEVEL2) {
             try (InputStream in = Level.class.getResourceAsStream("ropes-02.txt")) {
                 platformsFromStream(in, PlatformType.ROPE);
             } catch (IOException e) {
@@ -628,14 +674,14 @@ public class Level {
     private void makeCollectables() {
         fruits = new ArrayList<>();
         int size = 16 * multi;
-        if(level == Mode.LEVEL1) {
+        if (level == Mode.LEVEL1) {
             fruits.add(new Collectable(Collectable.Fruit.CHERRY, 96 * multi, 81 * multi, size, size));
             fruits.add(new Collectable(Collectable.Fruit.GUAVA, 32 * multi, 81 * multi, size, size));
             fruits.add(new Collectable(Collectable.Fruit.GUAVA, 153 * multi, 98 * multi, size, size));
             fruits.add(new Collectable(Collectable.Fruit.BANANA, 136 * multi, 145 * multi, size, size));
         }
-        else if(level == Mode.LEVEL2) {
-            for(int i = 0; i < 8; i++) {
+        else if (level == Mode.LEVEL2) {
+            for (int i = 0; i < 8; i++) {
                 int nextX = (35 + (24 * i)) * multi;
                 fruits.add(new Collectable(Collectable.Fruit.CHERRY, nextX, 120 * multi, size, size));
             }
@@ -653,11 +699,11 @@ public class Level {
      * Creates player
      */
     private void makePlayer() {
-        if(level == Mode.LEVEL1) {
+        if (level == Mode.LEVEL1) {
             player = new Player(0, 200 * multi, 27 * multi, 16 * multi, 3);
         }
-        else if(level == Mode.LEVEL2) {
-            player = new Player(24 * multi, 200 * multi, 27* multi, 16 * multi, 1);
+        else if (level == Mode.LEVEL2) {
+            player = new Player(24 * multi, 200 * multi, 27 * multi, 16 * multi, 1);
         }
     }
 

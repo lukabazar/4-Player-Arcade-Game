@@ -4,11 +4,20 @@ import javafx.scene.image.ImageView;
 
 import java.util.Random;
 
+/**
+ * Name: Luka Bazar
+ * <p>
+ * Enemy GameObjects (chompers)
+ */
 public class Enemy extends GameObject {
+
+    /**
+     * Enemy sprites
+     */
     private enum EnemySprites {
-        RED1("enemies/red-01.png"), RED2("enemies/red-02.png"),
         BLUE1("enemies/blue-01.png"), BLUE2("enemies/blue-02.png");
         private final ImageView img;
+
         EnemySprites(String imgStr) {
             ImageView tempImg = null;
             try {
@@ -18,6 +27,7 @@ public class Enemy extends GameObject {
             }
             img = tempImg;
         }
+
         /**
          * Get image of Sprite
          *
@@ -29,7 +39,6 @@ public class Enemy extends GameObject {
     }
 
     private int xDir = new Random(System.currentTimeMillis()).nextInt(0, 2);
-    private EnemySprites startingSprite = EnemySprites.RED1;
     private final ImageView enemy = new ImageView();
     private int cycle = 0;
     private int rotate = 0;
@@ -39,9 +48,9 @@ public class Enemy extends GameObject {
     /**
      * Enemy GameObject
      *
-     * @param x x coordinate
-     * @param y y coordinate
-     * @param width enemy width
+     * @param x      x coordinate
+     * @param y      y coordinate
+     * @param width  enemy width
      * @param height enemy height
      */
     public Enemy(int x, int y, int width, int height) {
@@ -62,37 +71,20 @@ public class Enemy extends GameObject {
     }
 
     /**
-     * Switches the color of the sprite for static paths
-     */
-    public void switchColor() {
-        this.startingSprite = EnemySprites.BLUE1;
-    }
-
-    /**
      * Changes the sprite based on color and current cycle
      */
     public void changeSprite() {
-        if(xVelocity < 0) {
+        if (xVelocity < 0) {
             enemy.setScaleX(-1);
         }
         else if (xVelocity > 0) {
             enemy.setScaleX(1);
         }
-        if(cycle == 0) {
-            if(startingSprite == EnemySprites.RED1) {
-                enemy.setImage(EnemySprites.RED2.getImage());
-            }
-            else {
-                enemy.setImage(EnemySprites.BLUE2.getImage());
-            }
+        if (cycle == 0) {
+            enemy.setImage(EnemySprites.BLUE2.getImage());
         }
         else {
-            if(startingSprite == EnemySprites.RED1) {
-                enemy.setImage(EnemySprites.RED1.getImage());
-            }
-            else {
-                enemy.setImage(EnemySprites.BLUE2.getImage());
-            }
+            enemy.setImage(EnemySprites.BLUE1.getImage());
         }
     }
 
@@ -116,10 +108,10 @@ public class Enemy extends GameObject {
     }
 
     public void setXVelocity(double xVelocity) {
-        if(enemy.getRotate() != 0) {
+        if (enemy.getRotate() != 0) {
             this.xVelocity = 0;
         }
-        else if(xDir == 0) {
+        else if (xDir == 0) {
             this.xVelocity = xVelocity;
         }
         else {
@@ -127,17 +119,26 @@ public class Enemy extends GameObject {
         }
     }
 
+    /**
+     * Set the velocity in y direction
+     *
+     * @param yVelocity double
+     */
     public void setYVelocity(double yVelocity) {
-        if(enemy.getRotate() != 0) {}
+        if (enemy.getRotate() != 0) {
+        }
         else {
             this.yVelocity = yVelocity;
         }
     }
 
+    /**
+     * Switch the direction in x
+     */
     public void switchXDir() {
-        if(this.xDir == 0) {
+        if (this.xDir == 0) {
             this.xDir = 1;
-                    }
+        }
         else {
             this.xDir = 0;
         }
@@ -147,8 +148,8 @@ public class Enemy extends GameObject {
      * Changes the rotation of the sprite
      */
     public void changeRotate() {
-        if(rotate == 0) {
-            if(xVelocity > 0) {
+        if (rotate == 0) {
+            if (xVelocity > 0) {
                 rotate = 90;
             }
             else if (xVelocity < 0) {
@@ -169,7 +170,7 @@ public class Enemy extends GameObject {
      */
     @Override
     public void setX(double x) {
-        if(enemy.getRotate() != 0) {
+        if (enemy.getRotate() != 0) {
             enemy.setTranslateX(enemy.getTranslateX());
         }
         else {

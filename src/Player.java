@@ -3,6 +3,11 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * Name: Luka Bazar
+ * <p>
+ * Player character (Donkey Kong Jr.)
+ */
 public class Player extends GameObject {
 
     /**
@@ -12,9 +17,7 @@ public class Player extends GameObject {
         WALK1("sprites/walk-01.png"), WALK2("sprites/walk-02.png"),
         WALK3("sprites/walk-03.png"), CLIMB1("sprites/climb-01.png"),
         CLIMB2("sprites/climb-02.png"), CLIMB3("sprites/climb-03.png"),
-        JUMP("sprites/jump-01.png"), FALL("sprites/fall-01.png"),
-        DEATH1("sprites/death-01.png"), DEATH2("sprites/death-02.png"),
-        WIN1("sprites/win-01.png"), WIN2("sprites/win-02.png");
+        JUMP("sprites/jump-01.png"), FALL("sprites/fall-01.png");
 
         private final ImageView img;
 
@@ -22,8 +25,7 @@ public class Player extends GameObject {
             ImageView tempImg = null;
             try {
                 tempImg = new ImageView(imgStr);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("File not found.");
             }
             img = tempImg;
@@ -58,9 +60,9 @@ public class Player extends GameObject {
     /**
      * Player GameObject (Donkey Kong Jr.)
      *
-     * @param x initial x coordinate
-     * @param y initial y coordinate
-     * @param width width of object
+     * @param x      initial x coordinate
+     * @param y      initial y coordinate
+     * @param width  width of object
      * @param height height of object
      */
     public Player(int x, int y, int width, int height, int lives) {
@@ -273,19 +275,19 @@ public class Player extends GameObject {
      * ImageView representing the player character
      */
     public void changeSprite() {
-        if(isClimbing()) {
+        if (isClimbing()) {
             resetFall();
             setClimb();
         }
-        else if(isJumping()) {
+        else if (isJumping()) {
             resetFall();
             setJump();
         }
-        else if(isWalking()) {
+        else if (isWalking()) {
             resetFall();
             setWalk();
         }
-        else if(isGrounded()) {
+        else if (isGrounded()) {
             resetFall();
             setDefault();
         }
@@ -296,9 +298,14 @@ public class Player extends GameObject {
         }
     }
 
+    /**
+     * Respawn the player on death
+     *
+     * @param label Label to update with lives counter
+     */
     public void respawn(Label label) {
         lives--;
-        if(lives == 0) {
+        if (lives == 0) {
             label.setText("Lives: 0");
         }
         else if (lives >= 1) {
@@ -308,6 +315,11 @@ public class Player extends GameObject {
         }
     }
 
+    /**
+     * Get current number of lives the Player has
+     *
+     * @return number of lives left
+     */
     public int getLives() {
         return lives;
     }
@@ -316,13 +328,13 @@ public class Player extends GameObject {
      * Set current image to a Walk sprite
      */
     private void setWalk() {
-        if(cycle == 0) {
+        if (cycle == 0) {
             dk.setImage(Sprites.WALK2.getImage());
         }
-        else if(cycle == 1){
+        else if (cycle == 1) {
             dk.setImage(Sprites.WALK3.getImage());
         }
-        else if(cycle == 2){
+        else if (cycle == 2) {
             dk.setImage(Sprites.WALK2.getImage());
         }
         else {
@@ -341,8 +353,8 @@ public class Player extends GameObject {
      * Set current image to Climb sprite
      */
     private void setClimb() {
-        if(isClimbingSpecial) {
-            if(cycle % 2 == 0 && isCycle) {
+        if (isClimbingSpecial) {
+            if (cycle % 2 == 0 && isCycle) {
                 dk.setScaleX(1);
             }
             else {
@@ -350,7 +362,7 @@ public class Player extends GameObject {
             }
             dk.setImage(Sprites.CLIMB3.getImage());
         }
-        else if(cycle % 2 == 0 && isCycle) {
+        else if (cycle % 2 == 0 && isCycle) {
             dk.setImage(Sprites.CLIMB1.getImage());
         }
         else {
