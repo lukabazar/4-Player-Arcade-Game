@@ -75,79 +75,78 @@ public class Level {
         AnimationTimer timer = new AnimationTimer() {
             int count = 0;
             int altCount = 300;
+            long last = 0;
 
             @Override
             public void handle(long now) {
-                if (altCount == 0) {
-                    altCount = 1;
-                }
-                if (isWin) {
-                    this.stop();
-                    popUp();
-                }
-                if (player.getLives() == 0) {
-                    this.stop();
-                    player.getGameObject().relocate(0, 0);
-                    pane.getChildren().remove(player.getGameObject());
-                    popUp();
-                }
-                if (count % 120 == 0) {
-                    for (int i = fruits.size() - 1; i >= 0; i--) {
-                        if (!pane.getChildren().contains(fruits.get(i).getGameObject()) && level == Mode.LEVEL2) {
-                            fruits.get(i).setFalling(false);
-                            fruits.get(i).respawn();
-                            pane.getChildren().add(fruits.get(i).getGameObject());
-                            pane.getChildren().add(fruits.get(i).getHitBox());
-                            break;
+                if (now - last >= 8_333_333) {
+                    if (altCount == 0) {
+                        altCount = 1;
+                    }
+                    if (isWin) {
+                        this.stop();
+                        popUp();
+                    }
+                    if (player.getLives() == 0) {
+                        this.stop();
+                        player.getGameObject().relocate(0, 0);
+                        pane.getChildren().remove(player.getGameObject());
+                        popUp();
+                    }
+                    if (count % 120 == 0) {
+                        for (int i = fruits.size() - 1; i >= 0; i--) {
+                            if (!pane.getChildren().contains(fruits.get(i).getGameObject()) && level == Mode.LEVEL2) {
+                                fruits.get(i).setFalling(false);
+                                fruits.get(i).respawn();
+                                pane.getChildren().add(fruits.get(i).getGameObject());
+                                pane.getChildren().add(fruits.get(i).getHitBox());
+                                break;
+                            }
+                        }
+                        if (getScore() == 0 && level == Mode.LEVEL1) {
+                            labels.get(0).setText("Score: 0");
+                        } else {
+                            if (level == Mode.LEVEL1) {
+                                labels.get(0).setText("Score: " + (getScore() - 100));
+                            } else {
+                                labels.get(0).setText("Score: " + (getScore() + 100));
+                            }
                         }
                     }
-                    if (getScore() == 0 && level == Mode.LEVEL1) {
-                        labels.get(0).setText("Score: 0");
+                    if (count % altCount == 0 && level == Mode.LEVEL2) {
+                        Enemy enemyToAdd = new Enemy(48 * multi, 56 * multi, 16 * multi, 8 * multi);
+                        enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
+                        enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
+                        enemies.add(enemyToAdd);
+                        altCount -= 5;
                     }
-                    else {
-                        if (level == Mode.LEVEL1) {
-                            labels.get(0).setText("Score: " + (getScore() - 100));
-                        }
-                        else {
-                            labels.get(0).setText("Score: " + (getScore() + 100));
-                        }
+                    if (count % 300 == 0 && level == Mode.LEVEL1) {
+                        Enemy enemyToAdd = new Enemy(80 * multi, 56 * multi, 16 * multi, 8 * multi);
+                        enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
+                        enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
+                        enemies.add(enemyToAdd);
                     }
-                }
-                if (count % altCount == 0 && level == Mode.LEVEL2) {
-                    Enemy enemyToAdd = new Enemy(48 * multi, 56 * multi, 16 * multi, 8 * multi);
-                    enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
-                    enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
-                    enemies.add(enemyToAdd);
-                    altCount -= 5;
-                }
-                if (count % 300 == 0 && level == Mode.LEVEL1) {
-                    Enemy enemyToAdd = new Enemy(80 * multi, 56 * multi, 16 * multi, 8 * multi);
-                    enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
-                    enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
-                    enemies.add(enemyToAdd);
-                }
-                if (count % 8 == 0) {
-                    if (player.getCycle() == 0) {
-                        player.setCycle(1);
-                        for (Enemy enemy : enemies) {
-                            enemy.setCycle(1);
+                    if (count % 8 == 0) {
+                        if (player.getCycle() == 0) {
+                            player.setCycle(1);
+                            for (Enemy enemy : enemies) {
+                                enemy.setCycle(1);
+                            }
+                        } else if (player.getCycle() == 1) {
+                            player.setCycle(2);
+                            for (Enemy enemy : enemies) {
+                                enemy.setCycle(0);
+                            }
+                        } else if (player.getCycle() == 2) {
+                            player.setCycle(3);
+                        } else {
+                            player.setCycle(0);
                         }
                     }
-                    else if (player.getCycle() == 1) {
-                        player.setCycle(2);
-                        for (Enemy enemy : enemies) {
-                            enemy.setCycle(0);
-                        }
-                    }
-                    else if (player.getCycle() == 2) {
-                        player.setCycle(3);
-                    }
-                    else {
-                        player.setCycle(0);
-                    }
+                    update();
+                    last = now;
+                    count = (count + 1) % 3600;
                 }
-                update();
-                count = (count + 1) % 3600;
             }
         };
         timer.start();
