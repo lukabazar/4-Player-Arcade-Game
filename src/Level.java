@@ -193,8 +193,8 @@ public class Level {
         });
         stage.setOnCloseRequest(event -> isOver = true);
         if (level == Mode.LEVEL2 || isWin) {
-            int bonus = player.getLives() * 400;
-            label.setText("Game Over!\nFinal Score: " + getScore() + bonus);
+            int finalScore = getScore() + player.getLives() * 400;
+            label.setText("Game Over!\nFinal Score: " + finalScore);
         }
         else {
             label.setText("Game Over!\nNo More Lives!");
