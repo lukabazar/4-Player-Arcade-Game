@@ -8,6 +8,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,13 +94,42 @@ public class Title {
             }
             else if (event.getCode() == KeyCode.ENTER) {
                 List<Label> labels = makeLabels();
+                int portNum = 20;   // not sure what the right port num is, this is just what I usually use, may need to play around with it
+                String hostname = ""; // edit to proper hostname, TODO: add input boxes to title screen to add hostname and port number before player selection
+
+                int multi = (int) scene.getHeight() / 240;
+                Data thisData = new Data(24 * multi, 200 * multi, true);
+                Data otherData = new Data(24 * multi, 200 * multi, true);
+
+                //TODO: create list of 3 sockets for 4 player setup, wait for all 4 to connect before continuing
+
                 if (currentTitle == Titles.TITLE1) {
-                    currentLevel = new Level(scene, pane, labels, (int) scene.getHeight() / 240, Level.Mode.LEVEL1);
-                    changeBackground(new Image("backgrounds/background-01.png"));
+                    // player1, start server
+                    try (ServerSocket serverSocket = new ServerSocket(portNum)) {
+                        Socket player2 = serverSocket.accept();
+
+                        currentLevel = new Level(scene, pane, labels, multi, Level.Mode.LEVEL2);
+                        changeBackground(new Image("backgrounds/background-02.png"));
+
+                        Server server = new Server(player2, currentLevel, otherData, thisData);
+
+                        Thread serverThread = new Thread(server);
+                        serverThread.start();
+                    } catch (IOException e) {}
                 }
                 else {
-                    currentLevel = new Level(scene, pane, labels, (int) scene.getHeight() / 240, Level.Mode.LEVEL2);
-                    changeBackground(new Image("backgrounds/background-02.png"));
+                    // player2, client connect
+                    // TODO: when 4 player is implemented, wait for all 4 players to connect
+                    try (Socket player = new Socket(hostname, portNum)) {
+
+                        currentLevel = new Level(scene, pane, labels, (int) scene.getHeight() / 240, Level.Mode.LEVEL2);
+                        changeBackground(new Image("backgrounds/background-02.png"));
+
+                        Client client = new Client(player, currentLevel, thisData, otherData);
+
+                        Thread clientThread = new Thread(client);
+                        clientThread.start();
+                    } catch (IOException e) {}
                 }
                 HBox hBox = new HBox();
                 hBox.getChildren().addAll(labels);
