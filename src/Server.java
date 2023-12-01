@@ -3,6 +3,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
@@ -10,7 +11,7 @@ import java.net.Socket;
  * @author Samuel Dauk
  */
 public class Server implements Runnable {
-    
+    private final ServerSocket serverSocket;
     private final Socket otherPlayer;
     private final Level level;
     private final Data otherData;
@@ -20,14 +21,15 @@ public class Server implements Runnable {
     private final InputStream inStream;
     private final ObjectInputStream in;
 
-    public Server(Socket otherPlayer, Level level, Data otherData, Data thisData) throws IOException {
+    public Server(ServerSocket serverSocket, Socket otherPlayer, Level level, Data otherData, Data thisData) throws IOException {
+        this.serverSocket = serverSocket;
         this.otherPlayer = otherPlayer;
         this.level = level;
         this.otherData = otherData;
         this.thisData = thisData;
-        this.outStream = otherPlayer.getOutputStream();
+        this.outStream = this.otherPlayer.getOutputStream();
+        this.inStream = this.otherPlayer.getInputStream();
         this.out = new ObjectOutputStream(outStream);
-        this.inStream = otherPlayer.getInputStream();
         this.in = new ObjectInputStream(inStream);
     }
 
@@ -40,24 +42,24 @@ public class Server implements Runnable {
             // will need to implement a loop that goes through each socket and gets the data for all 4 players
             // then will send each client data for other players
             try {
+                otherPlayer.setKeepAlive(true);
                 out.writeObject(thisData);
 
-                try {
-                    Data tempData = (Data) in.readObject();
+                Data tempData = (Data) in.readObject();
 
-                    otherData.setX(tempData.getX());
-                    otherData.setY(tempData.getY());
-                    otherData.setIsAlive(tempData.getIsAlive());
-
-                } catch (ClassNotFoundException exception) {}
+                otherData.setX(tempData.getX());
+                otherData.setY(tempData.getY());
+                otherData.setIsAlive(tempData.getIsAlive());
+                System.out.println(otherData.getX());
 
                 if (!otherData.getIsAlive() && !thisData.getIsAlive()) {
                     playing = false;
-                    otherPlayer.close();
                 }
-                
-            } catch (IOException e) {}
 
+            } catch (Exception e) {
+                e.printStackTrace();
+                playing = false;
+            }
         }
     }
 }

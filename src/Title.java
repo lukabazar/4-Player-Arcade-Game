@@ -34,7 +34,7 @@ public class Title {
             try {
                 tempImg = new ImageView(imgStr);
             } catch (Exception e) {
-                System.out.println("File not found.");
+                System.out.println("File not found: " + imgStr);
             }
             img = tempImg;
         }
@@ -95,7 +95,7 @@ public class Title {
             else if (event.getCode() == KeyCode.ENTER) {
                 List<Label> labels = makeLabels();
                 int portNum = 20;   // not sure what the right port num is, this is just what I usually use, may need to play around with it
-                String hostname = ""; // edit to proper hostname, TODO: add input boxes to title screen to add hostname and port number before player selection
+                String hostname = "localHost"; // edit to proper hostname, TODO: add input boxes to title screen to add hostname and port number before player selection
 
                 int multi = (int) scene.getHeight() / 240;
                 Data thisData = new Data(24 * multi, 200 * multi, true);
@@ -111,7 +111,7 @@ public class Title {
                         currentLevel = new Level(scene, pane, labels, multi, Level.Mode.LEVEL2);
                         changeBackground(new Image("backgrounds/background-02.png"));
 
-                        Server server = new Server(player2, currentLevel, otherData, thisData);
+                        Server server = new Server(serverSocket, player2, currentLevel, otherData, thisData);
 
                         Thread serverThread = new Thread(server);
                         serverThread.start();

@@ -32,9 +32,9 @@ public class Client implements Runnable{
         this.level = level;
         this.thisData = thisData;
         this.otherData = otherData;
-        this.outStream = socket.getOutputStream();
+        this.outStream = this.socket.getOutputStream();
+        this.inStream = this.socket.getInputStream();
         this.out = new ObjectOutputStream(outStream);
-        this.inStream = socket.getInputStream();
         this.in = new ObjectInputStream(inStream);
     }
 
@@ -46,23 +46,22 @@ public class Client implements Runnable{
 
         while (playing) {
             try {
-                try {
-                    Data tempData = (Data) in.readObject();
-    
-                    otherData.setX(tempData.getX());
-                    otherData.setY(tempData.getY());
-                    otherData.setIsAlive(tempData.getIsAlive());
-    
-                } catch (ClassNotFoundException exception) {}
+                Data tempData = (Data) in.readObject();
+
+                otherData.setX(tempData.getX());
+                otherData.setY(tempData.getY());
+                otherData.setIsAlive(tempData.getIsAlive());
+                System.out.println(otherData.getX());
     
                 out.writeObject(thisData);
                 
                 if (!otherData.getIsAlive() && !thisData.getIsAlive()) {
                     playing = false;
-                    socket.close();
                 }
-            } catch (IOException e) {}
-
+            } catch (Exception e) {
+                e.printStackTrace();
+                playing = false;
+            }
         }
     }
 }
