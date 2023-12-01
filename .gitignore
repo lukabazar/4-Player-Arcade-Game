@@ -3,3 +3,9 @@ out/
 *.iml
 *.class
 .DS_Store
+src/backgrounds/
+src/enemies
+src/fruits
+src/sprites
+src/*.png
+src/*.txt
