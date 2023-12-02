@@ -94,43 +94,26 @@ public class Title {
             }
             else if (event.getCode() == KeyCode.ENTER) {
                 List<Label> labels = makeLabels();
-                int portNum = 20;   // not sure what the right port num is, this is just what I usually use, may need to play around with it
-                String hostname = "localHost"; // edit to proper hostname, TODO: add input boxes to title screen to add hostname and port number before player selection
-
-                int multi = (int) scene.getHeight() / 240;
-                Data thisData = new Data(24 * multi, 200 * multi, true);
-                Data otherData = new Data(24 * multi, 200 * multi, true);
-
-                //TODO: create list of 3 sockets for 4 player setup, wait for all 4 to connect before continuing
 
                 if (currentTitle == Titles.TITLE1) {
-                    // player1, start server
-                    try (ServerSocket serverSocket = new ServerSocket(portNum)) {
-                        Socket player2 = serverSocket.accept();
-
-                        currentLevel = new Level(scene, pane, labels, multi, Level.Mode.LEVEL2);
-                        changeBackground(new Image("backgrounds/background-02.png"));
-
-                        Server server = new Server(serverSocket, player2, currentLevel, otherData, thisData);
-
-                        Thread serverThread = new Thread(server);
-                        serverThread.start();
-                    } catch (IOException e) {}
+                    currentLevel = new Level(scene, pane, labels, (int) scene.getHeight() / 240, Level.Mode.LEVEL1);
+                    changeBackground(new Image("backgrounds/background-01.png"));
                 }
                 else {
-                    // player2, client connect
-                    // TODO: when 4 player is implemented, wait for all 4 players to connect
-                    try (Socket player = new Socket(hostname, portNum)) {
+                    PlayerData playerData = new PlayerData();
+                    
+                    for (int idx = 0; idx < 4; idx++) {
+                        playerData.addPlayer(10, 10, true); // edit to have proper starting coordinates
+                    }
 
-                        currentLevel = new Level(scene, pane, labels, (int) scene.getHeight() / 240, Level.Mode.LEVEL2);
-                        changeBackground(new Image("backgrounds/background-02.png"));
+                    Client client = new Client("localhost", 8000, playerData);
+                    Thread clientThread = new Thread(client);
+                    clientThread.start();
 
-                        Client client = new Client(player, currentLevel, thisData, otherData);
-
-                        Thread clientThread = new Thread(client);
-                        clientThread.start();
-                    } catch (IOException e) {}
+                    currentLevel = new Level(scene, pane, labels, (int) scene.getHeight() / 240, Level.Mode.LEVEL2);
+                    changeBackground(new Image("backgrounds/background-02.png"));
                 }
+
                 HBox hBox = new HBox();
                 hBox.getChildren().addAll(labels);
                 hBox.setPadding(new Insets(10));

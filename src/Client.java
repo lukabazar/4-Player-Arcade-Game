@@ -1,67 +1,56 @@
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
-/**
- * Client class to handle getting multiplayer data
- * @author Samuel Dauk
- */
-public class Client implements Runnable{
-    private final Socket socket;
-    private final Level level;
-    private final Data thisData;
-    private final Data otherData;
-    private final OutputStream outStream;
-    private final ObjectOutputStream out;
-    private final InputStream inStream;
-    private final ObjectInputStream in;
+public class Client implements Runnable {
+    private final String hostname;
+    private final int port;
+    private final PlayerData playerData;
 
-    /**
-     * Constructor for client class
-     * @param socket client socket
-     * @param level current level
-     * @param thisData player data
-     * @param otherData multiplayer data
-     */
-    public Client(Socket socket, Level level, Data thisData, Data otherData) throws IOException {
-        // for 4 players may need to set player num so knows when receiving data from server, knows which data is its own
-        this.socket = socket;
-        this.level = level;
-        this.thisData = thisData;
-        this.otherData = otherData;
-        this.outStream = this.socket.getOutputStream();
-        this.inStream = this.socket.getInputStream();
-        this.out = new ObjectOutputStream(outStream);
-        this.in = new ObjectInputStream(inStream);
+    private int playerNum;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
+    private boolean playing;
+
+    public Client(String hostname, int port, PlayerData playerData) {
+        this.hostname = hostname;
+        this.port = port;
+        this.playerData = playerData;
+
+        playing = true;
     }
 
     @Override
     public void run() {
-        // Gets player data from server, sends its own
-        // will need loop where receives player data for each player separately
-        boolean playing = true;
+        Data inData;
+        Data outData;
 
-        while (playing) {
-            try {
-                Data tempData = (Data) in.readObject();
+        try (Socket socket = new Socket(hostname, port)) {
+            socket.setSoTimeout(250);
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
 
-                otherData.setX(tempData.getX());
-                otherData.setY(tempData.getY());
-                otherData.setIsAlive(tempData.getIsAlive());
-                System.out.println(otherData.getX());
-    
-                out.writeObject(thisData);
-                
-                if (!otherData.getIsAlive() && !thisData.getIsAlive()) {
-                    playing = false;
+            playerNum = in.readInt();
+            System.out.println("Player: " + playerNum);
+
+            while (playing) {
+                outData = playerData.getPlayerData(playerNum);
+                out.writeObject(outData);
+                out.flush();
+
+                for (int idx = 0; idx < playerData.getNumPlayers(); idx++) {
+                    try {
+                        inData = (Data) in.readObject();
+                        playerData.setPlayerData(idx, inData.getX(), inData.getY(), inData.getIsAlive());
+                    } catch (SocketTimeoutException e) {
+                        idx = 4;
+                    }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                playing = false;
             }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }
