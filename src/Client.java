@@ -54,6 +54,7 @@ public class Client implements Runnable {
 
                         if (idx != playerNum) {
                             playerData.setPlayerData(idx, inData.getX(), inData.getY(), inData.getIsAlive());
+                            System.out.println("Player " + idx + ": " + inData.getX() + ", " + inData.getY() + ", " + inData.getIsAlive());
                         }
 
                     } catch (SocketTimeoutException e) {
