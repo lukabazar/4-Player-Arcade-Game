@@ -22,6 +22,14 @@ public class Client implements Runnable {
         playing = true;
     }
 
+    public int getPlayerNum() {
+        return playerNum;
+    }
+
+    public void stopClient() {
+        playing = false;
+    }
+
     @Override
     public void run() {
         Data inData;
@@ -43,12 +51,18 @@ public class Client implements Runnable {
                 for (int idx = 0; idx < playerData.getNumPlayers(); idx++) {
                     try {
                         inData = (Data) in.readObject();
-                        playerData.setPlayerData(idx, inData.getX(), inData.getY(), inData.getIsAlive());
+
+                        if (idx != playerNum) {
+                            playerData.setPlayerData(idx, inData.getX(), inData.getY(), inData.getIsAlive());
+                        }
+
                     } catch (SocketTimeoutException e) {
                         idx = 4;
                     }
                 }
             }
+
+            System.out.println("Disconnected.");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

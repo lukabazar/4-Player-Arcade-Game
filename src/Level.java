@@ -36,6 +36,9 @@ public class Level {
     private final List<Label> labels;
     private final int multi;
     private final Mode level;
+    private final PlayerData playerData;
+    private final int playerNum;
+    private final Client client;
     private List<GameObject> platforms;
     private List<Rope> ropes;
     private List<Collectable> fruits;
@@ -54,12 +57,15 @@ public class Level {
      * @param pane  Pane to place assets
      * @param multi Multiple used to scale window
      */
-    public Level(Scene scene, Pane pane, List<Label> labels, int multi, Mode level) {
+    public Level(Scene scene, Pane pane, List<Label> labels, int multi, Client client, PlayerData playerData, int playerNum, Mode level) {
         this.scene = scene;
         this.pane = pane;
         this.multi = multi;
         this.level = level;
         this.labels = labels;
+        this.playerData = playerData;
+        this.playerNum = playerNum;
+        this.client = client;
         makeGameObjects();
         makeCollectables();
         makeEnemies();
@@ -91,6 +97,7 @@ public class Level {
                         this.stop();
                         player.getGameObject().relocate(0, 0);
                         pane.getChildren().remove(player.getGameObject());
+                        client.stopClient();
                         popUp();
                     }
                     if (count % 120 == 0) {
@@ -231,6 +238,8 @@ public class Level {
 
         player.setX(player.getX() + player.xVelocity());
         player.setY(player.getY() + player.yVelocity());
+
+        playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.getLives() != 0);
 
         // Gravity
         if (!player.isClimbing()) {

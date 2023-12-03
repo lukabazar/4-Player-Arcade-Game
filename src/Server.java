@@ -16,7 +16,7 @@ public class Server {
                 Socket client = serverSocket.accept();
                 System.out.println("Client connected: " + client);
 
-                playerData.addPlayer(10, 10, true); // set to default spawn location based on player number
+                playerData.addPlayer(0, 0, true); // set to default spawn location based on player number
                 
                 ClientHandler handler = new ClientHandler(client, playerData, playerNum);
                 Thread thread = new Thread(handler);

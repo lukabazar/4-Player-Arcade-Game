@@ -12,11 +12,11 @@ public class PlayerData {
         return playerData.get(player);
     }
 
-    public void addPlayer(int x, int y, boolean isAlive) {
+    public void addPlayer(double x, double y, boolean isAlive) {
         playerData.add(new Data(x, y, isAlive));
     }
 
-    public void setPlayerData(int player, int x, int y, boolean isAlive) {
+    public void setPlayerData(int player, double x, double y, boolean isAlive) {
         playerData.get(player).setX(x);
         playerData.get(player).setY(y);
         playerData.get(player).setIsAlive(isAlive);

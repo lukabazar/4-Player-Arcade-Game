@@ -5,8 +5,8 @@ import java.io.Serializable;
  * @author Samuel Dauk
  */
 public class Data implements Serializable {
-    private int x;
-    private int y;
+    private double x;
+    private double y;
     private boolean isAlive;
     
     /**
@@ -15,7 +15,7 @@ public class Data implements Serializable {
      * @param y player y coord
      * @param isAlive player alive status
      */
-    public Data(int x, int y, boolean isAlive) {
+    public Data(double x, double y, boolean isAlive) {
         this.x = x;
         this.y = y;
         this.isAlive = isAlive;
@@ -25,7 +25,7 @@ public class Data implements Serializable {
      * Get x coord
      * @return x val
      */
-    public int getX() {
+    public double getX() {
         return x;
     }
 
@@ -33,7 +33,7 @@ public class Data implements Serializable {
      * Set x coord
      * @param val new x val
      */
-    public void setX(int val) {
+    public void setX(double val) {
         x = val;
     }
 
@@ -41,7 +41,7 @@ public class Data implements Serializable {
      * Get y coord
      * @return y val
      */
-    public int getY() {
+    public double getY() {
         return y;
     }
 
@@ -49,7 +49,7 @@ public class Data implements Serializable {
      * Set y coord
      * @param val new y val
      */
-    public void setY(int val) {
+    public void setY(double val) {
         y = val;
     }
 

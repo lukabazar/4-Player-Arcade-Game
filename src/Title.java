@@ -51,6 +51,7 @@ public class Title {
 
     private final Scene scene;
     private final BorderPane pane;
+    private final PlayerData playerData;
     private Level currentLevel;
     private Titles currentTitle = Titles.TITLE1;
 
@@ -63,6 +64,7 @@ public class Title {
     public Title(int width, int height) {
         this.pane = new BorderPane();
         this.scene = new Scene(this.pane, width, height);
+        this.playerData = new PlayerData();
         changeBackground(currentTitle.getImage());
     }
 
@@ -94,23 +96,31 @@ public class Title {
             }
             else if (event.getCode() == KeyCode.ENTER) {
                 List<Label> labels = makeLabels();
+                int multi = (int) scene.getHeight() / 240;
 
                 if (currentTitle == Titles.TITLE1) {
-                    currentLevel = new Level(scene, pane, labels, (int) scene.getHeight() / 240, Level.Mode.LEVEL1);
+                    //currentLevel = new Level(scene, pane, labels, (int) scene.getHeight() / 240, Level.Mode.LEVEL1);
                     changeBackground(new Image("backgrounds/background-01.png"));
                 }
                 else {
-                    PlayerData playerData = new PlayerData();
                     
                     for (int idx = 0; idx < 4; idx++) {
-                        playerData.addPlayer(10, 10, true); // edit to have proper starting coordinates
+                        playerData.addPlayer(24 * multi, 200 * multi, true); // edit to have proper starting coordinates
                     }
 
                     Client client = new Client("localhost", 8000, playerData);
                     Thread clientThread = new Thread(client);
                     clientThread.start();
 
-                    currentLevel = new Level(scene, pane, labels, (int) scene.getHeight() / 240, Level.Mode.LEVEL2);
+                    try {
+                        Thread.sleep(100); // Give client time to get player number
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println(client.getPlayerNum());
+
+                    currentLevel = new Level(scene, pane, labels, multi, client, playerData, client.getPlayerNum(), Level.Mode.LEVEL2);
                     changeBackground(new Image("backgrounds/background-02.png"));
                 }
 
