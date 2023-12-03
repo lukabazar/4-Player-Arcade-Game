@@ -45,12 +45,12 @@ public class Client implements Runnable {
 
             while (playing) {
                 outData = playerData.getPlayerData(playerNum);
-                out.writeObject(outData);
+                out.writeUnshared(outData);
                 out.flush();
 
                 for (int idx = 0; idx < playerData.getNumPlayers(); idx++) {
                     try {
-                        inData = (Data) in.readObject();
+                        inData = (Data) in.readUnshared();
 
                         if (idx != playerNum) {
                             playerData.setPlayerData(idx, inData.getX(), inData.getY(), inData.getIsAlive());

@@ -31,13 +31,13 @@ class ClientHandler implements Runnable {
             out.flush();
 
             while (true) {
-                inData = (Data) in.readObject();
+                inData = (Data) in.readUnshared();
                 playerData.setPlayerData(playerNum, inData.getX(), inData.getY(), inData.getIsAlive());
                 System.out.println("Player " + playerNum + ": " + playerData.getPlayerData(playerNum).getX() + ", " + playerData.getPlayerData(playerNum).getY() + ", " + playerData.getPlayerData(playerNum).getIsAlive()); //debugging
 
                 for (int idx = 0; idx < playerData.getNumPlayers(); idx++) {
                     outData = playerData.getPlayerData(idx);
-                    out.writeObject(outData);
+                    out.writeUnshared(outData);
                     out.flush();
                 }
             }

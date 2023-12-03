@@ -153,6 +153,8 @@ public class Level {
                     update();
                     last = now;
                     count = (count + 1) % 3600;
+
+                    playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.getLives() != 0);
                 }
             }
         };
@@ -238,8 +240,6 @@ public class Level {
 
         player.setX(player.getX() + player.xVelocity());
         player.setY(player.getY() + player.yVelocity());
-
-        playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.getLives() != 0);
 
         // Gravity
         if (!player.isClimbing()) {
