@@ -8,6 +8,12 @@ public class Data implements Serializable {
     private double x;
     private double y;
     private boolean isAlive;
+    private boolean isJumping;
+    private boolean isWalking;
+    private boolean isGrounded;
+    private boolean isClimbing;
+    private boolean isClimbingSpecial;
+    private int direction;
     
     /**
      * Constructor for Data class
@@ -19,6 +25,20 @@ public class Data implements Serializable {
         this.x = x;
         this.y = y;
         this.isAlive = isAlive;
+        isJumping = false;
+        isWalking = false;
+        isGrounded = true;
+        isClimbing = false;
+        isClimbingSpecial = false;
+        direction = 1;
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        this.direction = direction;
     }
 
     /**
@@ -67,5 +87,45 @@ public class Data implements Serializable {
      */
     public void setIsAlive(boolean val) {
         isAlive = val;
+    }
+
+    public void setJumping(boolean jumping) {
+        isJumping = jumping;
+    }
+
+    public void setClimbing(boolean climbing) {
+        isClimbing = climbing;
+    }
+
+    public void setGrounded(boolean grounded) {
+        isGrounded = grounded;
+    }
+
+    public void setWalking(boolean walking) {
+        isWalking = walking;
+    }
+
+    public void setClimbingSpecial(boolean climbingSpecial) {
+        isClimbingSpecial = climbingSpecial;
+    }
+
+    public boolean isClimbing() {
+        return isClimbing;
+    }
+
+    public boolean isClimbingSpecial() {
+        return isClimbingSpecial;
+    }
+
+    public boolean isGrounded() {
+        return isGrounded;
+    }
+
+    public boolean isJumping() {
+        return isJumping;
+    }
+
+    public boolean isWalking() {
+        return isWalking;
     }
 }
