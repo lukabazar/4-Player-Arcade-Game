@@ -17,7 +17,8 @@ public class Player extends GameObject {
         WALK1("sprites/walk-01.png"), WALK2("sprites/walk-02.png"),
         WALK3("sprites/walk-03.png"), CLIMB1("sprites/climb-01.png"),
         CLIMB2("sprites/climb-02.png"), CLIMB3("sprites/climb-03.png"),
-        JUMP("sprites/jump-01.png"), FALL("sprites/fall-01.png");
+        JUMP("sprites/jump-01.png"), FALL("sprites/fall-01.png"),
+        OVERHEAD("sprites/overhead-01.png");
 
         private final ImageView img;
 
@@ -56,6 +57,7 @@ public class Player extends GameObject {
     private boolean isFalling = false;
     private boolean isClimbingSpecial = false;
     private final ImageView dk = new ImageView();
+    private final ImageView overhead = new ImageView();
 
     /**
      * Player GameObject (Donkey Kong Jr.)
@@ -74,6 +76,12 @@ public class Player extends GameObject {
         dk.setTranslateY(y);
         dk.setPreserveRatio(true);
         dk.setFitHeight(height);
+        overhead.setTranslateX(x);
+        overhead.setTranslateY(y + height);
+        dk.setPreserveRatio(true);
+        overhead.setFitHeight(height * 0.75);
+        overhead.setFitWidth(height * 0.75);
+        overhead.setImage(Sprites.OVERHEAD.getImage());
     }
 
     /**
@@ -85,6 +93,7 @@ public class Player extends GameObject {
     public Node getGameObject() {
         return dk;
     }
+    public Node getOverhead() { return overhead; }
 
     /**
      * Get current x coordinate
@@ -116,6 +125,8 @@ public class Player extends GameObject {
         dk.setTranslateX(x);
     }
 
+    public void setOverX(double x) { overhead.setTranslateX(x);}
+
     /**
      * Set new y coordinate
      *
@@ -126,6 +137,8 @@ public class Player extends GameObject {
         dk.setTranslateY(y);
     }
 
+    public void setOverY(double y) { overhead.setTranslateX(y);}
+
     /**
      * Set velocity in x direction
      *
@@ -134,6 +147,8 @@ public class Player extends GameObject {
     public void setXVelocity(double xVelocity) {
         this.xVelocity = xVelocity;
     }
+
+
 
     /**
      * Set velocity in y direction

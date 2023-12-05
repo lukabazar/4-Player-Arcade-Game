@@ -1,3 +1,5 @@
+import javafx.scene.image.ImageView;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +10,9 @@ public class Data implements Serializable {
     private double x;
     private double y;
     private boolean isAlive;
+    private ImageView oppA;
+    private ImageView oppB;
+    private ImageView oppC;
     
     /**
      * Constructor for Data class
@@ -19,6 +24,9 @@ public class Data implements Serializable {
         this.x = x;
         this.y = y;
         this.isAlive = isAlive;
+        this. oppA = new ImageView();
+        this. oppB = new ImageView();
+        this. oppC = new ImageView();
     }
 
     /**
@@ -68,4 +76,16 @@ public class Data implements Serializable {
     public void setIsAlive(boolean val) {
         isAlive = val;
     }
+
+    public ImageView getOpponentA() { return oppA; }
+
+    public void setOpponentA(ImageView opponent) { oppA = opponent; }
+
+    public ImageView getOpponentB() { return oppB; }
+
+    public void setOpponentB(ImageView opponent) { oppB = opponent; }
+
+    public ImageView getOpponentC() { return oppC; }
+
+    public void setOpponentC(ImageView opponent) { oppC = opponent; }
 }

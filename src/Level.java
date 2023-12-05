@@ -225,7 +225,7 @@ public class Level {
 
         player.changeSprite();
 
-        for (Enemy enemy : enemies) {
+        /*for (Enemy enemy : enemies) {
             if (snapToBounds(enemy)) {
                 enemy.switchXDir();
                 enemy.setXVelocity(enemy.xVelocity());
@@ -236,10 +236,12 @@ public class Level {
             pane.getChildren().remove(enemy.getGameObject());
             pane.getChildren().add(enemy.getGameObject());
             enemy.changeSprite();
-        }
+        }*/
 
         player.setX(player.getX() + player.xVelocity());
+        player.setOverX(player.getX() + player.xVelocity());
         player.setY(player.getY() + player.yVelocity());
+        player.setOverY(player.getY() + player.getHeight() + player.yVelocity());
 
         // Gravity
         if (!player.isClimbing()) {
@@ -281,7 +283,9 @@ public class Level {
         else if (event.getCode() == KeyCode.LEFT && !isPressed) {
             if (player.isClimbingSpecial()) {
                 player.getGameObject().setScaleX(-1);
+                player.getOverhead().setScaleX(-1);
                 player.setX(player.getX() - 2.5 * multi);
+                player.setOverX(player.getX() - 2.5 * multi);
                 player.setClimbing(false);
                 player.setClimbingSpecial(false);
                 isPressed = true;
@@ -297,20 +301,26 @@ public class Level {
                 if (player.getGameObject().getScaleX() == 1 && player.getX() - player.getWidth() / 2 > left) {
                     player.setClimbingSpecial(true);
                     player.setX(player.getX() - player.getWidth() / 2 + ropes.get(0).getWidth());
+                    player.setOverX(player.getX() - player.getWidth() / 2 + ropes.get(0).getWidth());
                     player.getGameObject().setScaleX(-1);
+                    player.getOverhead().setScaleX(-1);
                 }
                 player.getGameObject().setScaleX(1);
+                player.getOverhead().setScaleX(1);
             }
             else {
                 player.setXVelocity(-2 / 3.0 * multi);
                 player.setWalking(true);
                 player.getGameObject().setScaleX(-1);
+                player.getOverhead().setScaleX(-1);
             }
         }
         else if (event.getCode() == KeyCode.RIGHT && !isPressed) {
             if (player.isClimbingSpecial()) {
                 player.getGameObject().setScaleX(1);
+                player.getOverhead().setScaleX(1);
                 player.setX(player.getX() + 5.5 * multi);
+                player.setOverX(player.getX() + 5.5 * multi);
                 player.setClimbing(false);
                 player.setClimbingSpecial(false);
                 isPressed = true;
@@ -326,14 +336,18 @@ public class Level {
                 if (player.getGameObject().getScaleX() == -1 && player.getX() + 3 * player.getWidth() / 2 < right) {
                     player.setClimbingSpecial(true);
                     player.setX(player.getX() + player.getWidth() / 2);
+                    player.setOverX(player.getX() + player.getWidth() / 2);
                     player.getGameObject().setScaleX(1);
+                    player.getOverhead().setScaleX(1);
                 }
                 player.getGameObject().setScaleX(-1);
+                player.getOverhead().setScaleX(-1);
             }
             else {
                 player.setXVelocity(2 / 3.0 * multi);
                 player.setWalking(true);
                 player.getGameObject().setScaleX(1);
+                player.getOverhead().setScaleX(1);
             }
         }
         else if (event.getCode() == KeyCode.UP && player.isClimbing()) {
@@ -400,6 +414,7 @@ public class Level {
                 if (!player.isClimbing()) {
                     player.setYVelocity(0);
                     player.setX(rope.getX() - player.getWidth() / 2 - rope.getWidth());
+                    player.setOverX(rope.getX() - player.getWidth() / 2 - rope.getWidth());
                 }
                 player.setXVelocity(0);
                 player.setClimbing(true);
@@ -477,26 +492,31 @@ public class Level {
                 player.setClimbingSpecial(false);
                 player.setGrounded(true);
                 player.setY(platform.getY() - player.getHeight());
+                player.setOverY(platform.getY());
             }
             else if (isCollision(player, platform) && player.isClimbing() && player.getY() > platform.getY()) {
                 if (player.isClimbingSpecial()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
+                    player.setOverY(platform.getY() + 2 * platform.getHeight());
                 }
                 else if (player.getGameObject().getScaleX() == 1 &&
                         player.getX() + 2 * 9 * multi > platform.getX() + platform.getWidth()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
+                    player.setOverY(platform.getY() + 2 * platform.getHeight());
                 }
                 else if (player.getGameObject().getScaleX() == -1 &&
                         player.getX() + player.getWidth() - 2 * 9 * multi < platform.getX()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
+                    player.setOverY(platform.getY() + 2 * platform.getHeight());
                 }
                 else if (player.getX() > platform.getX() &&
                         player.getX() + player.getWidth() < platform.getX() + platform.getWidth()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
+                    player.setOverY(platform.getY() + 2 * platform.getHeight());
                 }
                 player.setGrounded(false);
             }
@@ -505,11 +525,13 @@ public class Level {
                         player.getX() + player.getWidth() - 2 * 9 * multi < platform.getX()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() - player.getHeight());
+                    player.setOverY(platform.getY());
                 }
                 else if (player.getGameObject().getScaleX() == 1 &&
                         player.getX() + 2 * 9 * multi > platform.getX() + platform.getWidth()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() - player.getHeight());
+                    player.setOverY(platform.getY());
                 }
                 player.setGrounded(false);
             }
@@ -611,6 +633,7 @@ public class Level {
             ropes.get(ropes.size() - 1).setWinner();
         }
         pane.getChildren().add(player.getGameObject());
+        pane.getChildren().add(player.getOverhead());
     }
 
     /**
