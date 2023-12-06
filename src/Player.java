@@ -17,7 +17,8 @@ public class Player extends GameObject {
         WALK1("sprites/walk-01.png"), WALK2("sprites/walk-02.png"),
         WALK3("sprites/walk-03.png"), CLIMB1("sprites/climb-01.png"),
         CLIMB2("sprites/climb-02.png"), CLIMB3("sprites/climb-03.png"),
-        JUMP("sprites/jump-01.png"), FALL("sprites/fall-01.png");
+        JUMP("sprites/jump-01.png"), FALL("sprites/fall-01.png"),
+        OVERHEADA("sprites/overhead-01.png"), OVERHEADB("sprites/overhead-02.png");
 
         private final ImageView img;
 
@@ -56,6 +57,8 @@ public class Player extends GameObject {
     private boolean isFalling = false;
     private boolean isClimbingSpecial = false;
     private final ImageView dk = new ImageView();
+    private final ImageView overhead = new ImageView();
+    private boolean hasOverA = true;
 
     /**
      * Player GameObject (Donkey Kong Jr.)
@@ -74,6 +77,12 @@ public class Player extends GameObject {
         dk.setTranslateY(y);
         dk.setPreserveRatio(true);
         dk.setFitHeight(height);
+        overhead.setTranslateX(x + 10);
+        overhead.setTranslateY(y - height);
+        overhead.setPreserveRatio(true);
+        overhead.setFitHeight(height * 0.75);
+        overhead.setFitWidth(height * 0.75);
+        setOverToA();
     }
 
     /**
@@ -85,6 +94,7 @@ public class Player extends GameObject {
     public Node getGameObject() {
         return dk;
     }
+    public Node getOverhead() { return overhead; }
 
     /**
      * Get current x coordinate
@@ -114,7 +124,17 @@ public class Player extends GameObject {
     @Override
     public void setX(double x) {
         dk.setTranslateX(x);
+        if(isClimbing && !isClimbingSpecial && dk.getScaleX() == -1) {
+            overhead.setTranslateX(x + 0.375 * getHeight() + getWidth()/2);
+        }
+        else {
+            overhead.setTranslateX(x + 0.375 * getHeight());
+        }
     }
+
+    public void setHasOverA(boolean b) { hasOverA = b; }
+
+    public boolean getHasOverA() { return hasOverA; }
 
     /**
      * Set new y coordinate
@@ -124,6 +144,7 @@ public class Player extends GameObject {
     @Override
     public void setY(double y) {
         dk.setTranslateY(y);
+        overhead.setTranslateY(y - getHeight());
     }
 
     /**
@@ -134,6 +155,9 @@ public class Player extends GameObject {
     public void setXVelocity(double xVelocity) {
         this.xVelocity = xVelocity;
     }
+
+    public void setOverToA(){ overhead.setImage(Sprites.OVERHEADA.getImage()); }
+    public void setOverToB(){ overhead.setImage(Sprites.OVERHEADB.getImage()); }
 
     /**
      * Set velocity in y direction

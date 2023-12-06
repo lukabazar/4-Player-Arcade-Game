@@ -1,8 +1,11 @@
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -36,6 +39,9 @@ public class Level {
     private final List<Label> labels;
     private final int multi;
     private final Mode level;
+    private final PlayerData playerData;
+    private final int playerNum;
+    private final Client client;
     private List<GameObject> platforms;
     private List<Rope> ropes;
     private List<Collectable> fruits;
@@ -47,6 +53,8 @@ public class Level {
     private int numRopes = 0;
     private final Random random = new Random(System.currentTimeMillis());
 
+
+    private final List<Player> otherPlayers = new ArrayList<>();
     /**
      * Places all game objects onto the level
      *
@@ -54,17 +62,29 @@ public class Level {
      * @param pane  Pane to place assets
      * @param multi Multiple used to scale window
      */
-    public Level(Scene scene, Pane pane, List<Label> labels, int multi, Mode level) {
+    public Level(Scene scene, Pane pane, List<Label> labels, int multi, Client client,
+                 PlayerData playerData, int playerNum, Mode level) {
         this.scene = scene;
         this.pane = pane;
         this.multi = multi;
         this.level = level;
         this.labels = labels;
+        this.playerData = playerData;
+        this.playerNum = playerNum;
+        this.client = client;
         makeGameObjects();
         makeCollectables();
         makeEnemies();
         makePlayer();
         addAll();
+
+        for(int i = 0; i < 1; i++) {
+            Player player = new Player(24 * multi, 200 * multi, 27 * multi, 16 * multi, 1);
+            otherPlayers.add(player);
+            pane.getChildren().add(player.getGameObject());
+        }
+        otherPlayers.add(playerNum, player);
+
         play();
     }
 
@@ -75,79 +95,100 @@ public class Level {
         AnimationTimer timer = new AnimationTimer() {
             int count = 0;
             int altCount = 300;
+            long last = 0;
 
             @Override
             public void handle(long now) {
-                if (altCount == 0) {
-                    altCount = 1;
-                }
-                if (isWin) {
-                    this.stop();
-                    popUp();
-                }
-                if (player.getLives() == 0) {
-                    this.stop();
-                    player.getGameObject().relocate(0, 0);
-                    pane.getChildren().remove(player.getGameObject());
-                    popUp();
-                }
-                if (count % 120 == 0) {
-                    for (int i = fruits.size() - 1; i >= 0; i--) {
-                        if (!pane.getChildren().contains(fruits.get(i).getGameObject()) && level == Mode.LEVEL2) {
-                            fruits.get(i).setFalling(false);
-                            fruits.get(i).respawn();
-                            pane.getChildren().add(fruits.get(i).getGameObject());
-                            pane.getChildren().add(fruits.get(i).getHitBox());
-                            break;
+                if (now - last >= 8_333_333) {
+                    if (altCount == 0) {
+                        altCount = 1;
+                    }
+                    if (isWin) {
+                        this.stop();
+                        popUp();
+                    }
+                    if (player.getLives() == 0) {
+                        this.stop();
+                        player.getGameObject().relocate(0, 0);
+                        pane.getChildren().remove(player.getGameObject());
+                        client.stopClient();
+                        popUp();
+                    }
+                    if (count % 120 == 0) {
+                        for (int i = fruits.size() - 1; i >= 0; i--) {
+                            if (!pane.getChildren().contains(fruits.get(i).getGameObject()) && level == Mode.LEVEL2) {
+                                fruits.get(i).setFalling(false);
+                                fruits.get(i).respawn();
+                                pane.getChildren().add(fruits.get(i).getGameObject());
+                                pane.getChildren().add(fruits.get(i).getHitBox());
+                                break;
+                            }
+                        }
+                        if (getScore() == 0 && level == Mode.LEVEL1) {
+                            labels.get(0).setText("Score: 0");
+                        } else {
+                            if (level == Mode.LEVEL1) {
+                                labels.get(0).setText("Score: " + (getScore() - 100));
+                            } else {
+                                labels.get(0).setText("Score: " + (getScore() + 100));
+                            }
                         }
                     }
-                    if (getScore() == 0 && level == Mode.LEVEL1) {
-                        labels.get(0).setText("Score: 0");
+                    if (count % altCount == 0 && level == Mode.LEVEL2) {
+                        Enemy enemyToAdd = new Enemy(48 * multi, 56 * multi, 16 * multi, 8 * multi);
+                        enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
+                        enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
+                        enemies.add(enemyToAdd);
+                        altCount -= 5;
                     }
-                    else {
-                        if (level == Mode.LEVEL1) {
-                            labels.get(0).setText("Score: " + (getScore() - 100));
+                    if (count % 300 == 0 && level == Mode.LEVEL1) {
+                        Enemy enemyToAdd = new Enemy(80 * multi, 56 * multi, 16 * multi, 8 * multi);
+                        enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
+                        enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
+                        enemies.add(enemyToAdd);
+                    }
+                    if (count % 8 == 0) {
+                        if (player.getCycle() == 0) {
+                            for(Player otherPlayer : otherPlayers) {
+                                otherPlayer.setCycle(1);
+                            }
+                            for (Enemy enemy : enemies) {
+                                enemy.setCycle(1);
+                            }
+                        } else if (player.getCycle() == 1) {
+                            for(Player otherPlayer : otherPlayers) {
+                                otherPlayer.setCycle(2);
+                            }
+                            for (Enemy enemy : enemies) {
+                                enemy.setCycle(0);
+                            }
+                        } else if (player.getCycle() == 2) {
+                            for(Player otherPlayer : otherPlayers) {
+                                otherPlayer.setCycle(3);
+                            }
+                        } else {
+                            for(Player otherPlayer : otherPlayers) {
+                                otherPlayer.setCycle(0);
+                            }
+                        }
+                    }
+                    if (count % 25 == 0) {
+                        if (player.getHasOverA()){
+                            player.setOverToB();
+                            player.setHasOverA(false);
                         }
                         else {
-                            labels.get(0).setText("Score: " + (getScore() + 100));
+                            player.setOverToA();
+                            player.setHasOverA(true);
                         }
                     }
+                    update();
+                    last = now;
+                    count = (count + 1) % 3600;
                 }
-                if (count % altCount == 0 && level == Mode.LEVEL2) {
-                    Enemy enemyToAdd = new Enemy(48 * multi, 56 * multi, 16 * multi, 8 * multi);
-                    enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
-                    enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
-                    enemies.add(enemyToAdd);
-                    altCount -= 5;
-                }
-                if (count % 300 == 0 && level == Mode.LEVEL1) {
-                    Enemy enemyToAdd = new Enemy(80 * multi, 56 * multi, 16 * multi, 8 * multi);
-                    enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
-                    enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
-                    enemies.add(enemyToAdd);
-                }
-                if (count % 8 == 0) {
-                    if (player.getCycle() == 0) {
-                        player.setCycle(1);
-                        for (Enemy enemy : enemies) {
-                            enemy.setCycle(1);
-                        }
-                    }
-                    else if (player.getCycle() == 1) {
-                        player.setCycle(2);
-                        for (Enemy enemy : enemies) {
-                            enemy.setCycle(0);
-                        }
-                    }
-                    else if (player.getCycle() == 2) {
-                        player.setCycle(3);
-                    }
-                    else {
-                        player.setCycle(0);
-                    }
-                }
-                update();
-                count = (count + 1) % 3600;
+                playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.getLives() != 0,
+                        player.isJumping(), player.isWalking(), player.isGrounded(),
+                        player.isClimbing(), player.isClimbingSpecial(), (int) player.getGameObject().getScaleX());
             }
         };
         timer.start();
@@ -193,8 +234,8 @@ public class Level {
         });
         stage.setOnCloseRequest(event -> isOver = true);
         if (level == Mode.LEVEL2 || isWin) {
-            int bonus = player.getLives() * 400;
-            label.setText("Game Over!\nFinal Score: " + getScore() + bonus);
+            int finalScore = getScore() + player.getLives() * 400;
+            label.setText("Game Over!\nFinal Score: " + finalScore);
         }
         else {
             label.setText("Game Over!\nNo More Lives!");
@@ -206,6 +247,22 @@ public class Level {
      * Updates the screen based on user input and gravity
      */
     private void update() {
+
+        for(int i = 0; i < otherPlayers.size(); i++) {
+            if(i != playerNum) {
+                Player dk = otherPlayers.get(i);
+                dk.setX(playerData.getPlayerData(i).getX());
+                dk.setY(playerData.getPlayerData(i).getY());
+                dk.getGameObject().setScaleX(playerData.getPlayerData(i).getDirection());
+                dk.setJumping(playerData.getPlayerData(i).isJumping());
+                dk.setWalking(playerData.getPlayerData(i).isWalking());
+                dk.setGrounded(playerData.getPlayerData(i).isGrounded());
+                dk.setClimbing(playerData.getPlayerData(i).isClimbing());
+                dk.setClimbingSpecial(playerData.getPlayerData(i).isClimbingSpecial());
+                dk.changeSprite();
+            }
+        }
+
         if (player.getFallCount() >= 8 * multi) {
             if (player.isGrounded()) {
                 if (level == Mode.LEVEL1) {
@@ -217,7 +274,7 @@ public class Level {
 
         player.changeSprite();
 
-        for (Enemy enemy : enemies) {
+        /*for (Enemy enemy : enemies) {
             if (snapToBounds(enemy)) {
                 enemy.switchXDir();
                 enemy.setXVelocity(enemy.xVelocity());
@@ -228,7 +285,7 @@ public class Level {
             pane.getChildren().remove(enemy.getGameObject());
             pane.getChildren().add(enemy.getGameObject());
             enemy.changeSprite();
-        }
+        }*/
 
         player.setX(player.getX() + player.xVelocity());
         player.setY(player.getY() + player.yVelocity());
@@ -273,6 +330,7 @@ public class Level {
         else if (event.getCode() == KeyCode.LEFT && !isPressed) {
             if (player.isClimbingSpecial()) {
                 player.getGameObject().setScaleX(-1);
+                player.getOverhead().setScaleX(-1);
                 player.setX(player.getX() - 2.5 * multi);
                 player.setClimbing(false);
                 player.setClimbingSpecial(false);
@@ -290,18 +348,22 @@ public class Level {
                     player.setClimbingSpecial(true);
                     player.setX(player.getX() - player.getWidth() / 2 + ropes.get(0).getWidth());
                     player.getGameObject().setScaleX(-1);
+                    player.getOverhead().setScaleX(-1);
                 }
                 player.getGameObject().setScaleX(1);
+                player.getOverhead().setScaleX(1);
             }
             else {
                 player.setXVelocity(-2 / 3.0 * multi);
                 player.setWalking(true);
                 player.getGameObject().setScaleX(-1);
+                player.getOverhead().setScaleX(-1);
             }
         }
         else if (event.getCode() == KeyCode.RIGHT && !isPressed) {
             if (player.isClimbingSpecial()) {
                 player.getGameObject().setScaleX(1);
+                player.getOverhead().setScaleX(1);
                 player.setX(player.getX() + 5.5 * multi);
                 player.setClimbing(false);
                 player.setClimbingSpecial(false);
@@ -319,13 +381,16 @@ public class Level {
                     player.setClimbingSpecial(true);
                     player.setX(player.getX() + player.getWidth() / 2);
                     player.getGameObject().setScaleX(1);
+                    player.getOverhead().setScaleX(1);
                 }
                 player.getGameObject().setScaleX(-1);
+                player.getOverhead().setScaleX(-1);
             }
             else {
                 player.setXVelocity(2 / 3.0 * multi);
                 player.setWalking(true);
                 player.getGameObject().setScaleX(1);
+                player.getOverhead().setScaleX(1);
             }
         }
         else if (event.getCode() == KeyCode.UP && player.isClimbing()) {
@@ -603,6 +668,7 @@ public class Level {
             ropes.get(ropes.size() - 1).setWinner();
         }
         pane.getChildren().add(player.getGameObject());
+        pane.getChildren().add(player.getOverhead());
     }
 
     /**
