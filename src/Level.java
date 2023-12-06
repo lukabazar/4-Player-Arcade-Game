@@ -252,10 +252,10 @@ public class Level {
         for(int i = 0; i < otherPlayers.size(); i++) {
             if(i != playerNum) {
                 Player dk = otherPlayers.get(i);
-                dk.setX(playerData.getPlayerData(i).getX());
-                dk.setY(playerData.getPlayerData(i).getY());
                 dk.setXVelocity(playerData.getPlayerData(i).xVelocity());
                 dk.setYVelocity(playerData.getPlayerData(i).yVelocity());
+                dk.setX(playerData.getPlayerData(i).getX() + playerData.getPlayerData(i).xVelocity());
+                dk.setY(playerData.getPlayerData(i).getY() + playerData.getPlayerData(i).yVelocity());
                 dk.getGameObject().setScaleX(playerData.getPlayerData(i).getDirection());
                 dk.setJumping(playerData.getPlayerData(i).isJumping());
                 dk.setWalking(playerData.getPlayerData(i).isWalking());
@@ -266,6 +266,17 @@ public class Level {
                 dk.changeSprite();
             }
         }
+
+        //After updating opponents, go through and remove dead ones
+        /*for ( Player opponent : otherPlayers) {
+            if (opponent.getLives() == 0) {
+                pane.getChildren().remove(opponent.getGameObject());
+                opponent.setX(pane.getWidth() + opponent.getWidth());
+                opponent.setY(pane.getHeight() + opponent.getHeight());
+                pane.getChildren().remove(opponent.getGameObject());
+                otherPlayers.remove(opponent);
+            }
+        }*/
 
         if (player.getFallCount() >= 8 * multi) {
             if (player.isGrounded()) {
@@ -278,7 +289,7 @@ public class Level {
 
         player.changeSprite();
 
-        for (Enemy enemy : enemies) {
+        /*for (Enemy enemy : enemies) {
             if (snapToBounds(enemy)) {
                 enemy.switchXDir();
                 enemy.setXVelocity(enemy.xVelocity());
@@ -289,7 +300,7 @@ public class Level {
             pane.getChildren().remove(enemy.getGameObject());
             pane.getChildren().add(enemy.getGameObject());
             enemy.changeSprite();
-        }
+        }*/
 
         player.setX(player.getX() + player.xVelocity());
         player.setY(player.getY() + player.yVelocity());
@@ -524,6 +535,24 @@ public class Level {
                 }
             }
         }
+        /* Handles player collision, killing the lower player. I can get it to remove them from
+        *  the otherPlayer list and send the sprite out of the way, as the above does with enemies
+        *  but it doesn't update on their end. If I leave that part out, it updated other players
+        * to get game over, but left their sprites which would still trigger collision
+        for ( Player opponent : otherPlayers) {
+            if (isCollision(player, opponent)){
+                if (player.getY() > opponent.getY()) player.respawn(labels.get(1));
+                else if (player.getY() < opponent.getY()) {
+                    opponent.respawn(labels.get(1));
+                    if (opponent.getLives() == 0) {
+                        opponent.setX(pane.getWidth() + opponent.getWidth());
+                        opponent.setY(pane.getHeight() + opponent.getHeight());
+                        pane.getChildren().remove(opponent.getGameObject());
+                        otherPlayers.remove(opponent);
+                    }
+                }
+            }
+        }*/
     }
 
     /**
