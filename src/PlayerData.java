@@ -16,11 +16,13 @@ public class PlayerData {
         playerData.add(new Data(x, y, isAlive));
     }
 
-    public void setPlayerData(int player, double x, double y, boolean isAlive, boolean isJumping,
+    public void setPlayerData(int player, double x, double y, double xVel, double yVel, boolean isAlive, boolean isJumping,
                               boolean isWalking, boolean isGrounded, boolean isClimbing, boolean isClimbingSpecial,
                               int direction, boolean isCycle) {
         playerData.get(player).setX(x);
         playerData.get(player).setY(y);
+        playerData.get(player).setXVelocity(xVel);
+        playerData.get(player).setYVelocity(yVel);
         playerData.get(player).setIsAlive(isAlive);
         playerData.get(player).setJumping(isJumping);
         playerData.get(player).setWalking(isWalking);

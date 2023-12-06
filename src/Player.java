@@ -147,6 +147,9 @@ public class Player extends GameObject {
         overhead.setTranslateY(y - getHeight());
     }
 
+    public void setOverToA(){ overhead.setImage(Sprites.OVERHEADA.getImage()); }
+    public void setOverToB(){ overhead.setImage(Sprites.OVERHEADB.getImage()); }
+    
     /**
      * Set velocity in x direction
      *
@@ -156,17 +159,12 @@ public class Player extends GameObject {
         this.xVelocity = xVelocity;
     }
 
-    public void setOverToA(){ overhead.setImage(Sprites.OVERHEADA.getImage()); }
-    public void setOverToB(){ overhead.setImage(Sprites.OVERHEADB.getImage()); }
-
     /**
      * Set velocity in y direction
      *
      * @param yVelocity new yVelocity
      */
-    public void setYVelocity(double yVelocity) {
-        this.yVelocity = yVelocity;
-    }
+    public void setYVelocity(double yVelocity) { this.yVelocity = yVelocity; }
 
     /**
      * Get current xVelocity

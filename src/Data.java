@@ -1,4 +1,3 @@
-import javafx.scene.image.ImageView;
 
 import java.io.Serializable;
 
@@ -9,6 +8,8 @@ import java.io.Serializable;
 public class Data implements Serializable {
     private double x;
     private double y;
+    private double xVelocity;
+    private double yVelocity;
     private boolean isAlive;
     private boolean isJumping;
     private boolean isWalking;
@@ -27,6 +28,8 @@ public class Data implements Serializable {
     public Data(double x, double y, boolean isAlive) {
         this.x = x;
         this.y = y;
+        this.xVelocity = 1;
+        this.yVelocity = 1;
         this.isAlive = isAlive;
         isJumping = false;
         isWalking = false;
@@ -85,6 +88,19 @@ public class Data implements Serializable {
         y = val;
     }
 
+
+    public void setXVelocity(double xVelocity) {
+        this.xVelocity = xVelocity;
+    }
+
+    public void setYVelocity(double yVelocity) { this.yVelocity = yVelocity; }
+    public double xVelocity() {
+        return this.xVelocity;
+    }
+
+    public double yVelocity() {
+        return this.yVelocity;
+    }
     /**
      * Get alive status
      * @return alive status
