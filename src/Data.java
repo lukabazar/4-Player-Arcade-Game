@@ -1,3 +1,5 @@
+import javafx.scene.image.ImageView;
+
 import java.io.Serializable;
 
 /**
@@ -14,6 +16,9 @@ public class Data implements Serializable {
     private boolean isClimbing;
     private boolean isClimbingSpecial;
     private int direction;
+    private ImageView oppA;
+    private ImageView oppB;
+    private ImageView oppC;
     
     /**
      * Constructor for Data class
@@ -39,6 +44,9 @@ public class Data implements Serializable {
 
     public void setDirection(int direction) {
         this.direction = direction;
+        this. oppA = new ImageView();
+        this. oppB = new ImageView();
+        this. oppC = new ImageView();
     }
 
     /**
@@ -128,4 +136,16 @@ public class Data implements Serializable {
     public boolean isWalking() {
         return isWalking;
     }
+
+    public ImageView getOpponentA() { return oppA; }
+
+    public void setOpponentA(ImageView opponent) { oppA = opponent; }
+
+    public ImageView getOpponentB() { return oppB; }
+
+    public void setOpponentB(ImageView opponent) { oppB = opponent; }
+
+    public ImageView getOpponentC() { return oppC; }
+
+    public void setOpponentC(ImageView opponent) { oppC = opponent; }
 }
