@@ -1,8 +1,11 @@
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -50,6 +53,8 @@ public class Level {
     private int numRopes = 0;
     private final Random random = new Random(System.currentTimeMillis());
 
+
+    private final List<Player> otherPlayers = new ArrayList<>();
     /**
      * Places all game objects onto the level
      *
@@ -57,7 +62,8 @@ public class Level {
      * @param pane  Pane to place assets
      * @param multi Multiple used to scale window
      */
-    public Level(Scene scene, Pane pane, List<Label> labels, int multi, Client client, PlayerData playerData, int playerNum, Mode level) {
+    public Level(Scene scene, Pane pane, List<Label> labels, int multi, Client client,
+                 PlayerData playerData, int playerNum, Mode level) {
         this.scene = scene;
         this.pane = pane;
         this.multi = multi;
@@ -71,6 +77,14 @@ public class Level {
         makeEnemies();
         makePlayer();
         addAll();
+
+        for(int i = 0; i < 1; i++) {
+            Player player = new Player(24 * multi, 200 * multi, 27 * multi, 16 * multi, 1);
+            otherPlayers.add(player);
+            pane.getChildren().add(player.getGameObject());
+        }
+        otherPlayers.add(playerNum, player);
+
         play();
     }
 
@@ -135,19 +149,27 @@ public class Level {
                     }
                     if (count % 8 == 0) {
                         if (player.getCycle() == 0) {
-                            player.setCycle(1);
+                            for(Player otherPlayer : otherPlayers) {
+                                otherPlayer.setCycle(1);
+                            }
                             for (Enemy enemy : enemies) {
                                 enemy.setCycle(1);
                             }
                         } else if (player.getCycle() == 1) {
-                            player.setCycle(2);
+                            for(Player otherPlayer : otherPlayers) {
+                                otherPlayer.setCycle(2);
+                            }
                             for (Enemy enemy : enemies) {
                                 enemy.setCycle(0);
                             }
                         } else if (player.getCycle() == 2) {
-                            player.setCycle(3);
+                            for(Player otherPlayer : otherPlayers) {
+                                otherPlayer.setCycle(3);
+                            }
                         } else {
-                            player.setCycle(0);
+                            for(Player otherPlayer : otherPlayers) {
+                                otherPlayer.setCycle(0);
+                            }
                         }
                     }
                     if (count % 25 == 0) {
@@ -163,9 +185,10 @@ public class Level {
                     update();
                     last = now;
                     count = (count + 1) % 3600;
-
-                    playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.getLives() != 0);
                 }
+                playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.getLives() != 0,
+                        player.isJumping(), player.isWalking(), player.isGrounded(),
+                        player.isClimbing(), player.isClimbingSpecial(), (int) player.getGameObject().getScaleX());
             }
         };
         timer.start();
@@ -224,6 +247,22 @@ public class Level {
      * Updates the screen based on user input and gravity
      */
     private void update() {
+
+        for(int i = 0; i < otherPlayers.size(); i++) {
+            if(i != playerNum) {
+                Player dk = otherPlayers.get(i);
+                dk.setX(playerData.getPlayerData(i).getX());
+                dk.setY(playerData.getPlayerData(i).getY());
+                dk.getGameObject().setScaleX(playerData.getPlayerData(i).getDirection());
+                dk.setJumping(playerData.getPlayerData(i).isJumping());
+                dk.setWalking(playerData.getPlayerData(i).isWalking());
+                dk.setGrounded(playerData.getPlayerData(i).isGrounded());
+                dk.setClimbing(playerData.getPlayerData(i).isClimbing());
+                dk.setClimbingSpecial(playerData.getPlayerData(i).isClimbingSpecial());
+                dk.changeSprite();
+            }
+        }
+
         if (player.getFallCount() >= 8 * multi) {
             if (player.isGrounded()) {
                 if (level == Mode.LEVEL1) {
