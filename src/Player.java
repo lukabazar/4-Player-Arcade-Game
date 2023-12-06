@@ -79,7 +79,7 @@ public class Player extends GameObject {
         dk.setFitHeight(height);
         overhead.setTranslateX(x + 10);
         overhead.setTranslateY(y - height);
-        dk.setPreserveRatio(true);
+        overhead.setPreserveRatio(true);
         overhead.setFitHeight(height * 0.75);
         overhead.setFitWidth(height * 0.75);
         setOverToA();
@@ -124,9 +124,13 @@ public class Player extends GameObject {
     @Override
     public void setX(double x) {
         dk.setTranslateX(x);
+        if(isClimbing && !isClimbingSpecial && dk.getScaleX() == -1) {
+            overhead.setTranslateX(x + 0.375 * getHeight() + getWidth()/2);
+        }
+        else {
+            overhead.setTranslateX(x + 0.375 * getHeight());
+        }
     }
-
-    public void setOverX(double x) { overhead.setTranslateX(x);}
 
     public void setHasOverA(boolean b) { hasOverA = b; }
 
@@ -140,9 +144,8 @@ public class Player extends GameObject {
     @Override
     public void setY(double y) {
         dk.setTranslateY(y);
+        overhead.setTranslateY(y - getHeight());
     }
-
-    public void setOverY(double y) { overhead.setTranslateX(y);}
 
     /**
      * Set velocity in x direction
