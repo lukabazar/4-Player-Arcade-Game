@@ -32,7 +32,7 @@ class ClientHandler implements Runnable {
 
             while (true) {
                 inData = (Data) in.readUnshared();
-                playerData.setPlayerData(playerNum, inData.getX(), inData.getY(), inData.getIsAlive());
+                playerData.setPlayerData(playerNum, inData.getX(), inData.getY(), inData.getScore(), inData.getIsAlive());
                 System.out.println("Player " + playerNum + ": " + playerData.getPlayerData(playerNum).getX() + ", " + playerData.getPlayerData(playerNum).getY() + ", " + playerData.getPlayerData(playerNum).getIsAlive()); //debugging
 
                 for (int idx = 0; idx < playerData.getNumPlayers(); idx++) {
