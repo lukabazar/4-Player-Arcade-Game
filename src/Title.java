@@ -105,7 +105,7 @@ public class Title {
                 else {
                     
                     for (int idx = 0; idx < 4; idx++) {
-                        playerData.addPlayer(24 * multi, 200 * multi, true); // edit to have proper starting coordinates
+                        playerData.addPlayer(24 * multi, 200 * multi, 0, true); // edit to have proper starting coordinates
                     }
 
                     Client client = new Client("localhost", 8000, playerData);

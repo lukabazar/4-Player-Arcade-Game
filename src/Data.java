@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class Data implements Serializable {
     private double x;
     private double y;
+    private int score;
     private boolean isAlive;
     private ImageView oppA;
     private ImageView oppB;
@@ -20,9 +21,10 @@ public class Data implements Serializable {
      * @param y player y coord
      * @param isAlive player alive status
      */
-    public Data(double x, double y, boolean isAlive) {
+    public Data(double x, double y, int score, boolean isAlive) {
         this.x = x;
         this.y = y;
+        this.score = score;
         this.isAlive = isAlive;
         this. oppA = new ImageView();
         this. oppB = new ImageView();
@@ -76,6 +78,10 @@ public class Data implements Serializable {
     public void setIsAlive(boolean val) {
         isAlive = val;
     }
+
+    public void setScore(int val) { score = val; }
+
+    public int getScore() { return score; }
 
     public ImageView getOpponentA() { return oppA; }
 

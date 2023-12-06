@@ -154,7 +154,7 @@ public class Level {
                     last = now;
                     count = (count + 1) % 3600;
 
-                    playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.getLives() != 0);
+                    playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.getLives() != 0);
                 }
             }
         };
@@ -175,7 +175,7 @@ public class Level {
      *
      * @return int score
      */
-    private int getScore() {
+    public int getScore() {
         return Integer.parseInt(labels.get(0).getText().substring(7));
     }
 
