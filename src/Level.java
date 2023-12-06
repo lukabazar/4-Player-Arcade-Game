@@ -78,7 +78,7 @@ public class Level {
         makePlayer();
         addAll();
 
-        for(int i = 0; i < 1; i++) {
+        for(int i = 0; i < 3; i++) {
             Player player = new Player(24 * multi, 200 * multi, 27 * multi, 16 * multi, 1);
             otherPlayers.add(player);
             pane.getChildren().add(player.getGameObject());
@@ -188,7 +188,8 @@ public class Level {
                 }
                 playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.getLives() != 0,
                         player.isJumping(), player.isWalking(), player.isGrounded(),
-                        player.isClimbing(), player.isClimbingSpecial(), (int) player.getGameObject().getScaleX());
+                        player.isClimbing(), player.isClimbingSpecial(), (int) player.getGameObject().getScaleX(),
+                        player.isCycling());
             }
         };
         timer.start();
@@ -259,6 +260,7 @@ public class Level {
                 dk.setGrounded(playerData.getPlayerData(i).isGrounded());
                 dk.setClimbing(playerData.getPlayerData(i).isClimbing());
                 dk.setClimbingSpecial(playerData.getPlayerData(i).isClimbingSpecial());
+                dk.isCycle(playerData.getPlayerData(i).isCycle());
                 dk.changeSprite();
             }
         }

@@ -436,4 +436,7 @@ public class Player extends GameObject {
         this.isCycle = bool;
     }
 
+    public boolean isCycling() {
+        return isCycle;
+    }
 }

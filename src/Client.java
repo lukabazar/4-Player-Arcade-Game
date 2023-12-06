@@ -55,7 +55,7 @@ public class Client implements Runnable {
                         if (idx != playerNum) {
                             playerData.setPlayerData(idx, inData.getX(), inData.getY(), inData.getIsAlive(),
                                     inData.isJumping(), inData.isWalking(), inData.isGrounded(), inData.isClimbing(),
-                                    inData.isClimbingSpecial(), inData.getDirection());
+                                    inData.isClimbingSpecial(), inData.getDirection(), inData.isCycle());
 
                             System.out.println("Player " + idx + ": " + inData.getX() + ", " + inData.getY() + ", " + inData.getIsAlive() + " Walking: " + inData.isWalking());
                         }

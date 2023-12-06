@@ -15,10 +15,8 @@ public class Data implements Serializable {
     private boolean isGrounded;
     private boolean isClimbing;
     private boolean isClimbingSpecial;
+    private boolean isCycle;
     private int direction;
-    private ImageView oppA;
-    private ImageView oppB;
-    private ImageView oppC;
     
     /**
      * Constructor for Data class
@@ -35,6 +33,7 @@ public class Data implements Serializable {
         isGrounded = true;
         isClimbing = false;
         isClimbingSpecial = false;
+        isCycle = false;
         direction = 1;
     }
 
@@ -44,9 +43,14 @@ public class Data implements Serializable {
 
     public void setDirection(int direction) {
         this.direction = direction;
-        this. oppA = new ImageView();
-        this. oppB = new ImageView();
-        this. oppC = new ImageView();
+    }
+
+    public boolean isCycle() {
+        return isCycle;
+    }
+
+    public void setCycle(boolean cycle) {
+        isCycle = cycle;
     }
 
     /**
@@ -137,15 +141,4 @@ public class Data implements Serializable {
         return isWalking;
     }
 
-    public ImageView getOpponentA() { return oppA; }
-
-    public void setOpponentA(ImageView opponent) { oppA = opponent; }
-
-    public ImageView getOpponentB() { return oppB; }
-
-    public void setOpponentB(ImageView opponent) { oppB = opponent; }
-
-    public ImageView getOpponentC() { return oppC; }
-
-    public void setOpponentC(ImageView opponent) { oppC = opponent; }
 }
