@@ -186,10 +186,10 @@ public class Level {
                     last = now;
                     count = (count + 1) % 3600;
                 }
-                playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.getLives() != 0,
-                        player.isJumping(), player.isWalking(), player.isGrounded(),
-                        player.isClimbing(), player.isClimbingSpecial(), (int) player.getGameObject().getScaleX(),
-                        player.isCycling());
+                playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.xVelocity(),
+                        player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
+                        player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
+                        (int) player.getGameObject().getScaleX(), player.isCycling());
             }
         };
         timer.start();
@@ -254,6 +254,8 @@ public class Level {
                 Player dk = otherPlayers.get(i);
                 dk.setX(playerData.getPlayerData(i).getX());
                 dk.setY(playerData.getPlayerData(i).getY());
+                dk.setXVelocity(playerData.getPlayerData(i).xVelocity());
+                dk.setYVelocity(playerData.getPlayerData(i).yVelocity());
                 dk.getGameObject().setScaleX(playerData.getPlayerData(i).getDirection());
                 dk.setJumping(playerData.getPlayerData(i).isJumping());
                 dk.setWalking(playerData.getPlayerData(i).isWalking());
@@ -276,7 +278,7 @@ public class Level {
 
         player.changeSprite();
 
-        /*for (Enemy enemy : enemies) {
+        for (Enemy enemy : enemies) {
             if (snapToBounds(enemy)) {
                 enemy.switchXDir();
                 enemy.setXVelocity(enemy.xVelocity());
@@ -287,7 +289,7 @@ public class Level {
             pane.getChildren().remove(enemy.getGameObject());
             pane.getChildren().add(enemy.getGameObject());
             enemy.changeSprite();
-        }*/
+        }
 
         player.setX(player.getX() + player.xVelocity());
         player.setY(player.getY() + player.yVelocity());
