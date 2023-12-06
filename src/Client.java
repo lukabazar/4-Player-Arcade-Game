@@ -30,6 +30,10 @@ public class Client implements Runnable {
         playing = false;
     }
 
+    public PlayerData getPlayerData(){
+        return playerData;
+    }
+
     @Override
     public void run() {
         Data inData;
@@ -54,6 +58,7 @@ public class Client implements Runnable {
 
                         if (idx != playerNum) {
                             playerData.setPlayerData(idx, inData.getX(), inData.getY(), inData.getScore(), inData.getIsAlive());
+                            System.out.println(idx + ":: SCORE " + inData.getScore() + "::");
                             System.out.println("Player " + idx + ": " + inData.getX() + ", " + inData.getY() + ", " + inData.getIsAlive() + ", " + inData.getScore());
                         }
 

@@ -182,6 +182,7 @@ public class Level {
     /**
      * End of game popups
      */
+    // @ryan here
     private void popUp() {
         Stage stage = new Stage();
         stage.setWidth(scene.getWidth()/4);
@@ -200,12 +201,23 @@ public class Level {
             stage.close();
         });
         stage.setOnCloseRequest(event -> isOver = true);
-        if (level == Mode.LEVEL2 || isWin) {
+        if (level == Mode.LEVEL2) {
+            List<Integer> standings = client.getPlayerData().getDeathOrder();
+            standings.get(standings.size()-1);
+            
+            client.getPlayerData().getPlayerData(standings.get(standings.size()-1)).addScore(3000);
+            System.out.println("Player: " + standings.get(standings.size()-1) + "Score increased by 3k for first place.");
+
+            client.getPlayerData().getPlayerData(standings.get(standings.size()-2)).addScore(1500);
+            System.out.println("Player: " + standings.get(standings.size()-2) + "Score increased by 1.5k for second place.");
+
+            client.getPlayerData().getPlayerData(standings.get(standings.size()-3)).addScore(500);
+            System.out.println("Player: " + standings.get(standings.size()-1) + "Score increased by 500 for third place.");
+
+
             int finalScore = getScore() + player.getLives() * 400;
             label.setText("Game Over!\nFinal Score: " + finalScore);
-        }
-        else {
-            label.setText("Game Over!\nNo More Lives!");
+
         }
         stage.show();
     }

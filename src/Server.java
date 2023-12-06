@@ -9,8 +9,6 @@ import java.util.Map;
  * Server class
  */
 public class Server {
-    private static Map<Integer, List<Integer>> standings = new HashMap<>();
-    private int[] placement = {0, 1, 2, 3};
     public static void main(String[] args) {
         int port = 8000;
         int playerNum = 0;
@@ -32,20 +30,5 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /*
-     * Update standings based off of death order
-     */
-    private static void updateStandings(int[] placement, PlayerData playerData){
-        /*
-         * 1st -> 2,000
-         * 2nd -> 750 
-         * 3rd -> 100
-         */
-        
-        // pull death order & assign placement points 
-        // First place points 
-        
     }
 }

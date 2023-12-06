@@ -26,9 +26,9 @@ public class Data implements Serializable {
         this.y = y;
         this.score = score;
         this.isAlive = isAlive;
-        this. oppA = new ImageView();
-        this. oppB = new ImageView();
-        this. oppC = new ImageView();
+        // this. oppA = new ImageView();
+        // this. oppB = new ImageView();
+        // this. oppC = new ImageView();
     }
 
     /**
@@ -80,6 +80,9 @@ public class Data implements Serializable {
     }
 
     public void setScore(int val) { score = val; }
+
+    // Placement points upon game end
+    public void addScore(int val) { score += val; }
 
     public int getScore() { return score; }
 

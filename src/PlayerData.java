@@ -40,4 +40,12 @@ public class PlayerData {
     public List<Integer> getDeathOrder(){
         return deathOrder;
     }
+
+    public void setScore(int score){
+        playerData.get(0).setScore(score);
+    }
+
+    public int getScore(){
+        return playerData.get(0).getScore();
+    }
 }
