@@ -231,33 +231,44 @@ public class Level {
         stage.show();
     }
 
-    public static List<List<Integer>> calculateStandings(List<Integer> standings) {
+    /*
+     * creates a list of opponent Id's paired with their scores, also gives bonus placement points 
+     * upon game end. 
+     * 
+     * @param standings is the deathOrder of players
+     * 
+     * calculate first place == last in deathOrder: standings.get(standings.size()-1) etc.
+     */
+    public List<List<Integer>> calculateStandings(List<Integer> standings) {
         List<List<Integer>> result = new ArrayList<>();
 
-        int firstPlace = standings.get(standings.size() - 1);
-        int secondPlace = standings.get(standings.size() - 2);
-        int thirdPlace = standings.get(standings.size() - 3);
+        // Define placement bonuses
+        int fBonus = 3000;
+        int sBonus = 1500;
+        int tBonus = 500;
 
-        int firstPlaceScore = 3000;
-        int secondPlaceScore = 1500;
-        int thirdPlaceScore = 500;
+        // Set positions
+        Data first = client.getPlayerData().getPlayerData(standings.get(standings.size()-1));
+        Data second = client.getPlayerData().getPlayerData(standings.get(standings.size()-2));
+        Data third = client.getPlayerData().getPlayerData(standings.get(standings.size()-3));
+
+        // Add bonus scores 
+        first.addScore(fBonus);
+        second.addScore(sBonus);
+        third.addScore(tBonus);
 
         // Adding scores for first, second, and third place
-        addToResult(result, firstPlace, firstPlaceScore);
-        addToResult(result, secondPlace, secondPlaceScore);
-        addToResult(result, thirdPlace, thirdPlaceScore);
-
-        // Calculating scores for other players
-        int additionalScore = 400;
-        for (int i = 0; i < standings.size() - 3; i++) {
-            int playerId = standings.get(i);
-            int playerScore = additionalScore * (i + 1); // Adjust as needed for your scoring logic
-            addToResult(result, playerId, playerScore);
-        }
+        addToResult(result, standings.get(standings.size()-1), fBonus);
+        addToResult(result, standings.get(standings.size()-2), sBonus);
+        addToResult(result, standings.get(standings.size()-3), tBonus);
 
         return result;
     }
 
+    /*
+     * Helper method for calculateStandings
+     * Formats player id's and scores properly for victory screen & standings display
+     */
     private static void addToResult(List<List<Integer>> result, int playerId, int score) {
         List<Integer> playerScorePair = new ArrayList<>();
         playerScorePair.add(playerId);
