@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+import javax.sound.midi.Soundbank;
+
 /**
  * Name: Luka Bazar
  * <p>
@@ -254,8 +256,12 @@ public class Level {
 
         // Add bonus scores 
         first.addScore(fBonus);
+        System.out.println("Player: " + standings.get(standings.size()-1) + "Score increased by" + fBonus + " for first place.");
         second.addScore(sBonus);
+        System.out.println("Player: " + standings.get(standings.size()-2) + "Score increased by" + sBonus + " for second place.");
         third.addScore(tBonus);
+        System.out.println("Player: " + standings.get(standings.size()-3) + "Score increased by" + tBonus + " for third place.");
+        System.out.println("Player: " + standings.get(standings.size()-4) + "Didn't receive any bonus.");
 
         // Adding scores for first, second, and third place
         addToResult(result, standings.get(standings.size()-1), fBonus);
