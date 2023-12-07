@@ -32,13 +32,13 @@ public class DonkeyKongJr extends Application {
     public void start(Stage primaryStage) {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
 
-        int multi = 1;
+        int multi = 3;
         int pixelWidth = 256;
         int pixelHeight = 240;
 
-        for (int i = 1; pixelHeight * i < screenHeight; i++) {
-            multi = i;
-        }
+        // for (int i = 1; pixelHeight * i < screenHeight; i++) {
+        //     multi = i;
+        // }
 
         int width = pixelWidth * multi;
         int height = pixelHeight * multi;
