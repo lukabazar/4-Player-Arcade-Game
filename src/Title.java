@@ -120,6 +120,18 @@ public class Title {
 
                     System.out.println(client.getPlayerNum());
 
+                    boolean allPlayersReady = false;
+
+                    while (!allPlayersReady) {
+                        allPlayersReady = true;
+                        for (Player p : playerData) {
+                            if (!p.isReady()){
+                                allPlayersReady = false;
+                                break;
+                            }
+                        }
+                    }
+
                     currentLevel = new Level(scene, pane, labels, multi, client, playerData, client.getPlayerNum(), Level.Mode.LEVEL2);
                     changeBackground(new Image("backgrounds/background-02.png"));
                 }

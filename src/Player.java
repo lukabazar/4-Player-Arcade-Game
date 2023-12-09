@@ -60,6 +60,8 @@ public class Player extends GameObject {
     private final ImageView overhead = new ImageView();
     private boolean hasOverA = true;
 
+    private boolean isReady = false;
+
     /**
      * Player GameObject (Donkey Kong Jr.)
      *
@@ -437,4 +439,8 @@ public class Player extends GameObject {
     public boolean isCycling() {
         return isCycle;
     }
+
+    public void setIsReady(boolean b) { isReady = b; }
+
+    public boolean isReady(){ return isReady; }
 }

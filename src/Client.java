@@ -14,6 +14,7 @@ public class Client implements Runnable {
     private ObjectInputStream in;
     private boolean playing;
 
+
     public Client(String hostname, int port, PlayerData playerData) {
         this.hostname = hostname;
         this.port = port;
@@ -25,6 +26,8 @@ public class Client implements Runnable {
     public int getPlayerNum() {
         return playerNum;
     }
+
+    public boolean isReady() { return playing; }
 
     public void stopClient() {
         playing = false;
@@ -56,7 +59,7 @@ public class Client implements Runnable {
                             playerData.setPlayerData(idx, inData.getX(), inData.getY(), inData.xVelocity(),
                                     inData.yVelocity(), inData.getIsAlive(), inData.isJumping(), inData.isWalking(),
                                     inData.isGrounded(), inData.isClimbing(), inData.isClimbingSpecial(),
-                                    inData.getDirection(), inData.isCycle());
+                                    inData.getDirection(), inData.isCycle(), inData.isReady());
 
                             System.out.println("Player " + idx + ": " + inData.getX() + ", " + inData.getY() + ", " + inData.getIsAlive() + " Walking: " + inData.isWalking());
                         }

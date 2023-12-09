@@ -18,6 +18,8 @@ public class Data implements Serializable {
     private boolean isClimbingSpecial;
     private boolean isCycle;
     private int direction;
+
+    private boolean isReady = false;
     
     /**
      * Constructor for Data class
@@ -156,5 +158,9 @@ public class Data implements Serializable {
     public boolean isWalking() {
         return isWalking;
     }
+
+    public boolean isReady() { return isReady; }
+
+    public void setReady( boolean ready) { isReady = ready: }
 
 }

@@ -186,7 +186,7 @@ public class Level {
                 playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.xVelocity(),
                         player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
                         player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
-                        (int) player.getGameObject().getScaleX(), player.isCycling());
+                        (int) player.getGameObject().getScaleX(), player.isCycling(), player.isReady());
             }
         };
         timer.start();
@@ -266,7 +266,7 @@ public class Level {
 
         //After updating opponents, go through and remove dead ones
         //Better implementation, players only show sprites of players that had already joined
-        Iterator<Player> iter = otherPlayers.iterator();
+        /*Iterator<Player> iter = otherPlayers.iterator();
         while (iter.hasNext()){
             Player opponent = iter.next();
             if (opponent.getLives() == 0) {
@@ -275,7 +275,7 @@ public class Level {
                 pane.getChildren().remove(opponent.getGameObject());
                 iter.remove();
             }
-        }
+        }*/
 
         if (player.getFallCount() >= 8 * multi) {
             if (player.isGrounded()) {
@@ -536,7 +536,7 @@ public class Level {
         }
 
 
-        Iterator<Player> iter = otherPlayers.iterator();
+        /*Iterator<Player> iter = otherPlayers.iterator();
         while (iter.hasNext()) {
             Player opponent = iter.next();
             if (isCollision(player, opponent)) {
@@ -551,7 +551,7 @@ public class Level {
                     }
                 }
             }
-        }
+        }*/
     }
 
     /**
