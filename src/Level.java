@@ -16,10 +16,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Name: Luka Bazar
@@ -268,15 +265,17 @@ public class Level {
         }
 
         //After updating opponents, go through and remove dead ones
-        /*for ( Player opponent : otherPlayers) {
+        //Better implementation, players only show sprites of players that had already joined
+        Iterator<Player> iter = otherPlayers.iterator();
+        while (iter.hasNext()){
+            Player opponent = iter.next();
             if (opponent.getLives() == 0) {
-                pane.getChildren().remove(opponent.getGameObject());
                 opponent.setX(pane.getWidth() + opponent.getWidth());
                 opponent.setY(pane.getHeight() + opponent.getHeight());
                 pane.getChildren().remove(opponent.getGameObject());
-                otherPlayers.remove(opponent);
+                iter.remove();
             }
-        }*/
+        }
 
         if (player.getFallCount() >= 8 * multi) {
             if (player.isGrounded()) {
@@ -535,12 +534,12 @@ public class Level {
                 }
             }
         }
-        /* Handles player collision, killing the lower player. I can get it to remove them from
-        *  the otherPlayer list and send the sprite out of the way, as the above does with enemies
-        *  but it doesn't update on their end. If I leave that part out, it updated other players
-        * to get game over, but left their sprites which would still trigger collision
-        for ( Player opponent : otherPlayers) {
-            if (isCollision(player, opponent)){
+
+
+        Iterator<Player> iter = otherPlayers.iterator();
+        while (iter.hasNext()) {
+            Player opponent = iter.next();
+            if (isCollision(player, opponent)) {
                 if (player.getY() > opponent.getY()) player.respawn(labels.get(1));
                 else if (player.getY() < opponent.getY()) {
                     opponent.respawn(labels.get(1));
@@ -548,11 +547,11 @@ public class Level {
                         opponent.setX(pane.getWidth() + opponent.getWidth());
                         opponent.setY(pane.getHeight() + opponent.getHeight());
                         pane.getChildren().remove(opponent.getGameObject());
-                        otherPlayers.remove(opponent);
+                        iter.remove();
                     }
                 }
             }
-        }*/
+        }
     }
 
     /**
