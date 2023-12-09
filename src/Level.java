@@ -209,37 +209,38 @@ public class Level {
             isOver = true;
             stage.close();
         });
+        
         stage.setOnCloseRequest(event -> isOver = true);
         if (level == Mode.LEVEL2) {
             List<Integer> standings = client.getPlayerData().getDeathOrder();
-            standings.get(standings.size() - 1);
+            List<List<Integer>> standingsWithScores = calculateStandings(standings);
 
-            client.getPlayerData().getPlayerData(standings.get(standings.size() - 1)).addScore(3000);
-            System.out.println(
-                    "Player: " + standings.get(standings.size() - 1) + "Score increased by 3k for first place.");
-
-            client.getPlayerData().getPlayerData(standings.get(standings.size() - 2)).addScore(1500);
-            System.out.println(
-                    "Player: " + standings.get(standings.size() - 2) + "Score increased by 1.5k for second place.");
-
-            client.getPlayerData().getPlayerData(standings.get(standings.size() - 3)).addScore(500);
-            System.out.println(
-                    "Player: " + standings.get(standings.size() - 1) + "Score increased by 500 for third place.");
-
-            int finalScore = getScore() + player.getLives() * 400;
+            // Final score == first place's score
+            int finalScore = standingsWithScores.get(0).get(1);
             label.setText("Game Over!\nFinal Score: " + finalScore);
 
+            StringBuilder winnersScores = new StringBuilder("Winners' Scores:\n");
+            for (List<Integer> playerScorePair : standingsWithScores) {
+                winnersScores.append("Player ").append(playerScorePair.get(0)).append(": ")
+                        .append(playerScorePair.get(1)).append("\n");
+            }
+
+            Label winnersLabel = new Label(winnersScores.toString());
+            vBox.getChildren().add(winnersLabel);
         }
+
         stage.show();
     }
 
     /*
-     * creates a list of opponent Id's paired with their scores, also gives bonus placement points 
-     * upon game end. 
+     * creates a list of opponent Id's paired with their scores, also gives bonus
+     * placement points
+     * upon game end.
      * 
      * @param standings is the deathOrder of players
      * 
-     * calculate first place == last in deathOrder: standings.get(standings.size()-1) etc.
+     * calculate first place == last in deathOrder:
+     * standings.get(standings.size()-1) etc.
      */
     public List<List<Integer>> calculateStandings(List<Integer> standings) {
         List<List<Integer>> result = new ArrayList<>();
@@ -250,30 +251,34 @@ public class Level {
         int tBonus = 500;
 
         // Set positions
-        Data first = client.getPlayerData().getPlayerData(standings.get(standings.size()-1));
-        Data second = client.getPlayerData().getPlayerData(standings.get(standings.size()-2));
-        Data third = client.getPlayerData().getPlayerData(standings.get(standings.size()-3));
+        Data first = client.getPlayerData().getPlayerData(standings.get(standings.size() - 1));
+        Data second = client.getPlayerData().getPlayerData(standings.get(standings.size() - 2));
+        Data third = client.getPlayerData().getPlayerData(standings.get(standings.size() - 3));
 
-        // Add bonus scores 
+        // Add bonus scores
         first.addScore(fBonus);
-        System.out.println("Player: " + standings.get(standings.size()-1) + "Score increased by" + fBonus + " for first place.");
+        System.out.println(
+                "Player: " + standings.get(standings.size() - 1) + "Score increased by" + fBonus + " for first place.");
         second.addScore(sBonus);
-        System.out.println("Player: " + standings.get(standings.size()-2) + "Score increased by" + sBonus + " for second place.");
+        System.out.println("Player: " + standings.get(standings.size() - 2) + "Score increased by" + sBonus
+                + " for second place.");
         third.addScore(tBonus);
-        System.out.println("Player: " + standings.get(standings.size()-3) + "Score increased by" + tBonus + " for third place.");
-        System.out.println("Player: " + standings.get(standings.size()-4) + "Didn't receive any bonus.");
+        System.out.println(
+                "Player: " + standings.get(standings.size() - 3) + "Score increased by" + tBonus + " for third place.");
+        System.out.println("Player: " + standings.get(standings.size() - 4) + "Didn't receive any bonus.");
 
         // Adding scores for first, second, and third place
-        addToResult(result, standings.get(standings.size()-1), fBonus);
-        addToResult(result, standings.get(standings.size()-2), sBonus);
-        addToResult(result, standings.get(standings.size()-3), tBonus);
+        addToResult(result, standings.get(standings.size() - 1), fBonus);
+        addToResult(result, standings.get(standings.size() - 2), sBonus);
+        addToResult(result, standings.get(standings.size() - 3), tBonus);
 
         return result;
     }
 
     /*
      * Helper method for calculateStandings
-     * Formats player id's and scores properly for victory screen & standings display
+     * Formats player id's and scores properly for victory screen & standings
+     * display
      */
     private static void addToResult(List<List<Integer>> result, int playerId, int score) {
         List<Integer> playerScorePair = new ArrayList<>();
@@ -297,20 +302,18 @@ public class Level {
 
         player.changeSprite();
 
-        /*
-         * for (Enemy enemy : enemies) {
-         * if (snapToBounds(enemy)) {
-         * enemy.switchXDir();
-         * enemy.setXVelocity(enemy.xVelocity());
-         * }
-         * enemy.setYVelocity(enemy.yVelocity() + 0.5 / 3.0 * multi);
-         * enemy.setX(enemy.getX() + enemy.xVelocity());
-         * enemy.setY(enemy.getY() + enemy.yVelocity());
-         * pane.getChildren().remove(enemy.getGameObject());
-         * pane.getChildren().add(enemy.getGameObject());
-         * enemy.changeSprite();
-         * }
-         */
+        for (Enemy enemy : enemies) {
+            if (snapToBounds(enemy)) {
+                enemy.switchXDir();
+                enemy.setXVelocity(enemy.xVelocity());
+            }
+            enemy.setYVelocity(enemy.yVelocity() + 0.5 / 3.0 * multi);
+            enemy.setX(enemy.getX() + enemy.xVelocity());
+            enemy.setY(enemy.getY() + enemy.yVelocity());
+            pane.getChildren().remove(enemy.getGameObject());
+            pane.getChildren().add(enemy.getGameObject());
+            enemy.changeSprite();
+        }
 
         player.setX(player.getX() + player.xVelocity());
         player.setOverX(player.getX() + player.xVelocity());
