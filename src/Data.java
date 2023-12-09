@@ -161,6 +161,6 @@ public class Data implements Serializable {
 
     public boolean isReady() { return isReady; }
 
-    public void setReady( boolean ready) { isReady = ready: }
+    public void setReady( boolean ready) { isReady = ready; }
 
 }

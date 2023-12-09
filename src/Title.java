@@ -124,8 +124,9 @@ public class Title {
 
                     while (!allPlayersReady) {
                         allPlayersReady = true;
-                        for (Player p : playerData) {
-                            if (!p.isReady()){
+                        for (int i = 0; i < 4; i++) {
+                            Data p = playerData.getPlayerData(i);
+                            if (!p.isReady()) {
                                 allPlayersReady = false;
                                 break;
                             }
