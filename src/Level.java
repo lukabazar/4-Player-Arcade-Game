@@ -246,21 +246,32 @@ public class Level {
         stage.setOnCloseRequest(event -> isOver = true);
         if (level == Mode.LEVEL2) {
             List<Integer> standings = client.getPlayerData().getDeathOrder();
-            List<List<Integer>> standingsWithScores = calculateStandings(standings);
-
-            // Final score == first place's score
-            int finalScore = standingsWithScores.get(0).get(1);
-            label.setText("Game Over!\nFinal Score: " + finalScore);
-
-            StringBuilder winnersScores = new StringBuilder("Winners' Scores:\n");
-            for (List<Integer> playerScorePair : standingsWithScores) {
-                winnersScores.append("Player ").append(playerScorePair.get(0)).append(": ")
-                        .append(playerScorePair.get(1)).append("\n");
+            
+            if (!standings.isEmpty()) { // Check if standings are available
+                List<List<Integer>> standingsWithScores = calculateStandings(standings);
+        
+                // Final score == first place's score
+                int finalScore = standingsWithScores.get(0).get(1);
+                label.setText("Game Over!\nFinal Score: " + finalScore);
+        
+                StringBuilder winnersScores = new StringBuilder("Winners' Scores:\n");
+                for (List<Integer> playerScorePair : standingsWithScores) {
+                    winnersScores.append("Player ").append(playerScorePair.get(0)).append(": ")
+                            .append(playerScorePair.get(1)).append("\n");
+                }
+        
+                Label winnersLabel = new Label(winnersScores.toString());
+                vBox.getChildren().add(winnersLabel);
+            } else {
+                // Handle empty standings list when level is LEVEL2
+                label.setText("Game Over!\nNo standings available.");
             }
-
-            Label winnersLabel = new Label(winnersScores.toString());
-            vBox.getChildren().add(winnersLabel);
+        } else {
+            // Code to handle other levels if needed
+            // For example, set a default message or handle other game modes
+            label.setText("Game Over!\nLevel completed. No standings available for this level.");
         }
+        
 
         stage.show();
     }
@@ -282,7 +293,11 @@ public class Level {
         System.out.println(" -----------   Calc Score   --------------- ");
         System.out.println(" ------------------------------------------ ");
 
-
+        if (standings.isEmpty()) {
+            // Handle empty standings list
+            System.out.println("No standings available!");
+            return result; // or handle this case according to your requirements
+        }
 
         // Define placement bonuses
         int fBonus = 3000;

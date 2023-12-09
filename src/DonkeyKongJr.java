@@ -30,7 +30,7 @@ public class DonkeyKongJr extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
+        // double screenHeight = Screen.getPrimary().getBounds().getHeight();
 
         int multi = 3;
         int pixelWidth = 256;
