@@ -126,8 +126,6 @@ public class Data implements Serializable {
 
     public int getScore() { return score; }
 
-    public ImageView getOpponentA() { return oppA; }
-
     public void setJumping(boolean jumping) {
         isJumping = jumping;
     }

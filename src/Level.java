@@ -643,25 +643,6 @@ public class Level {
                 player.setClimbingSpecial(false);
                 player.setGrounded(true);
                 player.setY(platform.getY() - player.getHeight());
-<<<<<<< src/Level.java
-                player.setOverY(platform.getY());
-            } else if (isCollision(player, platform) && player.isClimbing() && player.getY() > platform.getY()) {
-                if (player.isClimbingSpecial()) {
-                    player.setYVelocity(0);
-                    player.setY(platform.getY() + platform.getHeight());
-                    player.setOverY(platform.getY() + 2 * platform.getHeight());
-                } else if (player.getGameObject().getScaleX() == 1 &&
-                        player.getX() + 2 * 9 * multi > platform.getX() + platform.getWidth()) {
-                    player.setYVelocity(0);
-                    player.setY(platform.getY() + platform.getHeight());
-                    player.setOverY(platform.getY() + 2 * platform.getHeight());
-                } else if (player.getGameObject().getScaleX() == -1 &&
-                        player.getX() + player.getWidth() - 2 * 9 * multi < platform.getX()) {
-                    player.setYVelocity(0);
-                    player.setY(platform.getY() + platform.getHeight());
-                    player.setOverY(platform.getY() + 2 * platform.getHeight());
-                } else if (player.getX() > platform.getX() &&
-=======
             }
             else if (isCollision(player, platform) && player.isClimbing() && player.getY() > platform.getY()) {
                 if (player.isClimbingSpecial()) {
@@ -679,7 +660,6 @@ public class Level {
                     player.setY(platform.getY() + platform.getHeight());
                 }
                 else if (player.getX() > platform.getX() &&
->>>>>>> src/Level.java
                         player.getX() + player.getWidth() < platform.getX() + platform.getWidth()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
@@ -690,13 +670,8 @@ public class Level {
                         player.getX() + player.getWidth() - 2 * 9 * multi < platform.getX()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() - player.getHeight());
-<<<<<<< src/Level.java
-                    player.setOverY(platform.getY());
-                } else if (player.getGameObject().getScaleX() == 1 &&
-=======
                 }
                 else if (player.getGameObject().getScaleX() == 1 &&
->>>>>>> src/Level.java
                         player.getX() + 2 * 9 * multi > platform.getX() + platform.getWidth()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() - player.getHeight());

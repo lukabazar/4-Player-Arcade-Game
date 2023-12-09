@@ -48,6 +48,7 @@ public class Player extends GameObject {
     private int lives;
     private double xVelocity = 0;
     private double yVelocity = 0;
+    private int score = 0;
     private final double spawnX;
     private final double spawnY;
     private boolean isJumping = false;
@@ -437,4 +438,10 @@ public class Player extends GameObject {
     public boolean isCycling() {
         return isCycle;
     }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int getScore() { return this.score; }
 }
