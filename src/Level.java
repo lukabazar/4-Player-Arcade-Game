@@ -248,7 +248,7 @@ public class Level {
         if (level == Mode.LEVEL2) {
             List<Integer> standings = client.getPlayerData().getDeathOrder();
             
-            if (!standings.isEmpty()) { // Check if standings are available
+            if (!standings.isEmpty() && standings.size() == 4) { // Check standings are valid
                 List<List<Integer>> standingsWithScores = calculateStandings(standings);
         
                 // Final score == first place's score
@@ -265,7 +265,11 @@ public class Level {
                 vBox.getChildren().add(winnersLabel);
             } else {
                 // Handle empty standings list when level is LEVEL2
-                label.setText("Game Over!\nNo standings available.");
+                if(standings.size() < 4){
+                    label.setText("Less than 4 players in the game at the time of death.");
+                }else{
+                    label.setText("Game Over!\nNo standings available.");
+                }
             }
         } else {
             // Code to handle other levels if needed
