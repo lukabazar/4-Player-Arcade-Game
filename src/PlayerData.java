@@ -48,6 +48,10 @@ public class PlayerData {
         return deathOrder;
     }
 
+    public void addDeathOrder(int playerId) {
+        deathOrder.add(playerId);
+    }
+
     public void setScore(int score){
         playerData.get(0).setScore(score);
     }
