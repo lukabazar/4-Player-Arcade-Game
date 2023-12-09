@@ -22,15 +22,22 @@ public class PlayerData {
         playerData.add(new Data(x, y, score,  isAlive));
     }
 
-    public void setPlayerData(int player, double x, double y, int score, boolean isAlive) {
+    public void setPlayerData(int player, double x, double y, int score, double xVel, double yVel, boolean isAlive, boolean isJumping,
+                              boolean isWalking, boolean isGrounded, boolean isClimbing, boolean isClimbingSpecial,
+                              int direction, boolean isCycle) {
         playerData.get(player).setX(x);
         playerData.get(player).setY(y);
         playerData.get(player).setScore(score);
+        playerData.get(player).setXVelocity(xVel);
+        playerData.get(player).setYVelocity(yVel);
         playerData.get(player).setIsAlive(isAlive);
-
-        if(!isAlive){
-            deathOrder.add(player);
-        }
+        playerData.get(player).setJumping(isJumping);
+        playerData.get(player).setWalking(isWalking);
+        playerData.get(player).setGrounded(isGrounded);
+        playerData.get(player).setClimbing(isClimbing);
+        playerData.get(player).setClimbingSpecial(isClimbingSpecial);
+        playerData.get(player).setCycle(isCycle);
+        playerData.get(player).setDirection(direction);
     }
 
     public int getNumPlayers() {

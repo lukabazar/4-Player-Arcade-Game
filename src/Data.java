@@ -1,4 +1,3 @@
-import javafx.scene.image.ImageView;
 
 import java.io.Serializable;
 
@@ -10,10 +9,16 @@ public class Data implements Serializable {
     private double x;
     private double y;
     private int score;
+    private double xVelocity;
+    private double yVelocity;
     private boolean isAlive;
-    private ImageView oppA;
-    private ImageView oppB;
-    private ImageView oppC;
+    private boolean isJumping;
+    private boolean isWalking;
+    private boolean isGrounded;
+    private boolean isClimbing;
+    private boolean isClimbingSpecial;
+    private boolean isCycle;
+    private int direction;
     
     /**
      * Constructor for Data class
@@ -25,10 +30,32 @@ public class Data implements Serializable {
         this.x = x;
         this.y = y;
         this.score = score;
+        this.xVelocity = 1;
+        this.yVelocity = 1;
         this.isAlive = isAlive;
-        // this. oppA = new ImageView();
-        // this. oppB = new ImageView();
-        // this. oppC = new ImageView();
+        isJumping = false;
+        isWalking = false;
+        isGrounded = true;
+        isClimbing = false;
+        isClimbingSpecial = false;
+        isCycle = false;
+        direction = 1;
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        this.direction = direction;
+    }
+
+    public boolean isCycle() {
+        return isCycle;
+    }
+
+    public void setCycle(boolean cycle) {
+        isCycle = cycle;
     }
 
     /**
@@ -63,6 +90,19 @@ public class Data implements Serializable {
         y = val;
     }
 
+
+    public void setXVelocity(double xVelocity) {
+        this.xVelocity = xVelocity;
+    }
+
+    public void setYVelocity(double yVelocity) { this.yVelocity = yVelocity; }
+    public double xVelocity() {
+        return this.xVelocity;
+    }
+
+    public double yVelocity() {
+        return this.yVelocity;
+    }
     /**
      * Get alive status
      * @return alive status
@@ -88,13 +128,44 @@ public class Data implements Serializable {
 
     public ImageView getOpponentA() { return oppA; }
 
-    public void setOpponentA(ImageView opponent) { oppA = opponent; }
+    public void setJumping(boolean jumping) {
+        isJumping = jumping;
+    }
 
-    public ImageView getOpponentB() { return oppB; }
+    public void setClimbing(boolean climbing) {
+        isClimbing = climbing;
+    }
 
-    public void setOpponentB(ImageView opponent) { oppB = opponent; }
+    public void setGrounded(boolean grounded) {
+        isGrounded = grounded;
+    }
 
-    public ImageView getOpponentC() { return oppC; }
+    public void setWalking(boolean walking) {
+        isWalking = walking;
+    }
 
-    public void setOpponentC(ImageView opponent) { oppC = opponent; }
+    public void setClimbingSpecial(boolean climbingSpecial) {
+        isClimbingSpecial = climbingSpecial;
+    }
+
+    public boolean isClimbing() {
+        return isClimbing;
+    }
+
+    public boolean isClimbingSpecial() {
+        return isClimbingSpecial;
+    }
+
+    public boolean isGrounded() {
+        return isGrounded;
+    }
+
+    public boolean isJumping() {
+        return isJumping;
+    }
+
+    public boolean isWalking() {
+        return isWalking;
+    }
+
 }

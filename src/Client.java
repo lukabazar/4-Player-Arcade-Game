@@ -57,9 +57,12 @@ public class Client implements Runnable {
                         inData = (Data) in.readUnshared();
 
                         if (idx != playerNum) {
-                            playerData.setPlayerData(idx, inData.getX(), inData.getY(), inData.getScore(), inData.getIsAlive());
-                            System.out.println(idx + ":: SCORE " + inData.getScore() + "::");
-                            System.out.println("Player " + idx + ": " + inData.getX() + ", " + inData.getY() + ", " + inData.getIsAlive() + ", " + inData.getScore());
+                            playerData.setPlayerData(idx, inData.getX(), inData.getY(), inData.getScore(), inData.xVelocity(),
+                                    inData.yVelocity(), inData.getIsAlive(), inData.isJumping(), inData.isWalking(),
+                                    inData.isGrounded(), inData.isClimbing(), inData.isClimbingSpecial(),
+                                    inData.getDirection(), inData.isCycle());
+
+                            System.out.println("Player " + idx + ": " + inData.getX() + ", " + inData.getY() + ", " + inData.getIsAlive() + " Walking: " + inData.isWalking());
                         }
 
                     } catch (SocketTimeoutException e) {
