@@ -245,6 +245,12 @@ public class Level {
     public List<List<Integer>> calculateStandings(List<Integer> standings) {
         List<List<Integer>> result = new ArrayList<>();
 
+        System.out.println(" ------------------------------------------ ");
+        System.out.println(" -----------   Calc Score   --------------- ");
+        System.out.println(" ------------------------------------------ ");
+
+
+
         // Define placement bonuses
         int fBonus = 3000;
         int sBonus = 1500;
@@ -254,6 +260,9 @@ public class Level {
         Data first = client.getPlayerData().getPlayerData(standings.get(standings.size() - 1));
         Data second = client.getPlayerData().getPlayerData(standings.get(standings.size() - 2));
         Data third = client.getPlayerData().getPlayerData(standings.get(standings.size() - 3));
+
+        // load in original scores 
+        // first.addScore(client.getPlayerData().getPlayerData(first.getId()));
 
         // Add bonus scores
         first.addScore(fBonus);
@@ -271,6 +280,12 @@ public class Level {
         addToResult(result, standings.get(standings.size() - 1), fBonus);
         addToResult(result, standings.get(standings.size() - 2), sBonus);
         addToResult(result, standings.get(standings.size() - 3), tBonus);
+
+
+
+        System.out.println(" ------------------------------------------ ");
+        System.out.println(" ------------------------------------------ ");
+        System.out.println(" ------------------------------------------ ");
 
         return result;
     }
