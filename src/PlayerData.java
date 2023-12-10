@@ -52,11 +52,31 @@ public class PlayerData {
         deathOrder.add(playerId);
     }
 
-    public void setScore(int score){
-        playerData.get(0).setScore(score);
+    public void setScore(int player, int score){
+        playerData.get(player).setScore(score);
     }
 
-    public int getScore(){
-        return playerData.get(0).getScore();
+    public int getScore(int player){
+        return playerData.get(player).getScore();
+    }
+
+    public boolean allPlayersDead(){
+        System.out.println("----------------------------");
+        System.out.println("-- Checking Players Alive --");
+        System.out.println("Num players I can see:" + getNumPlayers());
+        for(int i = 0; i < getNumPlayers(); i++){
+            // if(playerData.get(i).getIsAlive()){
+            //     System.out.println("Player: " + i + " is alive)");
+            //     return false;
+            // }
+            System.out.println("Player: " + i + " isAlive: " + playerData.get(i).getIsAlive());
+        }
+        // ffs 
+        if(getPlayerData(0).getIsAlive() && getPlayerData(1).getIsAlive() && getPlayerData(2).getIsAlive() && getPlayerData(3).getIsAlive()){
+            return false;
+        }
+        System.out.println("All players are dead.");
+        System.out.println("----------------------------");
+        return true;
     }
 }

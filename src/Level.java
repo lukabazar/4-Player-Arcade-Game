@@ -93,7 +93,10 @@ public class Level {
         }
         otherPlayers.add(playerNum, player);
 
-        play();
+        if(playerData.getNumPlayers() == 4){
+            System.out.println("There are " + playerData.getNumPlayers() + " players connected. (level)");
+            play();
+        }
     }
 
     /**
@@ -138,6 +141,19 @@ public class Level {
                             if (level == Mode.LEVEL1) {
                                 labels.get(0).setText("Score: " + (getScore() - 100));
                             } else {
+
+                                // Add timing score to each player.
+                                System.out.println("***");
+                                for(int i=0 ;i<client.getPlayerData().getNumPlayers(); i++){
+                                    if(client.getPlayerData().getPlayerData(i).getIsAlive()){
+                                        client.getPlayerData().getPlayerData(i).addScore(100);
+                                        System.out.println("Player " + i + " Score: " + client.getPlayerData().getPlayerData(i).getScore());
+                                    }else{
+                                        System.out.println("Player " + i + " is dead.");
+                                    }
+                                }
+                                System.out.println("***");
+
                                 labels.get(0).setText("Score: " + (getScore() + 100));
                             }
                         }
@@ -202,6 +218,7 @@ public class Level {
             }
         };
         timer.start();
+        
     }
 
     /**
@@ -248,7 +265,7 @@ public class Level {
         if (level == Mode.LEVEL2) {
             List<Integer> standings = client.getPlayerData().getDeathOrder();
             
-            if (!standings.isEmpty()) { // Check if standings are available
+            if (!standings.isEmpty() && standings.size() == 4) { // Check standings are valid
                 List<List<Integer>> standingsWithScores = calculateStandings(standings);
         
                 // Final score == first place's score
@@ -265,7 +282,11 @@ public class Level {
                 vBox.getChildren().add(winnersLabel);
             } else {
                 // Handle empty standings list when level is LEVEL2
-                label.setText("Game Over!\nNo standings available.");
+                if(standings.size() < 4){
+                    label.setText("Less than 4 players in the game at the time of death.");
+                }else{
+                    label.setText("Game Over!\nNo standings available.");
+                }
             }
         } else {
             // Code to handle other levels if needed
@@ -575,6 +596,10 @@ public class Level {
         for (Collectable fruit : fruits) {
             if (player.getGameObject().getBoundsInParent().intersects(fruit.getHitBox().getBoundsInParent())) {
                 if (!fruit.isFalling()) {
+
+                    System.out.println("Fruit collected, +400 Score");
+                    playerData.getPlayerData(playerNum).addScore(400);
+
                     labels.get(0).setText("Score: " + (getScore() + 400));
                 }
                 fruit.setFalling(true);

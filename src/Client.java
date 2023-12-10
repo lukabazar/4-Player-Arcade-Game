@@ -47,7 +47,7 @@ public class Client implements Runnable {
             playerNum = in.readInt();
             System.out.println("Player: " + playerNum);
 
-            while (playing) {
+            while (playing && !playerData.allPlayersDead()) {
                 outData = playerData.getPlayerData(playerNum);
                 out.writeUnshared(outData);
                 out.flush();
@@ -62,7 +62,7 @@ public class Client implements Runnable {
                                     inData.isGrounded(), inData.isClimbing(), inData.isClimbingSpecial(),
                                     inData.getDirection(), inData.isCycle());
 
-                            System.out.println("Player " + idx + ": " + inData.getX() + ", " + inData.getY() + ", " + inData.getIsAlive() + " Walking: " + inData.isWalking());
+                            // System.out.println("Player " + idx + ": " + inData.getX() + ", " + inData.getY() + ", " + inData.getIsAlive() + " Walking: " + inData.isWalking());
                         }
 
                     } catch (SocketTimeoutException e) {
