@@ -28,18 +28,19 @@ public class Server {
                 playerNum++;
 
                 // Better debugging 
+                System.out.println();
+                System.out.println("----------------------------");
                 for(int i = 0; i < playerData.getNumPlayers(); i++){
-                    System.out.println();
-                    System.out.println("----------------------------");
+                    System.out.println("---------");
                     System.out.println("Player " + i);
                     System.out.println("X: " + playerData.getPlayerData(i).getX());
                     System.out.println("Y: " + playerData.getPlayerData(i).getY());
                     System.out.println("Score: " + playerData.getPlayerData(i).getScore());
                     System.out.println("Alive: " + playerData.getPlayerData(i).getIsAlive());
-                    System.out.println("----------------------------");
-                    System.out.println();
+                    System.out.println("---------");
                 }
                 System.out.println();
+                System.out.println("----------------------------");
             }
         } catch (IOException e) {
             e.printStackTrace();
