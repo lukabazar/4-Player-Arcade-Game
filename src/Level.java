@@ -141,6 +141,19 @@ public class Level {
                             if (level == Mode.LEVEL1) {
                                 labels.get(0).setText("Score: " + (getScore() - 100));
                             } else {
+
+                                // Add timing score to each player.
+                                System.out.println("***");
+                                for(int i=0 ;i<client.getPlayerData().getNumPlayers(); i++){
+                                    if(client.getPlayerData().getPlayerData(i).getIsAlive()){
+                                        client.getPlayerData().getPlayerData(i).addScore(100);
+                                        System.out.println("Player " + i + " Score: " + client.getPlayerData().getPlayerData(i).getScore());
+                                    }else{
+                                        System.out.println("Player " + i + " is dead.");
+                                    }
+                                }
+                                System.out.println("***");
+
                                 labels.get(0).setText("Score: " + (getScore() + 100));
                             }
                         }
@@ -585,7 +598,7 @@ public class Level {
                 if (!fruit.isFalling()) {
 
                     System.out.println("Fruit collected, +400 Score");
-                    playerData.getPlayerData(playerNum).addScore(400);  // a
+                    playerData.getPlayerData(playerNum).addScore(400);
 
                     labels.get(0).setText("Score: " + (getScore() + 400));
                 }
