@@ -70,6 +70,7 @@ public class PlayerData {
             //     return false;
             // }
             System.out.println("Player: " + i + " isAlive: " + playerData.get(i).getIsAlive());
+            System.out.println(" ** Score: " + playerData.get(i).getScore() + " ** ");
         }
         // ffs 
         if(getPlayerData(0).getIsAlive() && getPlayerData(1).getIsAlive() && getPlayerData(2).getIsAlive() && getPlayerData(3).getIsAlive()){

@@ -66,7 +66,11 @@ public class Client implements Runnable {
                         }
 
                         // player scores 
-                        
+                        // for(int i = 0; i < playerData.getNumPlayers(); i++){
+                        //     if(playerData.getPlayerData(i).getScore() > playerData.getPlayerData(playerNum).getScore()){
+                        //         playerData.getPlayerData(playerNum).setScore(playerData.getPlayerData(i).getScore());
+                        //     }
+                        // }
 
                     } catch (SocketTimeoutException e) {
                         idx = 4;
