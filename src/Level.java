@@ -542,16 +542,16 @@ public class Level {
             }
         }
 
-        for (Player opponent : otherPlayers) {
-            if (isCollision(player, opponent)) {
-                if (player.getY() > opponent.getY()) player.respawn(labels.get(1));
-                else if (player.getY() < opponent.getY()) {
-                    opponent.setX(pane.getWidth() + opponent.getWidth());
-                    opponent.setY(pane.getHeight() + opponent.getHeight());
-                    pane.getChildren().remove(opponent.getGameObject());
-                }
-            }
-        }
+//        for (Player opponent : otherPlayers) {
+//            if (isCollision(player, opponent)) {
+//                if (player.getY() > opponent.getY()) player.respawn(labels.get(1));
+//                else if (player.getY() < opponent.getY()) {
+//                    opponent.setX(pane.getWidth() + opponent.getWidth());
+//                    opponent.setY(pane.getHeight() + opponent.getHeight());
+//                    pane.getChildren().remove(opponent.getGameObject());
+//                }
+//            }
+//        }
 
     }
 
