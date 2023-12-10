@@ -59,4 +59,13 @@ public class PlayerData {
     public int getScore(){
         return playerData.get(0).getScore();
     }
+
+    public boolean allPlayersDead(){
+        for(int i = 0; i < playerData.size(); i++){
+            if(playerData.get(i).getIsAlive()){
+                return false;
+            }
+        }
+        return true;
+    }
 }
