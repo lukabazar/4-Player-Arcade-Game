@@ -106,6 +106,7 @@ public class Level {
                     }
                     if (player.getLives() == 0) {
                         this.stop();
+                        killPlayer();
                         player.getGameObject().relocate(0, 0);
                         pane.getChildren().remove(player.getGameObject());
                         client.stopClient();
@@ -264,19 +265,6 @@ public class Level {
             }
         }
 
-        //After updating opponents, go through and remove dead ones
-        //Better implementation, players only show sprites of players that had already joined
-        /*Iterator<Player> iter = otherPlayers.iterator();
-        while (iter.hasNext()){
-            Player opponent = iter.next();
-            if (opponent.getLives() == 0) {
-                opponent.setX(pane.getWidth() + opponent.getWidth());
-                opponent.setY(pane.getHeight() + opponent.getHeight());
-                pane.getChildren().remove(opponent.getGameObject());
-                iter.remove();
-            }
-        }*/
-
         if (player.getFallCount() >= 8 * multi) {
             if (player.isGrounded()) {
                 if (level == Mode.LEVEL1) {
@@ -288,7 +276,7 @@ public class Level {
 
         player.changeSprite();
 
-        /*for (Enemy enemy : enemies) {
+        for (Enemy enemy : enemies) {
             if (snapToBounds(enemy)) {
                 enemy.switchXDir();
                 enemy.setXVelocity(enemy.xVelocity());
@@ -299,7 +287,7 @@ public class Level {
             pane.getChildren().remove(enemy.getGameObject());
             pane.getChildren().add(enemy.getGameObject());
             enemy.changeSprite();
-        }*/
+        }
 
         player.setX(player.getX() + player.xVelocity());
         player.setY(player.getY() + player.yVelocity());
@@ -535,23 +523,19 @@ public class Level {
             }
         }
 
-
-        /*Iterator<Player> iter = otherPlayers.iterator();
+        Iterator<Player> iter = otherPlayers.iterator();
         while (iter.hasNext()) {
             Player opponent = iter.next();
             if (isCollision(player, opponent)) {
                 if (player.getY() > opponent.getY()) player.respawn(labels.get(1));
                 else if (player.getY() < opponent.getY()) {
-                    opponent.respawn(labels.get(1));
-                    if (opponent.getLives() == 0) {
-                        opponent.setX(pane.getWidth() + opponent.getWidth());
-                        opponent.setY(pane.getHeight() + opponent.getHeight());
-                        pane.getChildren().remove(opponent.getGameObject());
-                        iter.remove();
-                    }
+                    opponent.setX(pane.getWidth() + opponent.getWidth());
+                    opponent.setY(pane.getHeight() + opponent.getHeight());
+                    pane.getChildren().remove(opponent.getGameObject());
                 }
             }
-        }*/
+        }
+
     }
 
     /**
@@ -804,5 +788,15 @@ public class Level {
             player = new Player(24 * multi, 200 * multi, 27 * multi, 16 * multi, 1);
         }
     }
+
+    private void killPlayer() {
+        player.setX(pane.getWidth() + player.getWidth());
+        player.setY(pane.getHeight() + player.getHeight());
+        playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.xVelocity(),
+                player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
+                player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
+                (int) player.getGameObject().getScaleX(), player.isCycling(), false);
+    }
+
 
 }

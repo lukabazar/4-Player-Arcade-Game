@@ -440,7 +440,5 @@ public class Player extends GameObject {
         return isCycle;
     }
 
-    public void setIsReady(boolean b) { isReady = b; }
-
     public boolean isReady(){ return isReady; }
 }
