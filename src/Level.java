@@ -583,6 +583,10 @@ public class Level {
         for (Collectable fruit : fruits) {
             if (player.getGameObject().getBoundsInParent().intersects(fruit.getHitBox().getBoundsInParent())) {
                 if (!fruit.isFalling()) {
+
+                    System.out.println("Fruit collected, +400 Score");
+                    playerData.getPlayerData(playerNum).addScore(400);  // a
+
                     labels.get(0).setText("Score: " + (getScore() + 400));
                 }
                 fruit.setFalling(true);
