@@ -24,7 +24,7 @@ public class PlayerData {
 
     public void setPlayerData(int player, double x, double y, int score, double xVel, double yVel, boolean isAlive, boolean isJumping,
                               boolean isWalking, boolean isGrounded, boolean isClimbing, boolean isClimbingSpecial,
-                              int direction, boolean isCycle) {
+                              int direction, boolean isCycle, boolean isReady) {
         playerData.get(player).setX(x);
         playerData.get(player).setY(y);
         playerData.get(player).setScore(score);
@@ -38,6 +38,7 @@ public class PlayerData {
         playerData.get(player).setClimbingSpecial(isClimbingSpecial);
         playerData.get(player).setCycle(isCycle);
         playerData.get(player).setDirection(direction);
+        playerData.get(player).setReady(isReady);
     }
 
     public int getNumPlayers() {
