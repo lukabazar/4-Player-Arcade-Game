@@ -16,10 +16,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 import javax.sound.midi.Soundbank;
 
@@ -99,6 +96,15 @@ public class Level {
         }
     }
 
+    private boolean allReady() {
+        for(int i = 0; i < 4; i++) {
+            if(!playerData.getPlayerData(i).isReady() && i != playerNum) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Holds animation timer in order to update the game
      */
@@ -110,111 +116,121 @@ public class Level {
 
             @Override
             public void handle(long now) {
-                if (now - last >= 8_333_333) {
-                    if (altCount == 0) {
-                        altCount = 1;
-                    }
-                    if (isWin) {
-                        this.stop();
-                        popUp();
-                    }
-                    if (player.getLives() == 0) {
-                        this.stop();
-                        player.getGameObject().relocate(0, 0);
-                        pane.getChildren().remove(player.getGameObject());
-                        client.stopClient();
-                        popUp();
-                    }
-                    if (count % 120 == 0) {
-                        for (int i = fruits.size() - 1; i >= 0; i--) {
-                            if (!pane.getChildren().contains(fruits.get(i).getGameObject()) && level == Mode.LEVEL2) {
-                                fruits.get(i).setFalling(false);
-                                fruits.get(i).respawn();
-                                pane.getChildren().add(fruits.get(i).getGameObject());
-                                pane.getChildren().add(fruits.get(i).getHitBox());
-                                break;
-                            }
+                if (allReady()) {
+                    if (now - last >= 8_333_333) {
+                        if (altCount == 0) {
+                            altCount = 1;
                         }
-                        if (getScore() == 0 && level == Mode.LEVEL1) {
-                            labels.get(0).setText("Score: 0");
-                        } else {
-                            if (level == Mode.LEVEL1) {
-                                labels.get(0).setText("Score: " + (getScore() - 100));
-                            } else {
-
-                                // Add timing score to each player.
-                                System.out.println("***");
-                                for(int i=0 ;i<client.getPlayerData().getNumPlayers(); i++){
-                                    if(client.getPlayerData().getPlayerData(i).getIsAlive()){
-                                        client.getPlayerData().getPlayerData(i).addScore(100);
-                                        System.out.println("Player " + i + " Score: " + client.getPlayerData().getPlayerData(i).getScore());
-                                    }else{
-                                        System.out.println("Player " + i + " is dead.");
-                                    }
+                        if (isWin) {
+                            this.stop();
+                            popUp();
+                        }
+                        if (player.getLives() == 0) {
+                            killPlayer();
+                            this.stop();
+                            player.getGameObject().relocate(0, 0);
+                            pane.getChildren().remove(player.getGameObject());
+                            popUp();
+                        }
+                        if (count % 120 == 0) {
+                            for (int i = fruits.size() - 1; i >= 0; i--) {
+                                if (!pane.getChildren().contains(fruits.get(i).getGameObject()) && level == Mode.LEVEL2) {
+                                    fruits.get(i).setFalling(false);
+                                    fruits.get(i).respawn();
+                                    pane.getChildren().add(fruits.get(i).getGameObject());
+                                    pane.getChildren().add(fruits.get(i).getHitBox());
+                                    break;
                                 }
-                                System.out.println("***");
+                            }
+                            if (getScore() == 0 && level == Mode.LEVEL1) {
+                                labels.get(0).setText("Score: 0");
+                            }
+                            else {
+                                if (level == Mode.LEVEL1) {
+                                    labels.get(0).setText("Score: " + (getScore() - 100));
+                                }
+                                else {
+                                    // Add timing score to each player.
+                                    System.out.println("***");
+                                    for(int i=0 ;i<client.getPlayerData().getNumPlayers(); i++){
+                                        if(client.getPlayerData().getPlayerData(i).getIsAlive()){
+                                            client.getPlayerData().getPlayerData(i).addScore(100);
+                                            System.out.println("Player " + i + " Score: " + client.getPlayerData().getPlayerData(i).getScore());
+                                        }else{
+                                            System.out.println("Player " + i + " is dead.");
+                                        }
+                                    }
+                                    System.out.println("***");
 
-                                labels.get(0).setText("Score: " + (getScore() + 100));
+                                    labels.get(0).setText("Score: " + (getScore() + 100));
+                                }
                             }
                         }
-                    }
-                    if (count % altCount == 0 && level == Mode.LEVEL2) {
-                        Enemy enemyToAdd = new Enemy(48 * multi, 56 * multi, 16 * multi, 8 * multi);
-                        enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
-                        enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
-                        enemies.add(enemyToAdd);
-                        altCount -= 5;
-                    }
-                    if (count % 300 == 0 && level == Mode.LEVEL1) {
-                        Enemy enemyToAdd = new Enemy(80 * multi, 56 * multi, 16 * multi, 8 * multi);
-                        enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
-                        enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
-                        enemies.add(enemyToAdd);
-                    }
-                    if (count % 8 == 0) {
-                        if (player.getCycle() == 0) {
-                            for(Player otherPlayer : otherPlayers) {
-                                otherPlayer.setCycle(1);
+                        if (count % altCount == 0 && level == Mode.LEVEL2) {
+                            Enemy enemyToAdd = new Enemy(48 * multi, 56 * multi, 16 * multi, 8 * multi);
+                            enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
+                            enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
+                            enemies.add(enemyToAdd);
+                            altCount -= 5;
+                        }
+                        if (count % 300 == 0 && level == Mode.LEVEL1) {
+                            Enemy enemyToAdd = new Enemy(80 * multi, 56 * multi, 16 * multi, 8 * multi);
+                            enemyToAdd.setXVelocity(1.5 / 3.0 * multi);
+                            enemyToAdd.setYVelocity(1.5 / 3.0 * multi);
+                            enemies.add(enemyToAdd);
+                        }
+                        if (count % 8 == 0) {
+                            if (player.getCycle() == 0) {
+                                for (Player otherPlayer : otherPlayers) {
+                                    otherPlayer.setCycle(1);
+                                }
+                                for (Enemy enemy : enemies) {
+                                    enemy.setCycle(1);
+                                }
                             }
-                            for (Enemy enemy : enemies) {
-                                enemy.setCycle(1);
+                            else if (player.getCycle() == 1) {
+                                for (Player otherPlayer : otherPlayers) {
+                                    otherPlayer.setCycle(2);
+                                }
+                                for (Enemy enemy : enemies) {
+                                    enemy.setCycle(0);
+                                }
                             }
-                        } else if (player.getCycle() == 1) {
-                            for(Player otherPlayer : otherPlayers) {
-                                otherPlayer.setCycle(2);
+                            else if (player.getCycle() == 2) {
+                                for (Player otherPlayer : otherPlayers) {
+                                    otherPlayer.setCycle(3);
+                                }
                             }
-                            for (Enemy enemy : enemies) {
-                                enemy.setCycle(0);
-                            }
-                        } else if (player.getCycle() == 2) {
-                            for(Player otherPlayer : otherPlayers) {
-                                otherPlayer.setCycle(3);
-                            }
-                        } else {
-                            for(Player otherPlayer : otherPlayers) {
-                                otherPlayer.setCycle(0);
+                            else {
+                                for (Player otherPlayer : otherPlayers) {
+                                    otherPlayer.setCycle(0);
+                                }
                             }
                         }
-                    }
-                    if (count % 25 == 0) {
-                        if (player.getHasOverA()){
-                            player.setOverToB();
-                            player.setHasOverA(false);
+                        if (count % 25 == 0) {
+                            if (player.getHasOverA()) {
+                                player.setOverToB();
+                                player.setHasOverA(false);
+                            }
+                            else {
+                                player.setOverToA();
+                                player.setHasOverA(true);
+                            }
                         }
-                        else {
-                            player.setOverToA();
-                            player.setHasOverA(true);
-                        }
+                        update();
+                        last = now;
+                        count = (count + 1) % 3600;
                     }
-                    update();
-                    last = now;
-                    count = (count + 1) % 3600;
+                    playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
+                            player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
+                            player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
+                            (int) player.getGameObject().getScaleX(), player.isCycling(), player.isReady());
                 }
                 if(player.getLives() != 1) { playerData.addDeathOrder(playerNum); }     // add to death order if player has died
                 playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
                         player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
                         player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
-                        (int) player.getGameObject().getScaleX(), player.isCycling());
+                        (int) player.getGameObject().getScaleX(), player.isCycling(), player.isReady());
             }
         };
         timer.start();
@@ -258,10 +274,14 @@ public class Level {
         stage.setScene(new Scene(borderPane));
         button.setOnAction(event -> {
             isOver = true;
+            client.stopClient();
             stage.close();
         });
         
-        stage.setOnCloseRequest(event -> isOver = true);
+        stage.setOnCloseRequest(event -> {
+            isOver = true;
+            client.stopClient();
+        });
         if (level == Mode.LEVEL2) {
             List<Integer> standings = client.getPlayerData().getDeathOrder();
             
@@ -394,17 +414,6 @@ public class Level {
                 dk.changeSprite();
             }
         }
-
-        //After updating opponents, go through and remove dead ones
-        /*for ( Player opponent : otherPlayers) {
-            if (opponent.getLives() == 0) {
-                pane.getChildren().remove(opponent.getGameObject());
-                opponent.setX(pane.getWidth() + opponent.getWidth());
-                opponent.setY(pane.getHeight() + opponent.getHeight());
-                pane.getChildren().remove(opponent.getGameObject());
-                otherPlayers.remove(opponent);
-            }
-        }*/
 
         if (player.getFallCount() >= 8 * multi) {
             if (player.isGrounded()) {
@@ -652,24 +661,18 @@ public class Level {
                 }
             }
         }
-        /* Handles player collision, killing the lower player. I can get it to remove them from
-        *  the otherPlayer list and send the sprite out of the way, as the above does with enemies
-        *  but it doesn't update on their end. If I leave that part out, it updated other players
-        * to get game over, but left their sprites which would still trigger collision
-        for ( Player opponent : otherPlayers) {
-            if (isCollision(player, opponent)){
-                if (player.getY() > opponent.getY()) player.respawn(labels.get(1));
-                else if (player.getY() < opponent.getY()) {
-                    opponent.respawn(labels.get(1));
-                    if (opponent.getLives() == 0) {
-                        opponent.setX(pane.getWidth() + opponent.getWidth());
-                        opponent.setY(pane.getHeight() + opponent.getHeight());
-                        pane.getChildren().remove(opponent.getGameObject());
-                        otherPlayers.remove(opponent);
-                    }
-                }
-            }
-        }*/
+
+//        for (Player opponent : otherPlayers) {
+//            if (isCollision(player, opponent)) {
+//                if (player.getY() > opponent.getY()) player.respawn(labels.get(1));
+//                else if (player.getY() < opponent.getY()) {
+//                    opponent.setX(pane.getWidth() + opponent.getWidth());
+//                    opponent.setY(pane.getHeight() + opponent.getHeight());
+//                    pane.getChildren().remove(opponent.getGameObject());
+//                }
+//            }
+//        }
+
     }
 
     /**
@@ -916,5 +919,15 @@ public class Level {
             player = new Player(24 * multi, 200 * multi, 27 * multi, 16 * multi, 1);
         }
     }
+
+    private void killPlayer() {
+        player.setX(pane.getWidth() + player.getWidth());
+        player.setY(pane.getHeight() + player.getHeight());
+        playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
+                player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
+                player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
+                (int) player.getGameObject().getScaleX(), player.isCycling(), player.isReady());
+    }
+
 
 }

@@ -40,6 +40,7 @@ public class DonkeyKongJr extends Application {
         //     multi = i;
         // }
 
+        multi = 3;
         int width = pixelWidth * multi;
         int height = pixelHeight * multi;
 
