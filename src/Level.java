@@ -211,7 +211,7 @@ public class Level {
                     count = (count + 1) % 3600;
                 }
                 if(player.getLives() != 1) { playerData.addDeathOrder(playerNum); }     // add to death order if player has died
-                playerData.setPlayerData(playerNum, player.getX(), player.getY(), player.getScore(), player.xVelocity(),
+                playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
                         player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
                         player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
                         (int) player.getGameObject().getScaleX(), player.isCycling());

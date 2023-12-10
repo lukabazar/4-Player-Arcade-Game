@@ -65,6 +65,9 @@ public class Client implements Runnable {
                             // System.out.println("Player " + idx + ": " + inData.getX() + ", " + inData.getY() + ", " + inData.getIsAlive() + " Walking: " + inData.isWalking());
                         }
 
+                        // player scores 
+                        
+
                     } catch (SocketTimeoutException e) {
                         idx = 4;
                     }
