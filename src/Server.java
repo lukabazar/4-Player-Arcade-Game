@@ -39,8 +39,8 @@ public class Server {
                     System.out.println("Alive: " + playerData.getPlayerData(i).getIsAlive());
                     System.out.println("---------");
                 }
-                System.out.println();
                 System.out.println("----------------------------");
+                System.out.println();
             }
         } catch (IOException e) {
             e.printStackTrace();
