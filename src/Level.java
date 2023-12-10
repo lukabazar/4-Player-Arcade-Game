@@ -105,11 +105,10 @@ public class Level {
                         popUp();
                     }
                     if (player.getLives() == 0) {
-                        this.stop();
                         killPlayer();
+                        this.stop();
                         player.getGameObject().relocate(0, 0);
                         pane.getChildren().remove(player.getGameObject());
-                        client.stopClient();
                         popUp();
                     }
                     if (count % 120 == 0) {
@@ -229,6 +228,7 @@ public class Level {
         stage.setScene(new Scene(borderPane));
         button.setOnAction(event -> {
             isOver = true;
+            client.stopClient();
             stage.close();
         });
         stage.setOnCloseRequest(event -> isOver = true);
@@ -523,9 +523,7 @@ public class Level {
             }
         }
 
-        Iterator<Player> iter = otherPlayers.iterator();
-        while (iter.hasNext()) {
-            Player opponent = iter.next();
+        for (Player opponent : otherPlayers) {
             if (isCollision(player, opponent)) {
                 if (player.getY() > opponent.getY()) player.respawn(labels.get(1));
                 else if (player.getY() < opponent.getY()) {
