@@ -224,13 +224,13 @@ public class Level {
                     playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
                             player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
                             player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
-                            (int) player.getGameObject().getScaleX(), player.isCycling(), player.isReady());
+                            (int) player.getGameObject().getScaleX(), player.isCycling(), true);
                 }
                 if(player.getLives() != 1) { playerData.addDeathOrder(playerNum); }     // add to death order if player has died
                 playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
                         player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
                         player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
-                        (int) player.getGameObject().getScaleX(), player.isCycling(), player.isReady());
+                        (int) player.getGameObject().getScaleX(), player.isCycling(), true);
             }
         };
         timer.start();
@@ -426,7 +426,7 @@ public class Level {
 
         player.changeSprite();
 
-        for (Enemy enemy : enemies) {
+        /*for (Enemy enemy : enemies) {
             if (snapToBounds(enemy)) {
                 enemy.switchXDir();
                 enemy.setXVelocity(enemy.xVelocity());
@@ -437,7 +437,7 @@ public class Level {
             pane.getChildren().remove(enemy.getGameObject());
             pane.getChildren().add(enemy.getGameObject());
             enemy.changeSprite();
-        }
+        }*/
 
         player.setX(player.getX() + player.xVelocity());
         player.setY(player.getY() + player.yVelocity());
@@ -662,16 +662,19 @@ public class Level {
             }
         }
 
-//        for (Player opponent : otherPlayers) {
-//            if (isCollision(player, opponent)) {
-//                if (player.getY() > opponent.getY()) player.respawn(labels.get(1));
-//                else if (player.getY() < opponent.getY()) {
-//                    opponent.setX(pane.getWidth() + opponent.getWidth());
-//                    opponent.setY(pane.getHeight() + opponent.getHeight());
-//                    pane.getChildren().remove(opponent.getGameObject());
-//                }
-//            }
-//        }
+        for (int i = 0; i < 4; i++) {
+            if ( 1 != playerNum) {
+                Player opponent = otherPlayers.get(i);
+                if (isCollision(player, opponent)) {
+                    if (!opponent.isGrounded() && player.isGrounded()) player.respawn(labels.get(1));
+                    else if (!player.isGrounded() && opponent.isGrounded()) {
+                        opponent.setX(pane.getWidth() + opponent.getWidth());
+                        opponent.setY(pane.getHeight() + opponent.getHeight());
+                        pane.getChildren().remove(opponent.getGameObject());
+                    }
+                }
+            }
+        }
 
     }
 
@@ -926,8 +929,7 @@ public class Level {
         playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
                 player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
                 player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
-                (int) player.getGameObject().getScaleX(), player.isCycling(), player.isReady());
+                (int) player.getGameObject().getScaleX(), player.isCycling(), false);
     }
-
 
 }
