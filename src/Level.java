@@ -90,10 +90,7 @@ public class Level {
         }
         otherPlayers.add(playerNum, player);
 
-        if(playerData.getNumPlayers() == 4){
-            System.out.println("There are " + playerData.getNumPlayers() + " players connected. (level)");
-            play();
-        }
+        play();
     }
 
     private boolean allReady() {
@@ -221,15 +218,12 @@ public class Level {
                         last = now;
                         count = (count + 1) % 3600;
                     }
-                    playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
-                            player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
-                            player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
-                            (int) player.getGameObject().getScaleX(), player.isCycling(), true);
                 }
-                if(player.getLives() != 1) { playerData.addDeathOrder(playerNum); }     // add to death order if player has died
+                if(player.getLives() <= 0) { playerData.addDeathOrder(playerNum); } // add to death order if
+                // player has died
                 playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
-                        player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
-                        player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
+                        player.yVelocity(), player.getLives() > 0, player.isJumping(),
+                        player.isWalking(), player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
                         (int) player.getGameObject().getScaleX(), player.isCycling(), true);
             }
         };
@@ -398,7 +392,10 @@ public class Level {
     private void update() {
 
         for(int i = 0; i < otherPlayers.size(); i++) {
-            if(i != playerNum) {
+            if(i != playerNum && otherPlayers.get(i).getLives() <= 0) {
+                pane.getChildren().remove(otherPlayers.get(i).getGameObject());
+            }
+            else if(i != playerNum && otherPlayers.get(i).getLives() > 0) {
                 Player dk = otherPlayers.get(i);
                 dk.setXVelocity(playerData.getPlayerData(i).xVelocity());
                 dk.setYVelocity(playerData.getPlayerData(i).yVelocity());
@@ -662,20 +659,30 @@ public class Level {
             }
         }
 
-        for (int i = 0; i < 4; i++) {
-            if ( 1 != playerNum) {
+        opponentCollision();
+
+    }
+
+    private void opponentCollision() {
+        for(int i = 0; i < otherPlayers.size(); i++) {
+            if(i != playerNum) {
                 Player opponent = otherPlayers.get(i);
                 if (isCollision(player, opponent)) {
                     if (!opponent.isGrounded() && player.isGrounded()) player.respawn(labels.get(1));
-                    else if (!player.isGrounded() && opponent.isGrounded()) {
-                        opponent.setX(pane.getWidth() + opponent.getWidth());
-                        opponent.setY(pane.getHeight() + opponent.getHeight());
-                        pane.getChildren().remove(opponent.getGameObject());
+                    else if (!player.isGrounded() && opponent.isGrounded()) opponent.respawn(new Label());
+                }
+            }
+            for(int j = 0; j < otherPlayers.size(); j++) {
+                if(i != j && i != playerNum && j != playerNum) {
+                    Player opponent1 = otherPlayers.get(i);
+                    Player opponent2 = otherPlayers.get(j);
+                    if (isCollision(opponent1, opponent2)) {
+                        if (!opponent2.isGrounded() && opponent1.isGrounded()) opponent1.respawn(new Label());
+                        else if (!opponent1.isGrounded() && opponent2.isGrounded()) opponent2.respawn(new Label());
                     }
                 }
             }
         }
-
     }
 
     /**
@@ -927,7 +934,7 @@ public class Level {
         player.setX(pane.getWidth() + player.getWidth());
         player.setY(pane.getHeight() + player.getHeight());
         playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
-                player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
+                player.yVelocity(), player.getLives() > 0, player.isJumping(), player.isWalking(),
                 player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
                 (int) player.getGameObject().getScaleX(), player.isCycling(), false);
     }
