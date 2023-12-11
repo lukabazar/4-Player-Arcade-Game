@@ -62,22 +62,14 @@ public class PlayerData {
     }
 
     public boolean allPlayersDead(){
-        System.out.println("----------------------------");
-        System.out.println("-- Checking Players Alive --");
-        System.out.println("Num players I can see:" + getNumPlayers());
         for(int i = 0; i < getNumPlayers(); i++){
-            // if(playerData.get(i).getIsAlive()){
-            //     System.out.println("Player: " + i + " is alive)");
-            //     return false;
-            // }
-            System.out.println("Player: " + i + " isAlive: " + playerData.get(i).getIsAlive());
-            System.out.println(" ** Score: " + playerData.get(i).getScore() + " ** ");
+            if(playerData.get(i).getIsAlive()){
+                System.out.println("Player: " + i + " is alive)");
+                return false;
+            }
         }
-        // ffs 
-        if(getPlayerData(0).getIsAlive() && getPlayerData(1).getIsAlive() && getPlayerData(2).getIsAlive() && getPlayerData(3).getIsAlive()){
-            return false;
-        }
-        System.out.println("All players are dead.");
+        System.out.println("----------------------------");
+        System.out.println("--- All players are dead ---");
         System.out.println("----------------------------");
         return true;
     }

@@ -258,7 +258,6 @@ public class Level {
     /**
      * End of game popups
      */
-    // @ryan here
     private void popUp() {
         Stage stage = new Stage();
         stage.setWidth(scene.getWidth() / 4);
@@ -302,7 +301,21 @@ public class Level {
                 vBox.getChildren().add(winnersLabel);
             } else {
                 // Handle empty standings list when level is LEVEL2
+                // @ryan standings
                 if(standings.size() < 4){
+                    System.out.println("Standings Size: " + standings.size());
+                    System.out.println("========================");
+                    System.out.println("========================");
+                    System.out.println("======= Standings ======");
+
+                    for(int i = standings.size()-1; i>0; i--){
+                        System.out.println(standings.get(i));
+                    }
+
+                    System.out.println("========================");
+                    System.out.println("========================");
+
+
                     label.setText("Less than 4 players in the game at the time of death.");
                 }else{
                     label.setText("Game Over!\nNo standings available.");
@@ -637,6 +650,9 @@ public class Level {
                 if (level == Mode.LEVEL1) {
                     labels.get(0).setText("Score: 5000");
                 }
+
+                playerData.getPlayerData(playerNum).setIsAlive(false);
+
                 player.respawn(labels.get(1));
                 enemy.setX(pane.getWidth() + enemy.getWidth());
                 enemy.setY(pane.getHeight() + enemy.getHeight());
