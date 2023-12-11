@@ -11,6 +11,7 @@ public class Data implements Serializable {
     private double x;
     private double y;
     private int score;
+    private long timeAlive;
     private double xVelocity;
     private double yVelocity;
     private boolean isAlive;
@@ -189,4 +190,11 @@ public class Data implements Serializable {
         deathOrder.add(player);
     }
 
+    public long getTimeAlive(){
+        return timeAlive;
+    }
+
+    public void setTimeAlive(long timeAlive){
+        this.timeAlive = timeAlive;
+    }
 }

@@ -58,6 +58,8 @@ public class Level {
     private boolean isOver = false;
     private int numRopes = 0;
     private final Random random = new Random(System.currentTimeMillis());
+    private long startTime;
+    private long endTime;
 
 
     private final List<Player> otherPlayers = new ArrayList<>();
@@ -119,6 +121,9 @@ public class Level {
             @Override
             public void handle(long now) {
                 if (allReady()) {
+
+                    startScoreTimer();
+
                     if (now - last >= 8_333_333) {
                         if (altCount == 0) {
                             altCount = 1;
@@ -236,12 +241,12 @@ public class Level {
                         last = now;
                         count = (count + 1) % 3600;
                     }
-                    playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
+                    playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), getTimeAlive(), player.xVelocity(),
                             player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
                             player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
                             (int) player.getGameObject().getScaleX(), player.isCycling(), player.isReady());
                 }
-                playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
+                playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), getTimeAlive(), player.xVelocity(),
                         player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
                         player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
                         (int) player.getGameObject().getScaleX(), player.isCycling(), player.isReady());
@@ -965,13 +970,19 @@ public class Level {
         player.setX(pane.getWidth() + player.getWidth());
         player.setY(pane.getHeight() + player.getHeight());
 
+        stopScoreTimer();
+
         System.out.println("Player" + playerNum + " in level.killPlayer()");
 
-        playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
+        playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), getTimeAlive(), player.xVelocity(),
                 player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
                 player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
                 (int) player.getGameObject().getScaleX(), player.isCycling(), player.isReady());
     }
 
+    private void startScoreTimer(){ startTime = System.nanoTime(); }
 
+    private void stopScoreTimer(){ endTime = System.nanoTime(); }
+
+    private long getTimeAlive(){ return endTime - startTime; }
 }
