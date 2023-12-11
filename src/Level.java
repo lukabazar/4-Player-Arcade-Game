@@ -13,6 +13,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import java.util.ArrayList;
+import java.util.List;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -152,6 +154,7 @@ public class Level {
                                 else {
                                     // Add timing score to each player.
                                     System.out.println("***");
+                                    System.out.println("-- I am player " + playerNum + " --");
                                     for(int i=0 ;i<client.getPlayerData().getNumPlayers(); i++){
                                         if(client.getPlayerData().getPlayerData(i).getIsAlive()){
                                             client.getPlayerData().getPlayerData(i).addScore(100);
@@ -159,6 +162,18 @@ public class Level {
                                         }else{
                                             System.out.println("Player " + i + " is dead.");
                                         }
+
+                                        System.out.println("--- D Order--");
+                                        int size = client.getPlayerData().getPlayerData(i).getDeathOrder().size();
+                                        System.out.println("s: " + size);
+
+                                        if(size != 0){
+                                            for(int j=0; j<size; j++){
+                                                System.out.println("Player " + i + " Death Order: " + client.getPlayerData().getPlayerData(i).getDeathOrder().get(j));
+                                            }
+                                        }
+
+                                        System.out.println("-------------");
                                     }
                                     System.out.println("***");
 
@@ -226,7 +241,6 @@ public class Level {
                             player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
                             (int) player.getGameObject().getScaleX(), player.isCycling(), player.isReady());
                 }
-                if(player.getLives() != 1) { playerData.addDeathOrder(playerNum); }     // add to death order if player has died
                 playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
                         player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
                         player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
@@ -282,10 +296,30 @@ public class Level {
             client.stopClient();
         });
         if (level == Mode.LEVEL2) {
-            List<Integer> standings = client.getPlayerData().getDeathOrder();
+            System.out.println("========================");
+            System.out.println("========================");
+
+            List<Integer> standings = client.getPlayerData().getPlayerData(playerNum).getDeathOrder();
+
+
+            System.out.println("First standings pull: ");
+            System.out.println("~~~~");
+            for(int i=standings.size()-1; i>0; i--){
+                System.out.println(standings.get(i));
+            }
+            System.out.println("~~~~");
             
+
             if (!standings.isEmpty() && standings.size() == 4) { // Check standings are valid
+                System.out.println("Standings is not empty.");
                 List<List<Integer>> standingsWithScores = calculateStandings(standings);
+
+                System.out.println("Standings with scores pull ");
+                System.out.println("~~~~");
+                for(int i=standingsWithScores.size()-1; i>0; i--){
+                    System.out.println(standingsWithScores.get(i));
+                }
+                System.out.println("~~~~");
         
                 // Final score == first place's score
                 int finalScore = standingsWithScores.get(0).get(1);
@@ -303,23 +337,14 @@ public class Level {
                 // Handle empty standings list when level is LEVEL2
                 // @ryan standings
                 if(standings.size() < 4){
-                    System.out.println("Standings Size: " + standings.size());
-                    System.out.println("========================");
-                    System.out.println("========================");
-                    System.out.println("======= Standings ======");
-
-                    for(int i = standings.size()-1; i>0; i--){
-                        System.out.println(standings.get(i));
-                    }
-
-                    System.out.println("========================");
-                    System.out.println("========================");
-
 
                     label.setText("Less than 4 players in the game at the time of death.");
                 }else{
                     label.setText("Game Over!\nNo standings available.");
                 }
+
+                System.out.println("========================");
+                System.out.println("========================");
             }
         } else {
             // Code to handle other levels if needed
@@ -939,6 +964,9 @@ public class Level {
     private void killPlayer() {
         player.setX(pane.getWidth() + player.getWidth());
         player.setY(pane.getHeight() + player.getHeight());
+
+        System.out.println("Player" + playerNum + " in level.killPlayer()");
+
         playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
                 player.yVelocity(), player.getLives() != 0, player.isJumping(), player.isWalking(),
                 player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),

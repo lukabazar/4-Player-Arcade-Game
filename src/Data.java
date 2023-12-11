@@ -1,5 +1,7 @@
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Data structure to contain player data
@@ -21,6 +23,8 @@ public class Data implements Serializable {
     private int direction;
 
     private boolean isReady;
+
+    private List<Integer> deathOrder;
     
     /**
      * Constructor for Data class
@@ -43,6 +47,7 @@ public class Data implements Serializable {
         isCycle = false;
         direction = 1;
         isReady = false;
+        this.deathOrder = new ArrayList<>();
     }
 
     public int getDirection() {
@@ -172,5 +177,16 @@ public class Data implements Serializable {
     public boolean isReady() { return isReady; }
 
     public void setReady( boolean ready) { isReady = ready; }
+
+    /*
+     * Converting this to an array so I don't need to worry about importing arrayLists into every class.
+     */
+    public List<Integer> getDeathOrder(){
+        return deathOrder;
+    }
+
+    public void addDeathOrder(int player){
+        deathOrder.add(player);
+    }
 
 }
