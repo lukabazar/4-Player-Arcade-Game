@@ -152,9 +152,23 @@ public class Level {
                                     for(int i=0 ;i<client.getPlayerData().getNumPlayers(); i++){
                                         if(client.getPlayerData().getPlayerData(i).getIsAlive()){
                                             client.getPlayerData().getPlayerData(i).addScore(100);
-                                            System.out.println("Player " + i + " Score: " + client.getPlayerData().getPlayerData(i).getScore());
+
+                                            // Mark current player: 
+                                            if(i == playerNum){
+                                                System.out.print("[ ");
+                                                System.out.print("Player " + i + " Score: " + client.getPlayerData().getPlayerData(i).getScore());
+                                                System.out.print(" ]\n");
+                                            }else{
+                                                System.out.println("Player " + i + " Score: " + client.getPlayerData().getPlayerData(i).getScore());
+                                            }
                                         }else{
-                                            System.out.println("Player " + i + " is dead.");
+                                            if(i == playerNum){
+                                                System.out.print("[ ");
+                                                System.out.print("Player " + i + " is dead.");
+                                                System.out.print(" ]\n");
+                                            }else{
+                                                System.out.println("Player " + i + " is dead.");
+                                            }
                                         }
                                     }
                                     System.out.println("***");
