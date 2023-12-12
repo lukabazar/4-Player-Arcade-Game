@@ -57,13 +57,13 @@ public class Level {
     private int numRopes = 0;
     private final Random random = new Random(System.currentTimeMillis());
     /*
-     * Standings format: List<Integer> -> 
+     * Standings format: List<Integer> ->
      * [playerId, score, playerId, score, playerId, score, playerId, score]
      */
     private List<Integer> standings;
 
-
     private final List<Player> otherPlayers = new ArrayList<>();
+
     /**
      * Places all game objects onto the level
      *
@@ -72,7 +72,7 @@ public class Level {
      * @param multi Multiple used to scale window
      */
     public Level(Scene scene, Pane pane, List<Label> labels, int multi, Client client,
-                 PlayerData playerData, int playerNum, Mode level) {
+            PlayerData playerData, int playerNum, Mode level) {
 
         this.scene = scene;
         this.pane = pane;
@@ -89,7 +89,7 @@ public class Level {
         makePlayer();
         addAll();
 
-        for(int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             Player player = new Player(24 * multi, 200 * multi, 27 * multi, 16 * multi, 1);
             otherPlayers.add(player);
             pane.getChildren().add(player.getGameObject());
@@ -100,8 +100,8 @@ public class Level {
     }
 
     private boolean allReady() {
-        for(int i = 0; i < 4; i++) {
-            if(!playerData.getPlayerData(i).isReady() && i != playerNum) {
+        for (int i = 0; i < 4; i++) {
+            if (!playerData.getPlayerData(i).isReady() && i != playerNum) {
                 return false;
             }
         }
@@ -137,7 +137,8 @@ public class Level {
                         }
                         if (count % 120 == 0) {
                             for (int i = fruits.size() - 1; i >= 0; i--) {
-                                if (!pane.getChildren().contains(fruits.get(i).getGameObject()) && level == Mode.LEVEL2) {
+                                if (!pane.getChildren().contains(fruits.get(i).getGameObject())
+                                        && level == Mode.LEVEL2) {
                                     fruits.get(i).setFalling(false);
                                     fruits.get(i).respawn();
                                     pane.getChildren().add(fruits.get(i).getGameObject());
@@ -147,32 +148,32 @@ public class Level {
                             }
                             if (getScore() == 0 && level == Mode.LEVEL1) {
                                 labels.get(0).setText("Score: 0");
-                            }
-                            else {
+                            } else {
                                 if (level == Mode.LEVEL1) {
                                     labels.get(0).setText("Score: " + (getScore() - 100));
-                                }
-                                else {
+                                } else {
                                     // Add timing score to each player.
                                     System.out.println("***");
-                                    for(int i=0 ;i<client.getPlayerData().getNumPlayers(); i++){
-                                        if(client.getPlayerData().getPlayerData(i).getIsAlive()){
+                                    for (int i = 0; i < client.getPlayerData().getNumPlayers(); i++) {
+                                        if (client.getPlayerData().getPlayerData(i).getIsAlive()) {
                                             client.getPlayerData().getPlayerData(i).addScore(100);
 
-                                            // Mark current player: 
-                                            if(i == playerNum){
+                                            // Mark current player:
+                                            if (i == playerNum) {
                                                 System.out.print("[ ");
-                                                System.out.print("Player " + i + " Score: " + client.getPlayerData().getPlayerData(i).getScore());
+                                                System.out.print("Player " + i + " Score: "
+                                                        + client.getPlayerData().getPlayerData(i).getScore());
                                                 System.out.print(" ]\n");
-                                            }else{
-                                                System.out.println("Player " + i + " Score: " + client.getPlayerData().getPlayerData(i).getScore());
+                                            } else {
+                                                System.out.println("Player " + i + " Score: "
+                                                        + client.getPlayerData().getPlayerData(i).getScore());
                                             }
-                                        }else{
-                                            if(i == playerNum){
+                                        } else {
+                                            if (i == playerNum) {
                                                 System.out.print("[ ");
                                                 System.out.print("Player " + i + " is dead.");
                                                 System.out.print(" ]\n");
-                                            }else{
+                                            } else {
                                                 System.out.println("Player " + i + " is dead.");
                                             }
                                         }
@@ -204,21 +205,18 @@ public class Level {
                                 for (Enemy enemy : enemies) {
                                     enemy.setCycle(1);
                                 }
-                            }
-                            else if (player.getCycle() == 1) {
+                            } else if (player.getCycle() == 1) {
                                 for (Player otherPlayer : otherPlayers) {
                                     otherPlayer.setCycle(2);
                                 }
                                 for (Enemy enemy : enemies) {
                                     enemy.setCycle(0);
                                 }
-                            }
-                            else if (player.getCycle() == 2) {
+                            } else if (player.getCycle() == 2) {
                                 for (Player otherPlayer : otherPlayers) {
                                     otherPlayer.setCycle(3);
                                 }
-                            }
-                            else {
+                            } else {
                                 for (Player otherPlayer : otherPlayers) {
                                     otherPlayer.setCycle(0);
                                 }
@@ -228,8 +226,7 @@ public class Level {
                             if (player.getHasOverA()) {
                                 player.setOverToB();
                                 player.setHasOverA(false);
-                            }
-                            else {
+                            } else {
                                 player.setOverToA();
                                 player.setHasOverA(true);
                             }
@@ -240,33 +237,12 @@ public class Level {
                     }
                 }
                 /*
-                 * If a player runs out of lives, they enter a loop and only pull each other players' score 
+                 * If a player runs out of lives, they enter a loop and only pull each other
+                 * players' score
                  * until all players have died, at which point they all disconnect.
                  */
-                if(player.getLives() <= 0 && !allPlayersDead()) { 
-                    playerData.addDeathOrder(playerNum);
+                if (player.getLives() <= 0 && !allPlayersDead()) { playerData.addDeathOrder(playerNum); }
 
-                    // wait for all players to be dead before disconnecting
-                    while(!allPlayersDead()){
-                        try{
-                            Date currentTime = new Date();
-                            Thread.sleep(1000);
-                            System.out.println("[" + currentTime + "] " + "players still alive.");
-                        }catch (InterruptedException e){
-                            e.printStackTrace();
-                        }
-                    }
-
-                    calculateStandings(standings);
-
-                    // Stay connected for 5 seconds after everyone dies to make sure standings have plenty of time to update
-                    try {
-                        Thread.sleep(5000);
-                        System.out.println("Waiting 5 seconds.");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
                 // player has died
                 playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
                         player.yVelocity(), player.getLives() > 0, player.isJumping(),
@@ -275,14 +251,38 @@ public class Level {
             }
         };
         timer.start();
-        
+
     }
 
-    public boolean allPlayersDead(){
+    private void waitForGameEnd() {
+        System.out.println("Inside of waitForGameEnd");
+
+        // wait for all players to be dead before disconnecting
+        while (!allPlayersDead()) {
+            try {
+                Date currentTime = new Date();
+                Thread.sleep(1000);
+                System.out.println("[" + currentTime + "] " + "players still alive.");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Stay connected for 5 seconds after everyone dies to make sure standings have
+        // plenty of time to update
+        try {
+            Thread.sleep(5000);
+            System.out.println("Waiting 5 seconds.");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean allPlayersDead() {
         System.out.println("-----");
-        for(int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             System.out.println("player " + i + ": " + client.getPlayerData().getPlayerData(i).getIsAlive());
-            if(client.getPlayerData().getPlayerData(i).getIsAlive()){
+            if (client.getPlayerData().getPlayerData(i).getIsAlive()) {
                 return false;
             }
         }
@@ -330,34 +330,33 @@ public class Level {
             client.stopClient();
             stage.close();
         });
-        
+
         stage.setOnCloseRequest(event -> {
             isOver = true;
             client.stopClient();
         });
         if (level == Mode.LEVEL2) {
-            
-            
+
             if (!standings.isEmpty() && standings.size() == 4) { // Check standings are valid
                 List<List<Integer>> standingsWithScores = calculateStandings(standings);
-        
+
                 // Final score == first place's score
                 int finalScore = standingsWithScores.get(0).get(1);
                 label.setText("Game Over!\nFinal Score: " + finalScore);
-        
+
                 StringBuilder winnersScores = new StringBuilder("Winners' Scores:\n");
                 for (List<Integer> playerScorePair : standingsWithScores) {
                     winnersScores.append("Player ").append(playerScorePair.get(0)).append(": ")
                             .append(playerScorePair.get(1)).append("\n");
                 }
-        
+
                 Label winnersLabel = new Label(winnersScores.toString());
                 vBox.getChildren().add(winnersLabel);
             } else {
                 // Handle empty standings list when level is LEVEL2
-                if(standings.size() < 4){
+                if (standings.size() < 4) {
                     label.setText("Less than 4 players in the game at the time of death.");
-                }else{
+                } else {
                     label.setText("Game Over!\nNo standings available.");
                 }
             }
@@ -366,7 +365,6 @@ public class Level {
             // For example, set a default message or handle other game modes
             label.setText("Game Over!\nLevel completed. No standings available for this level.");
         }
-        
 
         stage.show();
     }
@@ -392,15 +390,15 @@ public class Level {
             // Handle empty standings list
             System.out.println("No standings available!");
             return result; // or handle this case according to your requirements
-        }else{
+        } else {
             System.out.println("Standings is not empty.");
         }
 
-        if(standings.size() < 4){
+        if (standings.size() < 4) {
             Date currentTime = new Date();
             System.out.println("[" + currentTime + "] " + "There are still players alive");
             return result;
-        }else{
+        } else {
             System.out.println("Standings has 4 values.");
         }
 
@@ -410,16 +408,19 @@ public class Level {
         int tBonus = 500;
 
         // Set positions
-        System.out.println("First is doing (ID):" + standings.get(standings.size() - 2) + "(SCORE): " + standings.get(standings.size() - 1));
+        System.out.println("First is doing (ID):" + standings.get(standings.size() - 2) + "(SCORE): "
+                + standings.get(standings.size() - 1));
         Data first = client.getPlayerData().getPlayerData(standings.get(standings.size() - 2));
 
-        System.out.println("Second is doing:" + standings.get(standings.size() - 4) + "(SCORE): " + standings.get(standings.size() - 3));
+        System.out.println("Second is doing:" + standings.get(standings.size() - 4) + "(SCORE): "
+                + standings.get(standings.size() - 3));
         Data second = client.getPlayerData().getPlayerData(standings.get(standings.size() - 4));
 
-        System.out.println("Third is doing:" + standings.get(standings.size() - 6) + "(SCORE): " + standings.get(standings.size() - 5));
+        System.out.println("Third is doing:" + standings.get(standings.size() - 6) + "(SCORE): "
+                + standings.get(standings.size() - 5));
         Data third = client.getPlayerData().getPlayerData(standings.get(standings.size() - 6));
 
-        // load in original scores 
+        // load in original scores
         // first.addScore(client.getPlayerData().getPlayerData(first.getId()));
 
         // Add bonus scores
@@ -438,8 +439,6 @@ public class Level {
         addToResult(result, standings.get(standings.size() - 1), fBonus);
         addToResult(result, standings.get(standings.size() - 2), sBonus);
         addToResult(result, standings.get(standings.size() - 3), tBonus);
-
-
 
         System.out.println(" ------------------------------------------ ");
         System.out.println(" ------------------------------------------ ");
@@ -465,11 +464,10 @@ public class Level {
      */
     private void update() {
 
-        for(int i = 0; i < otherPlayers.size(); i++) {
-            if(i != playerNum && otherPlayers.get(i).getLives() <= 0) {
+        for (int i = 0; i < otherPlayers.size(); i++) {
+            if (i != playerNum && otherPlayers.get(i).getLives() <= 0) {
                 pane.getChildren().remove(otherPlayers.get(i).getGameObject());
-            }
-            else if(i != playerNum && otherPlayers.get(i).getLives() > 0) {
+            } else if (i != playerNum && otherPlayers.get(i).getLives() > 0) {
                 Player dk = otherPlayers.get(i);
                 dk.setXVelocity(playerData.getPlayerData(i).xVelocity());
                 dk.setYVelocity(playerData.getPlayerData(i).yVelocity());
@@ -739,21 +737,25 @@ public class Level {
     }
 
     private void opponentCollision() {
-        for(int i = 0; i < otherPlayers.size(); i++) {
-            if(i != playerNum) {
+        for (int i = 0; i < otherPlayers.size(); i++) {
+            if (i != playerNum) {
                 Player opponent = otherPlayers.get(i);
                 if (isCollision(player, opponent)) {
-                    if (!opponent.isGrounded() && player.isGrounded()) player.respawn(labels.get(1));
-                    else if (!player.isGrounded() && opponent.isGrounded()) opponent.respawn(new Label());
+                    if (!opponent.isGrounded() && player.isGrounded())
+                        player.respawn(labels.get(1));
+                    else if (!player.isGrounded() && opponent.isGrounded())
+                        opponent.respawn(new Label());
                 }
             }
-            for(int j = 0; j < otherPlayers.size(); j++) {
-                if(i != j && i != playerNum && j != playerNum) {
+            for (int j = 0; j < otherPlayers.size(); j++) {
+                if (i != j && i != playerNum && j != playerNum) {
                     Player opponent1 = otherPlayers.get(i);
                     Player opponent2 = otherPlayers.get(j);
                     if (isCollision(opponent1, opponent2)) {
-                        if (!opponent2.isGrounded() && opponent1.isGrounded()) opponent1.respawn(new Label());
-                        else if (!opponent1.isGrounded() && opponent2.isGrounded()) opponent2.respawn(new Label());
+                        if (!opponent2.isGrounded() && opponent1.isGrounded())
+                            opponent1.respawn(new Label());
+                        else if (!opponent1.isGrounded() && opponent2.isGrounded())
+                            opponent2.respawn(new Label());
                     }
                 }
             }
@@ -772,23 +774,19 @@ public class Level {
                 player.setClimbingSpecial(false);
                 player.setGrounded(true);
                 player.setY(platform.getY() - player.getHeight());
-            }
-            else if (isCollision(player, platform) && player.isClimbing() && player.getY() > platform.getY()) {
+            } else if (isCollision(player, platform) && player.isClimbing() && player.getY() > platform.getY()) {
                 if (player.isClimbingSpecial()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
-                }
-                else if (player.getGameObject().getScaleX() == 1 &&
+                } else if (player.getGameObject().getScaleX() == 1 &&
                         player.getX() + 2 * 9 * multi > platform.getX() + platform.getWidth()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
-                }
-                else if (player.getGameObject().getScaleX() == -1 &&
+                } else if (player.getGameObject().getScaleX() == -1 &&
                         player.getX() + player.getWidth() - 2 * 9 * multi < platform.getX()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
-                }
-                else if (player.getX() > platform.getX() &&
+                } else if (player.getX() > platform.getX() &&
                         player.getX() + player.getWidth() < platform.getX() + platform.getWidth()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() + platform.getHeight());
@@ -799,8 +797,7 @@ public class Level {
                         player.getX() + player.getWidth() - 2 * 9 * multi < platform.getX()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() - player.getHeight());
-                }
-                else if (player.getGameObject().getScaleX() == 1 &&
+                } else if (player.getGameObject().getScaleX() == 1 &&
                         player.getX() + 2 * 9 * multi > platform.getX() + platform.getWidth()) {
                     player.setYVelocity(0);
                     player.setY(platform.getY() - player.getHeight());
@@ -1012,6 +1009,7 @@ public class Level {
                 player.yVelocity(), player.getLives() > 0, player.isJumping(), player.isWalking(),
                 player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
                 (int) player.getGameObject().getScaleX(), player.isCycling(), false);
+        waitForGameEnd();
     }
 
 }
