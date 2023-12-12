@@ -1,10 +1,13 @@
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
 /**
- * Name: Luka Bazar
+ * @author Luka Bazar
+ * @author Ryan Scherbarth
+ * @author Roget Davis 
+ * @author Samuel Dauk
  * <p>
  * Player character (Donkey Kong Jr.)
  */

@@ -4,7 +4,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Name: Luka Bazar
+ * @author Luka Bazar
+ * @author Ryan Scherbarth
+ * @author Roget Davis 
+ * @author Samuel Dauk
  * <p>
  * Collectable objects (fruit)
  */

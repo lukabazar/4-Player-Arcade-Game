@@ -1,12 +1,14 @@
+import java.net.Socket;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-/**
- * Server class
+ /**
+ * @author Luka Bazar
+ * @author Ryan Scherbarth
+ * @author Roget Davis 
+ * @author Samuel Dauk
+ * <p>
+ * Server Class
  */
 public class Server {
     public static void main(String[] args) {

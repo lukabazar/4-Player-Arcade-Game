@@ -1,11 +1,13 @@
+import java.util.Random;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import java.util.Random;
-
-/**
- * Name: Luka Bazar
+ /**
+ * @author Luka Bazar
+ * @author Ryan Scherbarth
+ * @author Roget Davis 
+ * @author Samuel Dauk
  * <p>
  * Enemy GameObjects (chompers)
  */

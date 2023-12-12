@@ -2,8 +2,11 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-/**
- * Name: Luka Bazar
+  /**
+ * @author Luka Bazar
+ * @author Ryan Scherbarth
+ * @author Roget Davis 
+ * @author Samuel Dauk
  * <p>
  * Standard GameObject (has only x,y and shape to be collided)
  */

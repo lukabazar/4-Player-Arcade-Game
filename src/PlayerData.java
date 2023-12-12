@@ -1,6 +1,14 @@
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
+/**
+ * @author Luka Bazar
+ * @author Ryan Scherbarth
+ * @author Roget Davis 
+ * @author Samuel Dauk
+ * <p>
+ * PlayerData Class
+ */
 public class PlayerData {
     private final List<Data> playerData;
 

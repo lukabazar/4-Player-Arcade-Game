@@ -1,9 +1,14 @@
+import java.net.Socket;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 
 /**
+ * @author Luka Bazar
+ * @author Ryan Scherbarth
+ * @author Roget Davis 
+ * @author Samuel Dauk
+ * <p>
  * Handler class
  */
 class ClientHandler implements Runnable {

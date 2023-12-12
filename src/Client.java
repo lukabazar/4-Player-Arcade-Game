@@ -1,9 +1,17 @@
+import java.net.Socket;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.net.SocketTimeoutException;
 
+/**
+ * @author Luka Bazar
+ * @author Ryan Scherbarth
+ * @author Roget Davis 
+ * @author Samuel Dauk
+ * <p>
+ * Client Class
+ */
 public class Client implements Runnable {
     private final String hostname;
     private final int port;

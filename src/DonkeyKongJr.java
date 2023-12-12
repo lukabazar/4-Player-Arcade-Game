@@ -1,16 +1,18 @@
-import javafx.animation.AnimationTimer;
-import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.scene.layout.*;
+import javafx.geometry.Insets;
+import javafx.scene.image.Image;
+import javafx.scene.control.Label;
+import javafx.application.Application;
+import javafx.scene.text.TextAlignment;
+import javafx.animation.AnimationTimer;
 
-/**
- * Name: Luka Bazar
+ /**
+ * @author Luka Bazar
+ * @author Ryan Scherbarth
+ * @author Roget Davis 
+ * @author Samuel Dauk
  * <p>
  * Main method for Donkey Kong Jr.
  */

@@ -1,26 +1,26 @@
-import javafx.animation.AnimationTimer;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
+import java.io.*;
+import java.util.*;
+import javafx.util.Pair;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import javafx.geometry.Pos;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
-import javafx.util.Pair;
-
-import java.io.*;
+import javafx.animation.AnimationTimer;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 
-/**
- * Name: Luka Bazar
+
+ /**
+ * @author Luka Bazar
+ * @author Ryan Scherbarth
+ * @author Roget Davis 
+ * @author Samuel Dauk
  * <p>
  * Main level with GameObjects
  */

@@ -1,9 +1,12 @@
-
 import java.io.Serializable;
 
 /**
- * Data structure to contain player data
+ * @author Luka Bazar
+ * @author Ryan Scherbarth
+ * @author Roget Davis 
  * @author Samuel Dauk
+ * <p>
+ * Data structure to contain player data
  */
 public class Data implements Serializable {
     private double x;

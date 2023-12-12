@@ -1,7 +1,10 @@
-/**
- * Name: Luka Bazar
+ /**
+ * @author Luka Bazar
+ * @author Ryan Scherbarth
+ * @author Roget Davis 
+ * @author Samuel Dauk
  * <p>
- * Level geometry GameObject (can be climbed)
+ * Level geometry GameObject (can be climbed)=
  */
 public class Rope extends GameObject {
     private boolean isWinner = false;
