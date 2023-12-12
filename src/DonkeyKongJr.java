@@ -35,7 +35,6 @@ public class DonkeyKongJr extends Application {
         String hostname = getParameters().getUnnamed().get(0);
         int port = Integer.parseInt(getParameters().getUnnamed().get(1));
 
-
         int multi = 3;
         int pixelWidth = 256;
         int pixelHeight = 240;
@@ -87,8 +86,8 @@ public class DonkeyKongJr extends Application {
                 The player with the flashing graphic overhead is your player!
                                 
                 Game Mode
-                Game B: A custom level for this project, Junior only has one life, drop on other players to take out fellow players,
-                fruit respawns, and enemies spawn faster as the game progresses.
+                Game B: A custom level for this project, Junior only has one life, drop on other players to take out\s
+                fellow players, fruit respawns, and enemies spawn faster as the game progresses.
                 Survive as long as possible, out last the other players, collect fruit, and drop
                 that fruit on enemies to get a high score before the enemies overwhelm Junior!\s
                                 

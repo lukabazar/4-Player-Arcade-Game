@@ -156,32 +156,33 @@ public class Level {
                                     labels.get(0).setText("Score: " + (getScore() - 100));
                                 } else {
                                     // Add timing score to each player.
-                                    System.out.println("***");
+                                    // Debugging
+                                    //System.out.println("***");
                                     for (int i = 0; i < client.getPlayerData().getNumPlayers(); i++) {
                                         if (client.getPlayerData().getPlayerData(i).getIsAlive()) {
                                             client.getPlayerData().getPlayerData(i).addScore(100);
 
                                             // Mark current player:
                                             if (i == playerNum) {
-                                                System.out.print("[ ");
-                                                System.out.print("Player " + i + " Score: "
-                                                        + client.getPlayerData().getPlayerData(i).getScore());
-                                                System.out.print(" ]\n");
+                                                //System.out.print("[ ");
+                                                //System.out.print("Player " + i + " Score: "
+                                                //        + client.getPlayerData().getPlayerData(i).getScore());
+                                                //System.out.print(" ]\n");
                                             } else {
-                                                System.out.println("Player " + i + " Score: "
-                                                        + client.getPlayerData().getPlayerData(i).getScore());
+                                                //System.out.println("Player " + i + " Score: "
+                                                //       + client.getPlayerData().getPlayerData(i).getScore());
                                             }
                                         } else {
                                             if (i == playerNum) {
-                                                System.out.print("[ ");
-                                                System.out.print("Player " + i + " is dead.");
-                                                System.out.print(" ]\n");
+                                                //System.out.print("[ ");
+                                                //System.out.print("Player " + i + " is dead.");
+                                                //System.out.print(" ]\n");
                                             } else {
-                                                System.out.println("Player " + i + " is dead.");
+                                                //System.out.println("Player " + i + " is dead.");
                                             }
                                         }
                                     }
-                                    System.out.println("***");
+                                    //System.out.println("***");
 
                                     labels.get(0).setText("Score: " + (getScore() + 100));
                                 }
@@ -252,14 +253,14 @@ public class Level {
     }
 
     public boolean allPlayersDead() {
-        System.out.println("-----");
+        //System.out.println("-----");
         for (int i = 0; i < 3; i++) {
-            System.out.println("player " + i + ": " + client.getPlayerData().getPlayerData(i).getIsAlive());
+           //System.out.println("player " + i + ": " + client.getPlayerData().getPlayerData(i).getIsAlive());
             if (client.getPlayerData().getPlayerData(i).getIsAlive()) {
                 return false;
             }
         }
-        System.out.println("-----");
+       // System.out.println("-----");
         return true;
     }
 
@@ -552,7 +553,7 @@ public class Level {
             if (player.getGameObject().getBoundsInParent().intersects(fruit.getHitBox().getBoundsInParent())) {
                 if (!fruit.isFalling()) {
 
-                    System.out.println("Fruit collected, +400 Score");
+                    //System.out.println("Fruit collected, +400 Score");
                     playerData.getPlayerData(playerNum).addScore(400);
 
                     labels.get(0).setText("Score: " + (getScore() + 400));
@@ -900,14 +901,14 @@ public class Level {
      * 
      */
     private void waitForGameEnd() {
-        System.out.println("Inside of waitForGameEnd");
+        //System.out.println("Inside of waitForGameEnd");
 
         // wait for all players to be dead before disconnecting
         while (!allPlayersDead()) {
             try {
                 Date currentTime = new Date();
                 Thread.sleep(1000);
-                System.out.println("[" + currentTime + "] " + "players still alive.");
+                //System.out.println("[" + currentTime + "] " + "players still alive.");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -920,27 +921,27 @@ public class Level {
         }
 
         // Print standings to console
-        System.out.println("----- Standings ----- ");
+        //System.out.println("----- Standings ----- ");
         for (int i = 0; i < standings.size(); i++) {
             if (i % 2 == 0) {
-                System.out.print("Player " + standings.get(i) + ": ");
+                //System.out.print("Player " + standings.get(i) + ": ");
             } else {
-                System.out.println(standings.get(i));
+                //System.out.println(standings.get(i));
             }
         }
-        System.out.println("--------------------- ");
+        //System.out.println("--------------------- ");
 
         // Stay connected for 5 seconds after everyone dies to make sure standings have
         // plenty of time to update
         try {
             Thread.sleep(5000);
-            System.out.println("Waiting 5 seconds.");
+            //System.out.println("Waiting 5 seconds.");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    /*
+    /**
      * Sorts the standings array in descending order, keeps scores aligned w/ player id's. 
      * Format: [playerId, score, ...]
      * 

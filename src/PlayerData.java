@@ -24,9 +24,9 @@ public class PlayerData {
         playerData.add(new Data(x, y, score,  isAlive));
     }
 
-    public void setPlayerData(int player, double x, double y, int score, double xVel, double yVel, boolean isAlive, boolean isJumping,
-                              boolean isWalking, boolean isGrounded, boolean isClimbing, boolean isClimbingSpecial,
-                              int direction, boolean isCycle, boolean isReady) {
+    public void setPlayerData(int player, double x, double y, int score, double xVel, double yVel, boolean isAlive,
+                              boolean isJumping, boolean isWalking, boolean isGrounded, boolean isClimbing,
+                              boolean isClimbingSpecial, int direction, boolean isCycle, boolean isReady) {
         playerData.get(player).setX(x);
         playerData.get(player).setY(y);
         playerData.get(player).setScore(score);
@@ -45,13 +45,5 @@ public class PlayerData {
 
     public int getNumPlayers() {
         return playerData.size();
-    }
-
-    public void setScore(int player, int score){
-        playerData.get(player).setScore(score);
-    }
-
-    public int getScore(int player){
-        return playerData.get(player).getScore();
     }
 }

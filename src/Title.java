@@ -93,7 +93,7 @@ public class Title {
                 List<Label> labels = makeLabels();
                 int multi = (int) scene.getHeight() / 240;
                 for (int idx = 0; idx < 4; idx++) {
-                    playerData.addPlayer(24 * multi, 200 * multi, 0, true); // edit to have proper starting coordinates
+                    playerData.addPlayer(24 * multi, 200 * multi, 0, true);
                 }
 
                 Client client = new Client(hostname, port, playerData);

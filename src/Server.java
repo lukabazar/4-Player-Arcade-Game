@@ -29,7 +29,8 @@ public class Server {
 
                 playerNum++;
 
-                // Better debugging 
+                // Better debugging
+                /*
                 System.out.println();
                 System.out.println("----------------------------");
                 for(int i = 0; i < playerData.getNumPlayers(); i++){
@@ -43,6 +44,7 @@ public class Server {
                 }
                 System.out.println("----------------------------");
                 System.out.println();
+                */
             }
         } catch (IOException e) {
             e.printStackTrace();
