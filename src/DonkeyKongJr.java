@@ -80,23 +80,21 @@ public class DonkeyKongJr extends Application {
     private static Label getLabel() {
         Label instructionText = new Label("""
                 Instructions
-                Jump to grab onto vines/chains, Junior climbs up very slow on one vine/chain but by reaching for\s
+                Jump to grab onto vines/chains, Junior climbs up very slow on one vine/chain but by reaching for
                 another he climbs much faster, however holding onto only one vine/chain makes sliding down faster.
-
-                Game Modes
-                Game A: The first level of Donkey Kong Jr. Make it to the blue key at the top of the level as fast\s
-                as possible, avoid enemies, collect fruit, and drop fruit onto enemies for a higher score! Don't let\s
-                Junior fall too far or you'll lose a life!
-
-                Game B: A custom level for this project, Junior only has one life, fruit respawns, and enemies spawn\s
-                faster as the game progresses. Survive as long as possible, collect fruit, and drop that fruit on\s
-                enemies to get a high score before the enemies overwhelm Junior!
-
+                The player with the flashing graphic overhead is your player!
+                                
+                Game Mode
+                Game B: A custom level for this project, Junior only has one life, drop on other players to take out fellow players,
+                fruit respawns, and enemies spawn faster as the game progresses.
+                Survive as long as possible, out last the other players, collect fruit, and drop
+                that fruit on enemies to get a high score before the enemies overwhelm Junior!\s
+                                
                 Controls
                 Left/Right: Move right and left on the ground, or reach/grab a vine/chain
-                Up/Down: Climb up and down the vines/chains, or change selection on title screen
+                Up/Down: Climb up and down the vines/chains
                 Space: Jump
-                Enter: Start the game with the highlighted selection on title screen""");
+                Enter: Start the game with the highlighted selection on title screen\s""");
         instructionText.setTextAlignment(TextAlignment.JUSTIFY);
         instructionText.setWrapText(true);
         return instructionText;
