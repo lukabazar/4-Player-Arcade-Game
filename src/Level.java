@@ -423,7 +423,8 @@ public class Level {
 
         player.changeSprite();
 
-        /*for (Enemy enemy : enemies) {
+        // @ryan enemy spawn
+        for (Enemy enemy : enemies) {
             if (snapToBounds(enemy)) {
                 enemy.switchXDir();
                 enemy.setXVelocity(enemy.xVelocity());
@@ -434,7 +435,7 @@ public class Level {
             pane.getChildren().remove(enemy.getGameObject());
             pane.getChildren().add(enemy.getGameObject());
             enemy.changeSprite();
-        }*/
+        }
 
         player.setX(player.getX() + player.xVelocity());
         player.setY(player.getY() + player.yVelocity());
