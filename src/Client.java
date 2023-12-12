@@ -50,7 +50,7 @@ public class Client implements Runnable {
             playerNum = in.readInt();
             System.out.println("Player: " + playerNum);
 
-            while (playing && !playerData.allPlayersDead()) {
+            while (playing) {
                 outData = playerData.getPlayerData(playerNum);
                 out.writeUnshared(outData);
                 out.flush();
