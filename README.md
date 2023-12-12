@@ -3,7 +3,7 @@ Donkey Kong Jr.
 
 ## Description
 DonkeyKongJr.java is the client class of this program and launches a window with the instructions and the 
-game window.
+game window, and wait for 4 total Clients to connect to the server before proceeding with gameplay
 Server.java is the server class and is used to connect the 4 clients.
 
 ## Usage
@@ -26,7 +26,7 @@ the goals for the game.
     The player with the flashing graphic overhead is your player!
 
     Game Modes
-    Game B: A custom level for this project, Junior only has one life, drop on other players to take out fellow players,
+    Game B: A custom level for this project, Junior only has one life, drop on other players to take out opponents,
     fruit respawns, and enemies spawn faster as the game progresses.
     Survive as long as possible, out last the other players, collect fruit, and drop 
     that fruit on enemies to get a high score before the enemies overwhelm Junior! 
@@ -39,9 +39,9 @@ the goals for the game.
 
 ## Contributions
 Original project code: Luka Bazar <br>
-Networking:<br>
-Player collision:<br>
-Multiplayer scoring:
+Networking: Luka Bazar, Samuel Dauk, Roger Davis, Ryan Scherbarth<br>
+Player collision: Luka Bazar, Roger Davis<br>
+Multiplayer scoring: Ryan Scherbarth
 
 ## Credits
 The backgrounds, the fruit sprites, and the Donkey Kong Jr. sprites are from 
