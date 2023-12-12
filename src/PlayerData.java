@@ -3,19 +3,13 @@ import java.util.List;
 
 public class PlayerData {
     private final List<Data> playerData;
-    private final List<Integer> deathOrder;
 
     public PlayerData() {
         playerData = new ArrayList<>();
-        deathOrder = new ArrayList<>();
     }
 
     public Data getPlayerData(int player) {
         return playerData.get(player);
-    }
-
-    public Data getDeathData(int player){
-        return playerData.get(deathOrder.get(player));
     }
 
     public void addPlayer(double x, double y, int score, boolean isAlive) {
@@ -45,14 +39,6 @@ public class PlayerData {
         return playerData.size();
     }
 
-    public List<Integer> getDeathOrder(){
-        return deathOrder;
-    }
-
-    public void addDeathOrder(int playerId) {
-        deathOrder.add(playerId);
-    }
-
     public void setScore(int player, int score){
         playerData.get(player).setScore(score);
     }
@@ -60,16 +46,4 @@ public class PlayerData {
     public int getScore(int player){
         return playerData.get(player).getScore();
     }
-
-    // public boolean allPlayersDead(){
-    //     System.out.println("-----");
-    //     for(int i = 0; i < 3; i++){
-    //         System.out.println("player " + i + playerData.get(i).getIsAlive());
-    //         if(playerData.get(i).getIsAlive()){
-    //             return false;
-    //         }
-    //     }
-    //     System.out.println("-----");
-    //     return true;
-    // }
 }

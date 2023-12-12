@@ -19,8 +19,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import javax.sound.midi.Soundbank;
-
 /**
  * Name: Luka Bazar
  * <p>
@@ -237,14 +235,6 @@ public class Level {
                         count = (count + 1) % 3600;
                     }
                 }
-                /*
-                 * If a player runs out of lives, they enter a loop and only pull each other
-                 * players' score
-                 * until all players have died, at which point they all disconnect.
-                 */
-                if (player.getLives() <= 0 && !allPlayersDead()) {
-                    playerData.addDeathOrder(playerNum);
-                }
 
                 // player has died
                 playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
@@ -338,96 +328,6 @@ public class Level {
         stage.show();
     }
 
-    /*
-     * creates a list of opponent Id's paired with their scores, also gives bonus
-     * placement points
-     * upon game end.
-     * 
-     * @param standings is the deathOrder of players
-     * 
-     * calculate first place == last in deathOrder:
-     * standings.get(standings.size()-1) etc.
-     */
-    public List<List<Integer>> calculateStandings(List<Integer> standings) {
-        List<List<Integer>> result = new ArrayList<>();
-
-        System.out.println(" ------------------------------------------ ");
-        System.out.println(" -----------   Calc Score   --------------- ");
-        System.out.println(" ------------------------------------------ ");
-
-        if (standings.isEmpty()) {
-            // Handle empty standings list
-            System.out.println("No standings available!");
-            return result; // or handle this case according to your requirements
-        } else {
-            System.out.println("Standings is not empty.");
-        }
-
-        if (standings.size() < 4) {
-            Date currentTime = new Date();
-            System.out.println("[" + currentTime + "] " + "There are still players alive");
-            return result;
-        } else {
-            System.out.println("Standings has 4 values.");
-        }
-
-        // Define placement bonuses
-        int fBonus = 3000;
-        int sBonus = 1500;
-        int tBonus = 500;
-
-        // Set positions
-        System.out.println("First is doing (ID):" + standings.get(standings.size() - 2) + "(SCORE): "
-                + standings.get(standings.size() - 1));
-        Data first = client.getPlayerData().getPlayerData(standings.get(standings.size() - 2));
-
-        System.out.println("Second is doing:" + standings.get(standings.size() - 4) + "(SCORE): "
-                + standings.get(standings.size() - 3));
-        Data second = client.getPlayerData().getPlayerData(standings.get(standings.size() - 4));
-
-        System.out.println("Third is doing:" + standings.get(standings.size() - 6) + "(SCORE): "
-                + standings.get(standings.size() - 5));
-        Data third = client.getPlayerData().getPlayerData(standings.get(standings.size() - 6));
-
-        // load in original scores
-        // first.addScore(client.getPlayerData().getPlayerData(first.getId()));
-
-        // Add bonus scores
-        first.addScore(fBonus);
-        System.out.println(
-                "Player: " + standings.get(standings.size() - 1) + "Score increased by" + fBonus + " for first place.");
-        second.addScore(sBonus);
-        System.out.println("Player: " + standings.get(standings.size() - 2) + "Score increased by" + sBonus
-                + " for second place.");
-        third.addScore(tBonus);
-        System.out.println(
-                "Player: " + standings.get(standings.size() - 3) + "Score increased by" + tBonus + " for third place.");
-        System.out.println("Player: " + standings.get(standings.size() - 4) + "Didn't receive any bonus.");
-
-        // Adding scores for first, second, and third place
-        addToResult(result, standings.get(standings.size() - 1), fBonus);
-        addToResult(result, standings.get(standings.size() - 2), sBonus);
-        addToResult(result, standings.get(standings.size() - 3), tBonus);
-
-        System.out.println(" ------------------------------------------ ");
-        System.out.println(" ------------------------------------------ ");
-        System.out.println(" ------------------------------------------ ");
-
-        return result;
-    }
-
-    /*
-     * Helper method for calculateStandings
-     * Formats player id's and scores properly for victory screen & standings
-     * display
-     */
-    private static void addToResult(List<List<Integer>> result, int playerId, int score) {
-        List<Integer> playerScorePair = new ArrayList<>();
-        playerScorePair.add(playerId);
-        playerScorePair.add(score);
-        result.add(playerScorePair);
-    }
-
     /**
      * Updates the screen based on user input and gravity
      */
@@ -464,7 +364,6 @@ public class Level {
 
         player.changeSprite();
 
-        // @ryan enemy spawn
         for (Enemy enemy : enemies) {
             if (snapToBounds(enemy)) {
                 enemy.switchXDir();
@@ -978,9 +877,14 @@ public class Level {
                 player.yVelocity(), player.getLives() > 0, player.isJumping(), player.isWalking(),
                 player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
                 (int) player.getGameObject().getScaleX(), player.isCycling(), false);
-        waitForGameEnd();
+        waitForGameEnd();   // make sure players don't disconnect too soon.
     }
 
+    /*
+     * Keeps each client connected to the server until all opponents have died, then delays 
+     * a few seconds so that scores can be updated.
+     * 
+     */
     private void waitForGameEnd() {
         System.out.println("Inside of waitForGameEnd");
 
@@ -1022,7 +926,13 @@ public class Level {
         }
     }
 
-    // [playerId, score, ...]
+    /*
+     * Sorts the standings array in descending order, keeps scores aligned w/ player id's. 
+     * Format: [playerId, score, ...]
+     * 
+     * @param input     unsorted standings array w/ player id's and corresponding scores. 
+     * @return         sorted standings array w/ player id's and corresponding scores.
+     */
     private List<Integer> sortStandings(List<Integer> input) {
 
         List<Pair<Integer, Integer>> players = new ArrayList<>();
