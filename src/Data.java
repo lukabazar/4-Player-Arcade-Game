@@ -45,18 +45,38 @@ public class Data implements Serializable {
         isReady = false;
     }
 
+    /**
+     * Get direction
+     *
+     * @return 1 for left, -1 for right
+     */
     public int getDirection() {
         return direction;
     }
 
+    /**
+     * Set direction
+     *
+     * @param direction (-1 or 1)
+     */
     public void setDirection(int direction) {
         this.direction = direction;
     }
 
+    /**
+     * Is playing cycling
+     *
+     * @return true if it is, false otherwise
+     */
     public boolean isCycle() {
         return isCycle;
     }
 
+    /**
+     * Set if cycling
+     *
+     * @param cycle true if it is false if not
+     */
     public void setCycle(boolean cycle) {
         isCycle = cycle;
     }
@@ -93,16 +113,36 @@ public class Data implements Serializable {
         y = val;
     }
 
-
+    /**
+     * Set the xVelocity
+     *
+     * @param xVelocity double velocity in x direction
+     */
     public void setXVelocity(double xVelocity) {
         this.xVelocity = xVelocity;
     }
 
+    /**
+     * Set yVelocity
+     *
+     * @param yVelocity double velocity in y direction
+     */
     public void setYVelocity(double yVelocity) { this.yVelocity = yVelocity; }
+
+    /**
+     * Get xVelocity
+     *
+     * @return velocity in x direction
+     */
     public double xVelocity() {
         return this.xVelocity;
     }
 
+    /**
+     * Get yVelocity
+     *
+     * @return velocity in y direction
+     */
     public double yVelocity() {
         return this.yVelocity;
     }
@@ -122,55 +162,127 @@ public class Data implements Serializable {
         isAlive = val;
     }
 
+    /**
+     * Set score
+     *
+     * @param val current score
+     */
     public void setScore(int val) { score = val; }
 
-    // Placement points upon game end
+    /**
+     * Placement points upon game end
+     */
     public void addScore(int val) { score += val; }
 
+    /**
+     * Get game score
+     *
+     * @return game score
+     */
     public int getScore() { return score; }
 
+    /**
+     * Set if player is jumping
+     *
+     * @param jumping true if jumping, false otherwise
+     */
     public void setJumping(boolean jumping) {
         isJumping = jumping;
     }
 
+    /**
+     * Set if player is climbing
+     *
+     * @param climbing true if climbing, false otherwise
+     */
     public void setClimbing(boolean climbing) {
         isClimbing = climbing;
     }
 
+    /**
+     * Set if player is grounded
+     *
+     * @param grounded true if grounded, false otherwise
+     */
     public void setGrounded(boolean grounded) {
         isGrounded = grounded;
     }
 
+    /**
+     * Set if player is walking
+     *
+     * @param walking true if walking, false otherwise
+     */
     public void setWalking(boolean walking) {
         isWalking = walking;
     }
 
+    /**
+     * Set if player is climbing (special)
+     *
+     * @param climbingSpecial true if special climb, false otherwise
+     */
     public void setClimbingSpecial(boolean climbingSpecial) {
         isClimbingSpecial = climbingSpecial;
     }
 
+    /**
+     * Get is player climbing
+     *
+     * @return true if climbing, false otherwise
+     */
     public boolean isClimbing() {
         return isClimbing;
     }
 
+    /**
+     * Get is player climbing (special)
+     *
+     * @return true if special climb, false otherwise
+     */
     public boolean isClimbingSpecial() {
         return isClimbingSpecial;
     }
 
+    /**
+     * Get if player is grounded
+     *
+     * @return true if grounded, false otherwise
+     */
     public boolean isGrounded() {
         return isGrounded;
     }
 
+    /**
+     * Get if player is jumping
+     *
+     * @return true if jumping, false otherwise
+     */
     public boolean isJumping() {
         return isJumping;
     }
 
+    /**
+     * Get if player is walking
+     *
+     * @return true if walking, false otherwise
+     */
     public boolean isWalking() {
         return isWalking;
     }
 
+    /**
+     * Get is ready
+     *
+     * @return true if player is ready, false otherwise
+     */
     public boolean isReady() { return isReady; }
 
+    /**
+     * Set is ready
+     *
+     * @param ready true for ready, false otherwise
+     */
     public void setReady( boolean ready) { isReady = ready; }
 
 }

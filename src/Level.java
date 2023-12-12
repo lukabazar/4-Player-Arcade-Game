@@ -93,6 +93,10 @@ public class Level {
         play();
     }
 
+    /**
+     * Are players ready to start game
+     * @return true if yes, false otherwise
+     */
     private boolean allReady() {
         for(int i = 0; i < 4; i++) {
             if(!playerData.getPlayerData(i).isReady() && i != playerNum) {
@@ -312,13 +316,12 @@ public class Level {
         stage.show();
     }
 
-    /*
+    /**
      * creates a list of opponent Id's paired with their scores, also gives bonus
      * placement points
      * upon game end.
      * 
      * @param standings is the deathOrder of players
-     * 
      * calculate first place == last in deathOrder:
      * standings.get(standings.size()-1) etc.
      */
@@ -374,7 +377,7 @@ public class Level {
         return result;
     }
 
-    /*
+    /**
      * Helper method for calculateStandings
      * Formats player id's and scores properly for victory screen & standings
      * display
@@ -394,6 +397,9 @@ public class Level {
         for(int i = 0; i < otherPlayers.size(); i++) {
             if(i != playerNum && otherPlayers.get(i).getLives() <= 0) {
                 pane.getChildren().remove(otherPlayers.get(i).getGameObject());
+            }
+            else if(i != playerNum && !playerData.getPlayerData(i).getIsAlive()) {
+                otherPlayers.get(i).respawn(new Label());
             }
             else if(i != playerNum && otherPlayers.get(i).getLives() > 0) {
                 Player dk = otherPlayers.get(i);
@@ -664,6 +670,9 @@ public class Level {
 
     }
 
+    /**
+     * Handles opponent collision
+     */
     private void opponentCollision() {
         for(int i = 0; i < otherPlayers.size(); i++) {
             if(i != playerNum) {
@@ -931,6 +940,9 @@ public class Level {
         }
     }
 
+    /**
+     * Kill current player
+     */
     private void killPlayer() {
         player.setX(pane.getWidth() + player.getWidth());
         player.setY(pane.getHeight() + player.getHeight());
