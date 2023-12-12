@@ -9,12 +9,12 @@ Server.java is the server class and is used to connect the 4 clients.
 ## Usage
 To start the server: <br>
 ``
-java -jar Server.jar <portNumber>
+java -jar dkserver1.0_bazar_rogerdavis85_rscherbarth_sdauk.jar <portNumber>
 ``
 
 To start the clients: <br>
 ``
-java -jar DonkeyKongJr.java <hostname> <portNumber>
+java -jar dkclient1.0_bazar_rogerdavis85_rscherbarth_sdauk.jar <hostname> <portNumber>
 ``
 
 Upon starting the client the instructions below are given in an additional window, this lays out the controls and 
