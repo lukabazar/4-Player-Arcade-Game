@@ -74,10 +74,10 @@ public class PlayerData {
         }
         // ffs 
         if(!getPlayerData(0).getIsAlive() && !getPlayerData(1).getIsAlive() && !getPlayerData(2).getIsAlive() && !getPlayerData(3).getIsAlive()){
-            return false;
+            return true;
         }
-        System.out.println("All players are dead.");
-        System.out.println("----------------------------");
-        return true;
+        //System.out.println("All players are dead.");
+        //System.out.println("----------------------------");
+        return false;
     }
 }

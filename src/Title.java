@@ -25,7 +25,7 @@ public class Title {
      * Title screen backgrounds
      */
     private enum Titles {
-        TITLE1("backgrounds/title-01.png"), TITLE2("backgrounds/title-02.png");
+        TITLE1("backgrounds/title-01.png"), TITLE2("backgrounds/title-multi.png");
 
         private final ImageView img;
 
@@ -53,7 +53,9 @@ public class Title {
     private final BorderPane pane;
     private final PlayerData playerData;
     private Level currentLevel;
-    private Titles currentTitle = Titles.TITLE1;
+    private final String hostname;
+    private final int port;
+    private Titles currentTitle = Titles.TITLE2;
 
     /**
      * Title screen
@@ -61,10 +63,12 @@ public class Title {
      * @param width  width of window
      * @param height height of window
      */
-    public Title(int width, int height) {
+    public Title(int width, int height, String hostname, int port) {
         this.pane = new BorderPane();
         this.scene = new Scene(this.pane, width, height);
         this.playerData = new PlayerData();
+        this.hostname = hostname;
+        this.port = port;
         changeBackground(currentTitle.getImage());
     }
 
@@ -86,56 +90,27 @@ public class Title {
      */
     private void handlePress() {
         scene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.UP) {
-                changeBackground(Titles.TITLE1.getImage());
-                currentTitle = Titles.TITLE1;
-            }
-            else if (event.getCode() == KeyCode.DOWN) {
-                changeBackground(Titles.TITLE2.getImage());
-                currentTitle = Titles.TITLE2;
-            }
-            else if (event.getCode() == KeyCode.ENTER) {
+            if (event.getCode() == KeyCode.ENTER) {
                 List<Label> labels = makeLabels();
                 int multi = (int) scene.getHeight() / 240;
-
-                if (currentTitle == Titles.TITLE1) {
-                    //currentLevel = new Level(scene, pane, labels, (int) scene.getHeight() / 240, Level.Mode.LEVEL1);
-                    changeBackground(new Image("backgrounds/background-01.png"));
+                for (int idx = 0; idx < 4; idx++) {
+                    playerData.addPlayer(24 * multi, 200 * multi, 0, true); // edit to have proper starting coordinates
                 }
-                else {
-                    
-                    for (int idx = 0; idx < 4; idx++) {
-                        playerData.addPlayer(24 * multi, 200 * multi, 0, true); // edit to have proper starting coordinates
-                    }
 
-                    Client client = new Client("localhost", 8000, playerData);
-                    Thread clientThread = new Thread(client);
-                    clientThread.start();
+                Client client = new Client(hostname, port, playerData);
+                Thread clientThread = new Thread(client);
+                clientThread.start();
 
-                    try {
-                        Thread.sleep(100); // Give client time to get player number
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    System.out.println(client.getPlayerNum());
-
-//                    boolean allPlayersReady = false;
-//                    while (!allPlayersReady) {
-//                        allPlayersReady = true;
-//                        for (int i = 0; i < 1; i++) {
-//                            Data pl = playerData.getPlayerData(i);
-//                            System.out.println("Player " + i + ": Ready? " + pl.isReady()); //debugging
-//                            if (!pl.isReady()) {
-//                                allPlayersReady = false;
-//                                break;
-//                            }
-//                        }
-//                    }
-
-                    currentLevel = new Level(scene, pane, labels, multi, client, playerData, client.getPlayerNum(), Level.Mode.LEVEL2);
-                    changeBackground(new Image("backgrounds/background-02.png"));
+                try {
+                    Thread.sleep(100); // Give client time to get player number
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+
+                System.out.println(client.getPlayerNum());
+
+                currentLevel = new Level(scene, pane, labels, multi, client, playerData, client.getPlayerNum(), Level.Mode.LEVEL2);
+                changeBackground(new Image("backgrounds/background-02.png"));
 
                 HBox hBox = new HBox();
                 hBox.getChildren().addAll(labels);

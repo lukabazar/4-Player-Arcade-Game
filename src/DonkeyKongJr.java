@@ -30,27 +30,24 @@ public class DonkeyKongJr extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-        // double screenHeight = Screen.getPrimary().getBounds().getHeight();
+        String hostname = getParameters().getUnnamed().get(0);
+        int port = Integer.parseInt(getParameters().getUnnamed().get(1));
+
 
         int multi = 3;
         int pixelWidth = 256;
         int pixelHeight = 240;
 
-        // for (int i = 1; pixelHeight * i < screenHeight; i++) {
-        //     multi = i;
-        // }
-
-        multi = 3;
         int width = pixelWidth * multi;
         int height = pixelHeight * multi;
 
-        final Title[] titleScreen = {new Title(width, height)};
+        final Title[] titleScreen = {new Title(width, height, hostname, port)};
         AnimationTimer animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if (titleScreen[0].getCurrentLevel() != null) {
                     if (titleScreen[0].getCurrentLevel().isOver()) {
-                        titleScreen[0] = new Title(width, height);
+                        titleScreen[0] = new Title(width, height, hostname, port);
                         primaryStage.setScene(titleScreen[0].getScene());
                     }
                 }
