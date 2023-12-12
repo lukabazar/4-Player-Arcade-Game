@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -241,7 +242,9 @@ public class Level {
                  * players' score
                  * until all players have died, at which point they all disconnect.
                  */
-                if (player.getLives() <= 0 && !allPlayersDead()) { playerData.addDeathOrder(playerNum); }
+                if (player.getLives() <= 0 && !allPlayersDead()) {
+                    playerData.addDeathOrder(playerNum);
+                }
 
                 // player has died
                 playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
@@ -252,30 +255,6 @@ public class Level {
         };
         timer.start();
 
-    }
-
-    private void waitForGameEnd() {
-        System.out.println("Inside of waitForGameEnd");
-
-        // wait for all players to be dead before disconnecting
-        while (!allPlayersDead()) {
-            try {
-                Date currentTime = new Date();
-                Thread.sleep(1000);
-                System.out.println("[" + currentTime + "] " + "players still alive.");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Stay connected for 5 seconds after everyone dies to make sure standings have
-        // plenty of time to update
-        try {
-            Thread.sleep(5000);
-            System.out.println("Waiting 5 seconds.");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     public boolean allPlayersDead() {
@@ -336,30 +315,20 @@ public class Level {
             client.stopClient();
         });
         if (level == Mode.LEVEL2) {
+            List<Integer> sortedStandings = sortStandings(standings);
 
-            if (!standings.isEmpty() && standings.size() == 4) { // Check standings are valid
-                List<List<Integer>> standingsWithScores = calculateStandings(standings);
+            int numPlayers = sortedStandings.size() / 2;
 
-                // Final score == first place's score
-                int finalScore = standingsWithScores.get(0).get(1);
-                label.setText("Game Over!\nFinal Score: " + finalScore);
+            // Set the label text with standings information
+            StringBuilder standingsInfo = new StringBuilder("Final Standings:\n");
+            for (int i = 0; i < numPlayers; i++) {
+                int playerId = sortedStandings.get(i * 2); // Get playerId
+                int score = sortedStandings.get(i * 2 + 1); // Get score
 
-                StringBuilder winnersScores = new StringBuilder("Winners' Scores:\n");
-                for (List<Integer> playerScorePair : standingsWithScores) {
-                    winnersScores.append("Player ").append(playerScorePair.get(0)).append(": ")
-                            .append(playerScorePair.get(1)).append("\n");
-                }
-
-                Label winnersLabel = new Label(winnersScores.toString());
-                vBox.getChildren().add(winnersLabel);
-            } else {
-                // Handle empty standings list when level is LEVEL2
-                if (standings.size() < 4) {
-                    label.setText("Less than 4 players in the game at the time of death.");
-                } else {
-                    label.setText("Game Over!\nNo standings available.");
-                }
+                standingsInfo.append("Player ").append(playerId).append(": ").append(score).append("\n");
             }
+
+            label.setText("Game Over!\n" + standingsInfo.toString());
         } else {
             // Code to handle other levels if needed
             // For example, set a default message or handle other game modes
@@ -1010,6 +979,69 @@ public class Level {
                 player.isGrounded(), player.isClimbing(), player.isClimbingSpecial(),
                 (int) player.getGameObject().getScaleX(), player.isCycling(), false);
         waitForGameEnd();
+    }
+
+    private void waitForGameEnd() {
+        System.out.println("Inside of waitForGameEnd");
+
+        // wait for all players to be dead before disconnecting
+        while (!allPlayersDead()) {
+            try {
+                Date currentTime = new Date();
+                Thread.sleep(1000);
+                System.out.println("[" + currentTime + "] " + "players still alive.");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // update standings now that every player has died
+        for (int i = 0; i < 3; i++) {
+            standings.add(i);
+            standings.add(client.getPlayerData().getPlayerData(i).getScore());
+        }
+
+        // Print standings to console
+        System.out.println("----- Standings ----- ");
+        for (int i = 0; i < standings.size(); i++) {
+            if (i % 2 == 0) {
+                System.out.print("Player " + standings.get(i) + ": ");
+            } else {
+                System.out.println(standings.get(i));
+            }
+        }
+        System.out.println("--------------------- ");
+
+        // Stay connected for 5 seconds after everyone dies to make sure standings have
+        // plenty of time to update
+        try {
+            Thread.sleep(5000);
+            System.out.println("Waiting 5 seconds.");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // [playerId, score, ...]
+    private List<Integer> sortStandings(List<Integer> input) {
+
+        List<Pair<Integer, Integer>> players = new ArrayList<>();
+        for (int i = 0; i < input.size(); i += 2) {
+            int playerId = input.get(i);
+            int score = input.get(i + 1);
+            players.add(new Pair<>(playerId, score));
+        }
+
+        // sort
+        players.sort((p1, p2) -> p2.getValue().compareTo(p1.getValue()));
+
+        List<Integer> sortedStandings = new ArrayList<>();
+        for (Pair<Integer, Integer> player : players) {
+            sortedStandings.add(player.getKey()); // id
+            sortedStandings.add(player.getValue()); // score
+        }
+
+        return sortedStandings;
     }
 
 }
