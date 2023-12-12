@@ -12,7 +12,15 @@ class ClientHandler implements Runnable {
     private final int playerNum;
     private final ObjectOutputStream out;
     private final ObjectInputStream in;
-    
+
+    /**
+     * Client Handler
+     *
+     * @param socket Socket
+     * @param playerData PlayerData
+     * @param playerNum Number Players
+     * @throws IOException No Socket
+     */
     public ClientHandler(Socket socket, PlayerData playerData, int playerNum) throws IOException {
         this.socket = socket;
         this.playerData = playerData;
@@ -36,9 +44,6 @@ class ClientHandler implements Runnable {
                         inData.yVelocity(), inData.getIsAlive(), inData.isJumping(), inData.isWalking(),
                         inData.isGrounded(), inData.isClimbing(), inData.isClimbingSpecial(), inData.getDirection(),
                         inData.isCycle(), true);
-
-                // System.out.println("Player " + playerNum + ": " + playerData.getPlayerData(playerNum).getX() + ", " + playerData.getPlayerData(playerNum).getY() + ", " + "score: " + playerData.getPlayerData(playerNum).getScore() + ", " + playerData.getPlayerData(playerNum).getIsAlive() + " Walking " + playerData.getPlayerData(playerNum).isWalking()); //debugging
-                //System.out.println("Player " + playerNum + ": " + playerData.getPlayerData(playerNum).getX() + ", " + playerData.getPlayerData(playerNum).getY() + ", " + playerData.getPlayerData(playerNum).getIsAlive() + " Ready: " + playerData.getPlayerData(playerNum).isReady()); //debugging
 
                 for (int idx = 0; idx < playerData.getNumPlayers(); idx++) {
                     outData = playerData.getPlayerData(idx);

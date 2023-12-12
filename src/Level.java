@@ -98,6 +98,10 @@ public class Level {
         play();
     }
 
+    /**
+     * Are players ready to start game
+     * @return true if yes, false otherwise
+     */
     private boolean allReady() {
         for (int i = 0; i < 4; i++) {
             if (!playerData.getPlayerData(i).isReady() && i != playerNum) {
@@ -336,7 +340,11 @@ public class Level {
         for (int i = 0; i < otherPlayers.size(); i++) {
             if (i != playerNum && otherPlayers.get(i).getLives() <= 0) {
                 pane.getChildren().remove(otherPlayers.get(i).getGameObject());
-            } else if (i != playerNum && otherPlayers.get(i).getLives() > 0) {
+            }
+            else if(i != playerNum && !playerData.getPlayerData(i).getIsAlive()) {
+                otherPlayers.get(i).respawn(new Label());
+            }
+            else if(i != playerNum && otherPlayers.get(i).getLives() > 0) {
                 Player dk = otherPlayers.get(i);
                 dk.setXVelocity(playerData.getPlayerData(i).xVelocity());
                 dk.setYVelocity(playerData.getPlayerData(i).yVelocity());
@@ -604,6 +612,9 @@ public class Level {
 
     }
 
+    /**
+     * Handles opponent collision
+     */
     private void opponentCollision() {
         for (int i = 0; i < otherPlayers.size(); i++) {
             if (i != playerNum) {
@@ -870,6 +881,9 @@ public class Level {
         }
     }
 
+    /**
+     * Kill current player
+     */
     private void killPlayer() {
         player.setX(pane.getWidth() + player.getWidth());
         player.setY(pane.getHeight() + player.getHeight());

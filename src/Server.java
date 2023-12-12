@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class Server {
     public static void main(String[] args) {
-        int port = 8000;
+        int port = Integer.parseInt(args[0]);
         int playerNum = 0;
         PlayerData playerData = new PlayerData();
         

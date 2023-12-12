@@ -97,6 +97,12 @@ public class Player extends GameObject {
     public Node getGameObject() {
         return dk;
     }
+
+    /**
+     * Returns overhead sprite object
+     *
+     * @return Node
+     */
     public Node getOverhead() { return overhead; }
 
     /**
@@ -150,7 +156,14 @@ public class Player extends GameObject {
         overhead.setTranslateY(y - getHeight());
     }
 
+    /**
+     * Set to overhead image A
+     */
     public void setOverToA(){ overhead.setImage(Sprites.OVERHEADA.getImage()); }
+
+    /**
+     * Set to overhead image B
+     */
     public void setOverToB(){ overhead.setImage(Sprites.OVERHEADB.getImage()); }
     
     /**
@@ -286,6 +299,11 @@ public class Player extends GameObject {
         return isFalling;
     }
 
+    /**
+     * Total frames fall count
+     *
+     * @return number of falling
+     */
     public int getFallCount() {
         return fallCount;
     }
@@ -437,6 +455,11 @@ public class Player extends GameObject {
         this.isCycle = bool;
     }
 
+    /**
+     * Is the player cycling
+     *
+     * @return true if yes, false otherwise
+     */
     public boolean isCycling() {
         return isCycle;
     }
@@ -446,5 +469,4 @@ public class Player extends GameObject {
     }
 
     public int getScore() { return this.score; }
-    public boolean isReady(){ return isReady; }
 }
