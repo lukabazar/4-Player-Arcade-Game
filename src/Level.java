@@ -56,6 +56,11 @@ public class Level {
     private boolean isOver = false;
     private int numRopes = 0;
     private final Random random = new Random(System.currentTimeMillis());
+    /*
+     * Standings format: List<Integer> -> 
+     * [playerId, score, playerId, score, playerId, score, playerId, score]
+     */
+    private List<Integer> standings;
 
 
     private final List<Player> otherPlayers = new ArrayList<>();
@@ -77,6 +82,7 @@ public class Level {
         this.playerData = playerData;
         this.playerNum = playerNum;
         this.client = client;
+        this.standings = new ArrayList<>(8);
         makeGameObjects();
         makeCollectables();
         makeEnemies();
@@ -233,7 +239,34 @@ public class Level {
                         count = (count + 1) % 3600;
                     }
                 }
-                if(player.getLives() <= 0) { playerData.addDeathOrder(playerNum); } // add to death order if
+                /*
+                 * If a player runs out of lives, they enter a loop and only pull each other players' score 
+                 * until all players have died, at which point they all disconnect.
+                 */
+                if(player.getLives() <= 0 && !allPlayersDead()) { 
+                    playerData.addDeathOrder(playerNum);
+
+                    // wait for all players to be dead before disconnecting
+                    while(!allPlayersDead()){
+                        try{
+                            Date currentTime = new Date();
+                            Thread.sleep(1000);
+                            System.out.println("[" + currentTime + "] " + "players still alive.");
+                        }catch (InterruptedException e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    calculateStandings(standings);
+
+                    // Stay connected for 5 seconds after everyone dies to make sure standings have plenty of time to update
+                    try {
+                        Thread.sleep(5000);
+                        System.out.println("Waiting 5 seconds.");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
                 // player has died
                 playerData.setPlayerData(playerNum, player.getX(), player.getY(), getScore(), player.xVelocity(),
                         player.yVelocity(), player.getLives() > 0, player.isJumping(),
@@ -243,6 +276,18 @@ public class Level {
         };
         timer.start();
         
+    }
+
+    public boolean allPlayersDead(){
+        System.out.println("-----");
+        for(int i = 0; i < 3; i++){
+            System.out.println("player " + i + ": " + client.getPlayerData().getPlayerData(i).getIsAlive());
+            if(client.getPlayerData().getPlayerData(i).getIsAlive()){
+                return false;
+            }
+        }
+        System.out.println("-----");
+        return true;
     }
 
     /**
@@ -291,7 +336,7 @@ public class Level {
             client.stopClient();
         });
         if (level == Mode.LEVEL2) {
-            List<Integer> standings = client.getPlayerData().getDeathOrder();
+            
             
             if (!standings.isEmpty() && standings.size() == 4) { // Check standings are valid
                 List<List<Integer>> standingsWithScores = calculateStandings(standings);
@@ -347,6 +392,16 @@ public class Level {
             // Handle empty standings list
             System.out.println("No standings available!");
             return result; // or handle this case according to your requirements
+        }else{
+            System.out.println("Standings is not empty.");
+        }
+
+        if(standings.size() < 4){
+            Date currentTime = new Date();
+            System.out.println("[" + currentTime + "] " + "There are still players alive");
+            return result;
+        }else{
+            System.out.println("Standings has 4 values.");
         }
 
         // Define placement bonuses
@@ -355,9 +410,14 @@ public class Level {
         int tBonus = 500;
 
         // Set positions
-        Data first = client.getPlayerData().getPlayerData(standings.get(standings.size() - 1));
-        Data second = client.getPlayerData().getPlayerData(standings.get(standings.size() - 2));
-        Data third = client.getPlayerData().getPlayerData(standings.get(standings.size() - 3));
+        System.out.println("First is doing (ID):" + standings.get(standings.size() - 2) + "(SCORE): " + standings.get(standings.size() - 1));
+        Data first = client.getPlayerData().getPlayerData(standings.get(standings.size() - 2));
+
+        System.out.println("Second is doing:" + standings.get(standings.size() - 4) + "(SCORE): " + standings.get(standings.size() - 3));
+        Data second = client.getPlayerData().getPlayerData(standings.get(standings.size() - 4));
+
+        System.out.println("Third is doing:" + standings.get(standings.size() - 6) + "(SCORE): " + standings.get(standings.size() - 5));
+        Data third = client.getPlayerData().getPlayerData(standings.get(standings.size() - 6));
 
         // load in original scores 
         // first.addScore(client.getPlayerData().getPlayerData(first.getId()));

@@ -61,12 +61,15 @@ public class PlayerData {
         return playerData.get(player).getScore();
     }
 
-    public boolean allPlayersDead(){
-        for(int i = 0; i < 3; i++){
-            if(playerData.get(i).getIsAlive()){
-                return false;
-            }
-        }
-        return true;
-    }
+    // public boolean allPlayersDead(){
+    //     System.out.println("-----");
+    //     for(int i = 0; i < 3; i++){
+    //         System.out.println("player " + i + playerData.get(i).getIsAlive());
+    //         if(playerData.get(i).getIsAlive()){
+    //             return false;
+    //         }
+    //     }
+    //     System.out.println("-----");
+    //     return true;
+    // }
 }
